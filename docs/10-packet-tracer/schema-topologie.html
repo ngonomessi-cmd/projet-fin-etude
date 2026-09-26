@@ -1,0 +1,340 @@
+<title>Topologie Packet Tracer KHS Bank</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f5f6f8; --panel:#ffffff; --ink:#1b2330; --muted:#5c6672; --line-soft:#d8dee5;
+    --line:#7a8494; --card-border:#dde2e8;
+    --paris:#2f6fed; --paris-fill:#eaf1ff; --paris-zone:#eef3fd;
+    --lyon:#0e8f96; --lyon-fill:#e4f7f7; --lyon-zone:#eaf7f7;
+    --isp:#5b6472; --isp-fill:#eef0f3;
+    --fw:#d1453d; --fw-fill:#fdeceb;
+    --core:#1c8a4c; --core-fill:#e7f6ec;
+    --dist:#7a5bd6; --dist-fill:#f0ecfc;
+    --srv:#a24fc4; --srv-fill:#f7ecfa;
+    --end:#8a94a3; --end-fill:#f2f3f5;
+    --net-zone:#f1f2f4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#12161d; --panel:#181d26; --ink:#e7ebf2; --muted:#95a0b1; --line-soft:#2a313d;
+      --line:#8b96a6; --card-border:#2a313d;
+      --paris:#6ea2ff; --paris-fill:#182746; --paris-zone:#141c2c;
+      --lyon:#4fd4d8; --lyon-fill:#0f2d2d; --lyon-zone:#0f2224;
+      --isp:#9aa5b6; --isp-fill:#232a35;
+      --fw:#ff8078; --fw-fill:#3a1f22;
+      --core:#4fd57f; --core-fill:#173321;
+      --dist:#b39cf5; --dist-fill:#241f3a;
+      --srv:#e39af0; --srv-fill:#33223a;
+      --end:#aab4c2; --end-fill:#1d232c;
+      --net-zone:#171c24;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#12161d; --panel:#181d26; --ink:#e7ebf2; --muted:#95a0b1; --line-soft:#2a313d;
+    --line:#8b96a6; --card-border:#2a313d;
+    --paris:#6ea2ff; --paris-fill:#182746; --paris-zone:#141c2c;
+    --lyon:#4fd4d8; --lyon-fill:#0f2d2d; --lyon-zone:#0f2224;
+    --isp:#9aa5b6; --isp-fill:#232a35;
+    --fw:#ff8078; --fw-fill:#3a1f22;
+    --core:#4fd57f; --core-fill:#173321;
+    --dist:#b39cf5; --dist-fill:#241f3a;
+    --srv:#e39af0; --srv-fill:#33223a;
+    --end:#aab4c2; --end-fill:#1d232c;
+    --net-zone:#171c24;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    padding-inline:16px; padding-block:28px 60px;
+    max-width:1180px; margin-inline:auto;
+  }
+  h1{
+    font-size:clamp(1.4rem,3vw,1.9rem); margin:0 0 4px; letter-spacing:-.01em; text-wrap:balance;
+  }
+  .subtitle{ color:var(--muted); margin:0 0 28px; font-size:.98rem; max-width:65ch; }
+
+  .card{
+    background:var(--panel); border:1px solid var(--card-border); border-radius:16px;
+    padding:20px; margin-bottom:22px;
+  }
+  .diagram-scroll{ overflow-x:auto; }
+  .diagram-scroll svg{ display:block; width:100%; min-width:920px; height:auto; color:var(--line); }
+
+  .zone{ fill: var(--net-zone); stroke: var(--line-soft); stroke-width:1.5; }
+  .zone-paris{ fill: var(--paris-zone); stroke: color-mix(in srgb, var(--paris) 35%, var(--line-soft)); }
+  .zone-lyon{ fill: var(--lyon-zone); stroke: color-mix(in srgb, var(--lyon) 35%, var(--line-soft)); }
+  .zlabel{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+    letter-spacing:.04em; fill:var(--muted); text-transform:uppercase;
+  }
+  .link{ stroke:currentColor; stroke-width:1.6; fill:none; }
+  .elabel{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; fill:var(--muted);
+  }
+  .node{ stroke-width:1.8; }
+  .nlabel{ font-size:11.5px; font-weight:600; fill:var(--ink); }
+
+  .node-isp{ fill:var(--isp-fill); stroke:var(--isp); }
+  .node-rtr{ fill:var(--paris-fill); stroke:var(--paris); }
+  .node-fw{ fill:var(--fw-fill); stroke:var(--fw); }
+  .node-core{ fill:var(--core-fill); stroke:var(--core); }
+  .node-dist{ fill:var(--dist-fill); stroke:var(--dist); }
+  .node-acc{ fill:var(--dist-fill); stroke:var(--dist); }
+  .node-srv{ fill:var(--srv-fill); stroke:var(--srv); }
+  .node-end{ fill:var(--end-fill); stroke:var(--end); }
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:14px; padding-top:14px;
+    border-top:1px solid var(--line-soft); font-size:.85rem; color:var(--muted);
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .swatch{ width:12px; height:12px; border-radius:3px; display:inline-block; border:1.6px solid; }
+  .sw-isp{ background:var(--isp-fill); border-color:var(--isp); }
+  .sw-rtr{ background:var(--paris-fill); border-color:var(--paris); }
+  .sw-fw{ background:var(--fw-fill); border-color:var(--fw); }
+  .sw-core{ background:var(--core-fill); border-color:var(--core); }
+  .sw-dist{ background:var(--dist-fill); border-color:var(--dist); }
+  .sw-srv{ background:var(--srv-fill); border-color:var(--srv); }
+  .sw-end{ background:var(--end-fill); border-color:var(--end); }
+
+  figcaption{ margin-top:14px; font-size:.9rem; color:var(--muted); max-width:80ch; }
+
+  h2{ font-size:1.05rem; margin:0 0 12px; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:720px){ .grid2{ grid-template-columns:1fr; } }
+
+  table{ border-collapse:collapse; width:100%; font-size:.88rem; }
+  caption{ text-align:left; font-size:.8rem; color:var(--muted); margin-bottom:8px; }
+  th,td{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-soft); }
+  th{ color:var(--muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em; }
+  td.mono, .mono{ font-family:"IBM Plex Mono",monospace; font-size:.83rem; }
+
+  .callout{
+    border-left:3px solid var(--paris); padding:2px 0 2px 14px; margin:0;
+    font-size:.9rem; color:var(--ink);
+  }
+  a{ color:var(--paris); }
+</style>
+
+<h1>Maquette Packet Tracer — KHS Bank / MOM-TECH</h1>
+<p class="subtitle">
+  Schéma à reproduire dans Cisco Packet Tracer : deux sites (Paris, Lyon) reliés par un tunnel VPN
+  au-dessus d'un routeur simulant Internet. Détail complet du câblage et des adresses dans
+  <span class="mono">docs/10-packet-tracer/</span> du dépôt.
+</p>
+
+<div class="card">
+  <figure style="margin:0">
+    <div class="diagram-scroll">
+      <svg viewBox="0 0 1650 900" role="img" aria-label="Topologie Packet Tracer KHS Bank / MOM-TECH : deux sites Paris et Lyon reliés par un tunnel GRE via un routeur Internet simulé, avec cœur redondant HSRP à Paris." xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="120" width="666" height="770" rx="14" class="zone zone-paris"/>
+<text x="44" y="146" class="zlabel">PARIS — siège</text>
+<rect x="1160" y="120" width="480" height="770" rx="14" class="zone zone-lyon"/>
+<text x="1184" y="146" class="zlabel">LYON — site secondaire</text>
+<rect x="720" y="8" width="360" height="106" rx="14" class="zone zone-net"/>
+<text x="744" y="28" class="zlabel">INTERNET (simulé)</text>
+<line x1="960" y1="68" x2="890" y2="72" class="link" marker-end="url(#arrow)"/>
+<text x="925" y="66" class="elabel" text-anchor="middle">Gi0/2</text>
+<line x1="760" y1="72" x2="430" y2="174" class="link" marker-end="url(#arrow)"/>
+<text x="560" y="110" class="elabel" text-anchor="middle">Gi0/0 · 203.0.113.0/30</text>
+<line x1="890" y1="72" x2="1280" y2="174" class="link" marker-end="url(#arrow)"/>
+<text x="1040" y="110" class="elabel" text-anchor="middle">Gi0/1 · 203.0.113.4/30</text>
+<line x1="430" y1="174" x2="1280" y2="174" class="link" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="790" y="150" class="elabel" text-anchor="middle">Tunnel0 GRE 172.16.0.0/30 (VPN)</text>
+<line x1="365" y1="198" x2="365" y2="260" class="link" marker-end="url(#arrow)"/>
+<text x="365" y="225" class="elabel" text-anchor="middle">Gi0/1 · 10.10.254.0/30</text>
+<line x1="1345" y1="198" x2="1345" y2="260" class="link" marker-end="url(#arrow)"/>
+<text x="1345" y="225" class="elabel" text-anchor="middle">Gi0/1 · 10.20.254.0/30</text>
+<line x1="300" y1="284" x2="280" y2="404" class="link" marker-end="url(#arrow)"/>
+<text x="140" y="325" class="elabel" text-anchor="middle">Eth0/1 · Vlan100</text>
+<line x1="430" y1="284" x2="430" y2="404" class="link" marker-end="url(#arrow)"/>
+<text x="470" y="325" class="elabel" text-anchor="middle">Eth0/2 · Vlan100</text>
+<line x1="1345" y1="308" x2="1345" y2="380" class="link" marker-end="url(#arrow)"/>
+<text x="1345" y="340" class="elabel" text-anchor="middle">Eth0/1 · 10.20.254.4/30</text>
+<line x1="280" y1="404" x2="430" y2="404" class="link" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="355" y="400" class="elabel" text-anchor="middle">trunk + HSRP</text>
+<line x1="280" y1="404" x2="620" y2="400" class="link" marker-end="url(#arrow)"/>
+<text x="450" y="398" class="elabel" text-anchor="middle">Fa0/2</text>
+<line x1="280" y1="404" x2="620" y2="460" class="link" marker-end="url(#arrow)"/>
+<text x="450" y="428" class="elabel" text-anchor="middle">Fa0/3</text>
+<line x1="1410" y1="404" x2="1460" y2="400" class="link" marker-end="url(#arrow)"/>
+<text x="1435" y="398" class="elabel" text-anchor="middle">Fa0/2</text>
+<line x1="280" y1="404" x2="300" y2="524" class="link" marker-end="url(#arrow)"/>
+<text x="290" y="460" class="elabel" text-anchor="middle">Fa0/1</text>
+<line x1="430" y1="404" x2="430" y2="524" class="link" marker-end="url(#arrow)"/>
+<text x="430" y="460" class="elabel" text-anchor="middle">Fa0/1</text>
+<line x1="300" y1="524" x2="290" y2="644" class="link" marker-end="url(#arrow)"/>
+<text x="295" y="580" class="elabel" text-anchor="middle">trunk</text>
+<line x1="430" y1="524" x2="430" y2="644" class="link" marker-end="url(#arrow)"/>
+<text x="430" y="580" class="elabel" text-anchor="middle">trunk</text>
+<line x1="1345" y1="428" x2="1345" y2="620" class="link" marker-end="url(#arrow)"/>
+<text x="1345" y="520" class="elabel" text-anchor="middle">Fa0/1</text>
+<line x1="160" y1="644" x2="140" y2="760" class="link" marker-end="url(#arrow)"/>
+<text x="90" y="686" class="elabel" text-anchor="middle">Fa0/2 · VLAN 10</text>
+<line x1="225" y1="668" x2="200" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="200" y="702" class="elabel" text-anchor="middle">Fa0/3 · VLAN 10</text>
+<line x1="225" y1="668" x2="310" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="310" y="686" class="elabel" text-anchor="middle">Fa0/4 · VLAN 20</text>
+<line x1="495" y1="668" x2="420" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="420" y="686" class="elabel" text-anchor="middle">Fa0/2 · VLAN 40</text>
+<line x1="420" y1="780" x2="420" y2="830" class="link" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="420" y="801" class="elabel" text-anchor="middle">Wi-Fi</text>
+<line x1="495" y1="668" x2="530" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="530" y="702" class="elabel" text-anchor="middle">Fa0/3 · voix VLAN 50</text>
+<line x1="560" y1="644" x2="590" y2="760" class="link" marker-end="url(#arrow)"/>
+<text x="640" y="686" class="elabel" text-anchor="middle">Fa0/4 · VLAN 10</text>
+<line x1="1345" y1="668" x2="1240" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="1240" y="686" class="elabel" text-anchor="middle">Fa0/2 · VLAN 10</text>
+<line x1="1345" y1="668" x2="1350" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="1350" y="702" class="elabel" text-anchor="middle">Fa0/3 · VLAN 20</text>
+<line x1="1345" y1="668" x2="1460" y2="740" class="link" marker-end="url(#arrow)"/>
+<text x="1460" y="686" class="elabel" text-anchor="middle">Fa0/4 · VLAN 40</text>
+<line x1="1460" y1="780" x2="1460" y2="830" class="link" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="1460" y="801" class="elabel" text-anchor="middle">Wi-Fi</text>
+<line x1="1410" y1="644" x2="1520" y2="760" class="link" marker-end="url(#arrow)"/>
+<text x="1570" y="702" class="elabel" text-anchor="middle">Fa0/5 · voix VLAN 50</text>
+<rect x="760" y="48" width="130" height="48" rx="7" class="node node-isp"/>
+<text x="825" y="69" class="nlabel" text-anchor="middle">ISP-RTR</text>
+<text x="825" y="83" class="nlabel" text-anchor="middle">Internet simulé</text>
+<rect x="960" y="48" width="100" height="40" rx="7" class="node node-srv"/>
+<text x="1010" y="65" class="nlabel" text-anchor="middle">SRV-INTERNET</text>
+<text x="1010" y="79" class="nlabel" text-anchor="middle">-TEST</text>
+<rect x="300" y="150" width="130" height="48" rx="7" class="node node-rtr"/>
+<text x="365" y="171" class="nlabel" text-anchor="middle">RTR-PARIS</text>
+<text x="365" y="185" class="nlabel" text-anchor="middle">2911</text>
+<rect x="1280" y="150" width="130" height="48" rx="7" class="node node-rtr"/>
+<text x="1345" y="171" class="nlabel" text-anchor="middle">RTR-LYON</text>
+<text x="1345" y="185" class="nlabel" text-anchor="middle">2911</text>
+<rect x="300" y="260" width="130" height="48" rx="7" class="node node-fw"/>
+<text x="365" y="281" class="nlabel" text-anchor="middle">FW-PARIS</text>
+<text x="365" y="295" class="nlabel" text-anchor="middle">ASA 5505</text>
+<rect x="1280" y="260" width="130" height="48" rx="7" class="node node-fw"/>
+<text x="1345" y="281" class="nlabel" text-anchor="middle">FW-LYON</text>
+<text x="1345" y="295" class="nlabel" text-anchor="middle">ASA 5505</text>
+<rect x="150" y="380" width="130" height="48" rx="7" class="node node-core"/>
+<text x="215" y="401" class="nlabel" text-anchor="middle">CORE-PARIS</text>
+<text x="215" y="415" class="nlabel" text-anchor="middle">-SW1 (HSRP Act.)</text>
+<rect x="430" y="380" width="130" height="48" rx="7" class="node node-core"/>
+<text x="495" y="401" class="nlabel" text-anchor="middle">CORE-PARIS</text>
+<text x="495" y="415" class="nlabel" text-anchor="middle">-SW2 (HSRP Sec.)</text>
+<rect x="1280" y="380" width="130" height="48" rx="7" class="node node-core"/>
+<text x="1345" y="401" class="nlabel" text-anchor="middle">CORE-LYON-SW</text>
+<text x="1345" y="415" class="nlabel" text-anchor="middle">3560</text>
+<rect x="620" y="380" width="100" height="40" rx="7" class="node node-srv"/>
+<text x="670" y="397" class="nlabel" text-anchor="middle">SRV-DHCP-DNS</text>
+<text x="670" y="411" class="nlabel" text-anchor="middle">-PARIS</text>
+<rect x="620" y="440" width="100" height="40" rx="7" class="node node-srv"/>
+<text x="670" y="457" class="nlabel" text-anchor="middle">SRV-FICHIERS</text>
+<text x="670" y="471" class="nlabel" text-anchor="middle">-PARIS</text>
+<rect x="1460" y="380" width="100" height="40" rx="7" class="node node-srv"/>
+<text x="1510" y="397" class="nlabel" text-anchor="middle">SRV-DHCP-DNS</text>
+<text x="1510" y="411" class="nlabel" text-anchor="middle">-LYON</text>
+<rect x="300" y="500" width="130" height="48" rx="7" class="node node-dist"/>
+<text x="365" y="521" class="nlabel" text-anchor="middle">DIST-PARIS-SW</text>
+<text x="365" y="535" class="nlabel" text-anchor="middle">2960</text>
+<rect x="160" y="620" width="130" height="48" rx="7" class="node node-acc"/>
+<text x="225" y="641" class="nlabel" text-anchor="middle">ACC-PARIS-SW1</text>
+<text x="225" y="655" class="nlabel" text-anchor="middle">postes + bancaire</text>
+<rect x="430" y="620" width="130" height="48" rx="7" class="node node-acc"/>
+<text x="495" y="641" class="nlabel" text-anchor="middle">ACC-PARIS-SW2</text>
+<text x="495" y="655" class="nlabel" text-anchor="middle">Wi-Fi / VOIP / imp.</text>
+<rect x="1280" y="620" width="130" height="48" rx="7" class="node node-acc"/>
+<text x="1345" y="641" class="nlabel" text-anchor="middle">ACC-LYON-SW</text>
+<text x="1345" y="655" class="nlabel" text-anchor="middle">2960</text>
+<rect x="40" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="90" y="757" class="nlabel" text-anchor="middle">PC-BUR</text>
+<text x="90" y="771" class="nlabel" text-anchor="middle">-PARIS-1</text>
+<rect x="150" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="200" y="757" class="nlabel" text-anchor="middle">PC-BUR</text>
+<text x="200" y="771" class="nlabel" text-anchor="middle">-PARIS-2</text>
+<rect x="260" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="310" y="757" class="nlabel" text-anchor="middle">PC-BANCAIRE</text>
+<text x="310" y="771" class="nlabel" text-anchor="middle">-PARIS-1</text>
+<rect x="370" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="420" y="764" class="nlabel" text-anchor="middle">AP-PARIS</text>
+<rect x="370" y="830" width="100" height="40" rx="7" class="node node-end"/>
+<text x="420" y="847" class="nlabel" text-anchor="middle">LAPTOP-WIFI</text>
+<text x="420" y="861" class="nlabel" text-anchor="middle">-PARIS-1</text>
+<rect x="480" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="530" y="757" class="nlabel" text-anchor="middle">IPPHONE</text>
+<text x="530" y="771" class="nlabel" text-anchor="middle">-PARIS-1</text>
+<rect x="590" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="640" y="757" class="nlabel" text-anchor="middle">PRINT</text>
+<text x="640" y="771" class="nlabel" text-anchor="middle">-PARIS-1</text>
+<rect x="1190" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="1240" y="757" class="nlabel" text-anchor="middle">PC-BUR</text>
+<text x="1240" y="771" class="nlabel" text-anchor="middle">-LYON-1</text>
+<rect x="1300" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="1350" y="757" class="nlabel" text-anchor="middle">PC-BANCAIRE</text>
+<text x="1350" y="771" class="nlabel" text-anchor="middle">-LYON-1</text>
+<rect x="1410" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="1460" y="764" class="nlabel" text-anchor="middle">AP-LYON</text>
+<rect x="1410" y="830" width="100" height="40" rx="7" class="node node-end"/>
+<text x="1460" y="847" class="nlabel" text-anchor="middle">LAPTOP-WIFI</text>
+<text x="1460" y="861" class="nlabel" text-anchor="middle">-LYON-1</text>
+<rect x="1520" y="740" width="100" height="40" rx="7" class="node node-end"/>
+<text x="1570" y="757" class="nlabel" text-anchor="middle">IPPHONE</text>
+<text x="1570" y="771" class="nlabel" text-anchor="middle">-LYON-1</text>
+</svg>
+    </div>
+    <figcaption>
+      Chaque flèche représente une liaison physique câblée, étiquetée avec l'interface et, quand elle
+      existe, la plage d'adresses du lien. La liaison en pointillés entre RTR-PARIS et RTR-LYON est le
+      tunnel GRE (VPN) ; les liaisons Wi-Fi vers les laptops sont également en pointillés.
+    </figcaption>
+  </figure>
+  <div class="legend">
+    <span><span class="swatch sw-isp"></span>Internet simulé</span>
+    <span><span class="swatch sw-rtr"></span>Routeur</span>
+    <span><span class="swatch sw-fw"></span>Pare-feu (ASA)</span>
+    <span><span class="swatch sw-core"></span>Cœur N3 (HSRP)</span>
+    <span><span class="swatch sw-dist"></span>Distribution / Accès</span>
+    <span><span class="swatch sw-srv"></span>Serveur</span>
+    <span><span class="swatch sw-end"></span>Poste / téléphone / imprimante / AP</span>
+  </div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h2>VLAN — Paris</h2>
+    <table>
+      <thead><tr><th>VLAN</th><th>Usage</th><th>Réseau</th><th>Passerelle (HSRP)</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td>Bureautique</td><td class="mono">10.10.0.0/22</td><td class="mono">10.10.0.1</td></tr>
+        <tr><td>20</td><td>Bancaire (KHS-Core)</td><td class="mono">10.10.4.0/26</td><td class="mono">10.10.4.1</td></tr>
+        <tr><td>30</td><td>Serveurs</td><td class="mono">10.10.4.64/27</td><td class="mono">10.10.4.65</td></tr>
+        <tr><td>40</td><td>Wi-Fi invités</td><td class="mono">10.10.8.0/24</td><td class="mono">10.10.8.1</td></tr>
+        <tr><td>50</td><td>VOIP</td><td class="mono">10.10.10.0/23</td><td class="mono">10.10.10.1</td></tr>
+        <tr><td>99</td><td>Management</td><td class="mono">10.10.12.0/26</td><td class="mono">10.10.12.1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>VLAN — Lyon</h2>
+    <table>
+      <thead><tr><th>VLAN</th><th>Usage</th><th>Réseau</th><th>Passerelle</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td>Bureautique</td><td class="mono">10.20.0.0/24</td><td class="mono">10.20.0.1</td></tr>
+        <tr><td>20</td><td>Bancaire (KHS-Core)</td><td class="mono">10.20.1.0/27</td><td class="mono">10.20.1.1</td></tr>
+        <tr><td>30</td><td>Serveurs</td><td class="mono">10.20.1.32/28</td><td class="mono">10.20.1.33</td></tr>
+        <tr><td>40</td><td>Wi-Fi invités</td><td class="mono">10.20.2.0/25</td><td class="mono">10.20.2.1</td></tr>
+        <tr><td>50</td><td>VOIP</td><td class="mono">10.20.2.128/25</td><td class="mono">10.20.2.129</td></tr>
+        <tr><td>99</td><td>Management</td><td class="mono">10.20.3.0/27</td><td class="mono">10.20.3.1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Ce que le schéma ne montre pas (déjà détaillé ailleurs)</h2>
+  <p class="callout">
+    Adresses complètes des liaisons routées, plan de câblage équipement-par-équipement, configurations
+    CLI prêtes à coller : voir <span class="mono">docs/10-packet-tracer/01-topologie-et-cablage.md</span>,
+    <span class="mono">02-plan-adressage.md</span> et <span class="mono">configs/</span> dans le dépôt.
+  </p>
+</div>
