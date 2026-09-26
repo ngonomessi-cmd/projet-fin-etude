@@ -42,30 +42,22 @@ interface GigabitEthernet0/2
  switchport trunk native vlan 999
 exit
 
-! --- Liaisons vers la distribution ---
+! --- Liaison vers l'unique switch d'accès (l'autre lien redondant part de SW2) ---
 interface FastEthernet0/1
- description LIEN-VERS-DIST-PARIS-SW
+ description LIEN-VERS-ACC-PARIS-SW
  switchport mode trunk
- switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999
- ip dhcp snooping trust
 exit
 
-! --- Ports serveurs (VLAN 30, accès direct au cœur) ---
+! --- Port serveur (VLAN 30, accès direct au cœur) ---
 ! Port de confiance DHCP snooping : c'est ici qu'est branché le vrai serveur DHCP,
 ! sans ce "trust" ses réponses (OFFER/ACK) seraient bloquées par le snooping.
 interface FastEthernet0/2
- description SRV-DHCP-DNS-PARIS
+ description SRV-PARIS-DHCP-DNS-FICHIERS
  switchport mode access
  switchport access vlan 30
  ip dhcp snooping trust
- spanning-tree portfast
-exit
-
-interface FastEthernet0/3
- description SRV-FICHIERS-PARIS
- switchport mode access
- switchport access vlan 30
  spanning-tree portfast
 exit
 

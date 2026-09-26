@@ -13,10 +13,6 @@ vlan 20
  name BANCAIRE-KHSCORE
 vlan 30
  name SERVEURS
-vlan 40
- name WIFI-INVITES
-vlan 50
- name VOIP
 vlan 99
  name MANAGEMENT
 vlan 999
@@ -34,13 +30,13 @@ exit
 interface FastEthernet0/1
  description LIEN-VERS-ACC-LYON-SW
  switchport mode trunk
- switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk allowed vlan 10,20,99
  switchport trunk native vlan 999
 exit
 
 ! --- Port serveur (VLAN 30) ---
 interface FastEthernet0/2
- description SRV-DHCP-DNS-LYON
+ description SRV-LYON-DHCP-DNS
  switchport mode access
  switchport access vlan 30
  ip dhcp snooping trust
@@ -63,29 +59,12 @@ interface Vlan30
  ip address 10.20.1.33 255.255.255.240
 exit
 
-interface Vlan40
- ip address 10.20.2.1 255.255.255.128
- ip helper-address 10.20.1.40
- ip access-group ACL-INVITES in
-exit
-
-interface Vlan50
- ip address 10.20.2.129 255.255.255.128
- ip helper-address 10.20.1.40
-exit
-
 interface Vlan99
  ip address 10.20.3.1 255.255.255.224
 exit
 
 ! --- Routage : tout ce qui sort du site part par le pare-feu ---
 ip route 0.0.0.0 0.0.0.0 10.20.254.5
-
-! --- ACL d'isolement du VLAN invités (constat R5) ---
-ip access-list extended ACL-INVITES
- deny ip 10.20.2.0 0.0.0.127 10.20.0.0 0.0.3.255
- permit ip any any
-exit
 
 ! --- Durcissement des ports d'accès ---
 interface range FastEthernet0/10-24
@@ -97,7 +76,7 @@ interface range FastEthernet0/10-24
  spanning-tree bpduguard enable
 exit
 ip dhcp snooping
-ip dhcp snooping vlan 10,40,50
+ip dhcp snooping vlan 10
 
 ! --- Gestion ---
 username admmomtech privilege 15 secret Cisco123!

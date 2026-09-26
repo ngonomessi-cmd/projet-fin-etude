@@ -1,5 +1,9 @@
 # Topologie et câblage
 
+> Version allégée (20 équipements au lieu de 28) : mêmes compétences démontrées (VLAN, HSRP, ACL, NAT,
+> VPN, DHCP, sécurité des ports), avec un seul switch d'accès et un seul serveur par site, moins
+> d'appareils terminaux redondants. Voir les [simplifications assumées](README.md#simplifications-assumées-à-annoncer-en-soutenance).
+
 ## 1. Inventaire des équipements
 
 ### Site Paris (siège)
@@ -10,17 +14,13 @@
 | FW-PARIS | ASA 5505 | Pare-feu périmétrique (NAT, ACL) |
 | CORE-PARIS-SW1 | Multilayer Switch 3560-24PS | Cœur N3, HSRP actif |
 | CORE-PARIS-SW2 | Multilayer Switch 3560-24PS | Cœur N3, HSRP secours |
-| DIST-PARIS-SW | Switch 2960-24TT | Distribution |
-| ACC-PARIS-SW1 | Switch 2960-24TT | Accès (postes bureautique + bancaire) |
-| ACC-PARIS-SW2 | Switch 2960-24TT | Accès (Wi-Fi, VOIP, imprimante) |
+| ACC-PARIS-SW | Switch 2960-24TT | Accès unique (postes, bancaire, Wi-Fi, VOIP) |
 | AP-PARIS | AccessPoint-PT | Borne Wi-Fi (VLAN invités) |
-| SRV-DHCP-DNS-PARIS | Server-PT | DHCP + DNS |
-| SRV-FICHIERS-PARIS | Server-PT | Partage fichiers (FTP/HTTP) |
-| PC-BUR-PARIS-1, PC-BUR-PARIS-2 | PC-PT | Postes bureautique (VLAN 10) |
+| SRV-PARIS | Server-PT | DHCP + DNS + fichiers (HTTP/FTP), un seul serveur |
+| PC-BUR-PARIS-1 | PC-PT | Poste bureautique (VLAN 10) |
 | PC-BANCAIRE-PARIS-1 | PC-PT | Poste application KHS-Core (VLAN 20) |
 | LAPTOP-WIFI-PARIS-1 | Laptop-PT | Poste Wi-Fi invité (VLAN 40) |
 | IPPHONE-PARIS-1 | IP Phone-PT | Téléphonie (VLAN 50, voix) |
-| PRINT-PARIS-1 | Printer-PT | Imprimante réseau (VLAN 10) |
 
 ### Site Lyon (secondaire)
 
@@ -28,14 +28,11 @@
 |---|---|---|
 | RTR-LYON | Router 2911 | Routeur de bordure |
 | FW-LYON | ASA 5505 | Pare-feu périmétrique |
-| CORE-LYON-SW | Multilayer Switch 3560-24PS | Cœur + distribution (échelle réduite, sans HSRP) |
+| CORE-LYON-SW | Multilayer Switch 3560-24PS | Cœur + distribution + passerelle (pas d'HSRP) |
 | ACC-LYON-SW | Switch 2960-24TT | Accès |
-| AP-LYON | AccessPoint-PT | Borne Wi-Fi |
-| SRV-DHCP-DNS-LYON | Server-PT | DHCP + DNS (secours) |
+| SRV-LYON | Server-PT | DHCP + DNS |
 | PC-BUR-LYON-1 | PC-PT | Poste bureautique |
 | PC-BANCAIRE-LYON-1 | PC-PT | Poste KHS-Core |
-| LAPTOP-WIFI-LYON-1 | Laptop-PT | Poste Wi-Fi invité |
-| IPPHONE-LYON-1 | IP Phone-PT | Téléphonie |
 
 ### Internet simulé
 
@@ -44,47 +41,47 @@
 | ISP-RTR | Router 2911 | Représente le fournisseur d'accès Internet |
 | SRV-INTERNET-TEST | Server-PT | Cible de test (ping, DNS, HTTP) « côté Internet » |
 
-**Total : 28 équipements.**
+**Total : 20 équipements** (contre 28 dans la version initiale — Wi-Fi et téléphonie ne sont démontrés
+qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un seul switch d'accès par site).
 
-## 2. Plan de câblage
+## 2. Ce qui change par rapport à la version initiale
+
+| Suppression | Remplacé par |
+|---|---|
+| DIST-PARIS-SW | Les deux cœurs se connectent **directement** à ACC-PARIS-SW (2 liens redondants) |
+| ACC-PARIS-SW2 | Fusionné dans **ACC-PARIS-SW**, qui porte tous les VLAN clients |
+| SRV-FICHIERS-PARIS | Fusionné dans **SRV-PARIS** (un serveur Packet Tracer peut cumuler DHCP, DNS, HTTP, FTP) |
+| PC-BUR-PARIS-2 | Un seul poste bureautique suffit à prouver le VLAN 10 |
+| PRINT-PARIS-1 | Aucune compétence réseau notée n'en dépend |
+| AP-LYON, LAPTOP-WIFI-LYON-1, IPPHONE-LYON-1 | Wi-Fi et VOIP déjà démontrés à Paris |
+
+## 3. Plan de câblage
 
 | Périphérique A | Interface A | Câble | Périphérique B | Interface B |
 |---|---|---|---|---|
-| RTR-PARIS | GigabitEthernet0/0 | Cuivre droit | ISP-RTR | GigabitEthernet0/0 |
-| RTR-LYON | GigabitEthernet0/0 | Cuivre droit | ISP-RTR | GigabitEthernet0/1 |
-| ISP-RTR | GigabitEthernet0/2 | Cuivre droit | SRV-INTERNET-TEST | FastEthernet0 |
-| RTR-PARIS | GigabitEthernet0/1 | Cuivre droit | FW-PARIS | Ethernet0/0 (outside) |
-| FW-PARIS | Ethernet0/1 (inside) | Cuivre droit | CORE-PARIS-SW1 | GigabitEthernet0/1 |
-| FW-PARIS | Ethernet0/2 (inside) | Cuivre droit | CORE-PARIS-SW2 | GigabitEthernet0/1 |
-| RTR-LYON | GigabitEthernet0/1 | Cuivre droit | FW-LYON | Ethernet0/0 (outside) |
-| FW-LYON | Ethernet0/1 (inside) | Cuivre droit | CORE-LYON-SW | GigabitEthernet0/1 |
-| CORE-PARIS-SW1 | GigabitEthernet0/2 | Cuivre croisé | CORE-PARIS-SW2 | GigabitEthernet0/2 |
-| CORE-PARIS-SW1 | FastEthernet0/1 | Cuivre droit | DIST-PARIS-SW | FastEthernet0/1 |
-| CORE-PARIS-SW2 | FastEthernet0/1 | Cuivre droit | DIST-PARIS-SW | FastEthernet0/2 |
-| DIST-PARIS-SW | FastEthernet0/3 | Cuivre droit | ACC-PARIS-SW1 | FastEthernet0/1 |
-| DIST-PARIS-SW | FastEthernet0/4 | Cuivre droit | ACC-PARIS-SW2 | FastEthernet0/1 |
-| CORE-PARIS-SW1 | FastEthernet0/2 | Cuivre droit | SRV-DHCP-DNS-PARIS | FastEthernet0 |
-| CORE-PARIS-SW1 | FastEthernet0/3 | Cuivre droit | SRV-FICHIERS-PARIS | FastEthernet0 |
-| ACC-PARIS-SW1 | FastEthernet0/2 | Cuivre droit | PC-BUR-PARIS-1 | FastEthernet0 |
-| ACC-PARIS-SW1 | FastEthernet0/3 | Cuivre droit | PC-BUR-PARIS-2 | FastEthernet0 |
-| ACC-PARIS-SW1 | FastEthernet0/4 | Cuivre droit | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
-| ACC-PARIS-SW2 | FastEthernet0/2 | Cuivre droit | AP-PARIS | Port0 |
+| RTR-PARIS | GigabitEthernet0/0 | Automatique | ISP-RTR | GigabitEthernet0/0 |
+| RTR-LYON | GigabitEthernet0/0 | Automatique | ISP-RTR | GigabitEthernet0/1 |
+| ISP-RTR | GigabitEthernet0/2 | Automatique | SRV-INTERNET-TEST | FastEthernet0 |
+| RTR-PARIS | GigabitEthernet0/1 | Automatique | FW-PARIS | Ethernet0/0 (outside) |
+| FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | GigabitEthernet0/1 |
+| FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | GigabitEthernet0/1 |
+| RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
+| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
+| CORE-PARIS-SW1 | GigabitEthernet0/2 | Automatique | CORE-PARIS-SW2 | GigabitEthernet0/2 |
+| CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | SRV-PARIS | FastEthernet0 |
+| CORE-PARIS-SW1 | FastEthernet0/1 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
+| CORE-PARIS-SW2 | FastEthernet0/1 | Automatique | ACC-PARIS-SW | FastEthernet0/2 |
+| ACC-PARIS-SW | FastEthernet0/3 | Automatique | PC-BUR-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/4 | Automatique | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/5 | Automatique | AP-PARIS | Port0 |
 | AP-PARIS | — (sans fil) | Wi-Fi | LAPTOP-WIFI-PARIS-1 | Carte Wi-Fi |
-| ACC-PARIS-SW2 | FastEthernet0/3 | Cuivre droit | IPPHONE-PARIS-1 | Port Switch |
-| IPPHONE-PARIS-1 | Port PC | Cuivre droit | PC-BUR-PARIS-2 *(optionnel, PC derrière le tél.)* | — |
-| ACC-PARIS-SW2 | FastEthernet0/4 | Cuivre droit | PRINT-PARIS-1 | FastEthernet0 |
-| CORE-LYON-SW | FastEthernet0/1 | Cuivre droit | ACC-LYON-SW | FastEthernet0/1 |
-| CORE-LYON-SW | FastEthernet0/2 | Cuivre droit | SRV-DHCP-DNS-LYON | FastEthernet0 |
-| ACC-LYON-SW | FastEthernet0/2 | Cuivre droit | PC-BUR-LYON-1 | FastEthernet0 |
-| ACC-LYON-SW | FastEthernet0/3 | Cuivre droit | PC-BANCAIRE-LYON-1 | FastEthernet0 |
-| ACC-LYON-SW | FastEthernet0/4 | Cuivre droit | AP-LYON | Port0 |
-| AP-LYON | — (sans fil) | Wi-Fi | LAPTOP-WIFI-LYON-1 | Carte Wi-Fi |
-| ACC-LYON-SW | FastEthernet0/5 | Cuivre droit | IPPHONE-LYON-1 | Port Switch |
+| ACC-PARIS-SW | FastEthernet0/6 | Automatique | IPPHONE-PARIS-1 | Port Switch |
+| CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
+| CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
+| ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
+| ACC-LYON-SW | FastEthernet0/3 | Automatique | PC-BANCAIRE-LYON-1 | FastEthernet0 |
 
-> Packet Tracer choisit automatiquement le bon type de câble si vous utilisez le câble **« Automatique »**
-> (icône éclair) lors du câblage — c'est la option la plus simple pour un premier montage.
-
-## 3. Schéma logique complet
+## 4. Schéma logique
 
 ```
                                    ┌───────────────────┐
@@ -102,17 +99,13 @@
                     │                                                    │
               ┌─────┴─────┐                                       ┌──────┴────┐
               │ FW-PARIS  │ (ASA 5505)                             │ FW-LYON   │
-              └─────┬─────┘                                       └──────┬────┘
-        ┌───────────┴───────────┐                                       │
-  ┌─────┴──────┐          ┌─────┴──────┐                          ┌─────┴──────┐
-  │CORE-PARIS  │══HSRP═══│CORE-PARIS  │                          │ CORE-LYON  │
-  │   -SW1     │  +trunk  │   -SW2     │                          │    -SW     │
-  └─────┬──────┘          └─────┬──────┘                          └─────┬──────┘
-        │      ┌──────────────── │                                       │
-   ┌────┴──┐   │            ┌────┴────┐                             ┌────┴────┐
-   │SRV-*  │   └──── DIST-PARIS-SW ───┘                             │ACC-LYON │
-   └───────┘             │        │                                  -SW     │
-                   ┌──────┘        └──────┐                          └──┬──┬──┘
-             ACC-PARIS-SW1          ACC-PARIS-SW2                       │  │
-             (postes + bancaire)    (Wi-Fi, VOIP, imprimante)      postes AP/Tel.
+              └──┬─────┬──┘                                       └──────┬────┘
+         ┌───────┘     └───────┐                                         │
+   ┌─────┴──────┐        ┌─────┴──────┐                            ┌─────┴──────┐
+   │CORE-PARIS  │══HSRP═══│CORE-PARIS  │                            │ CORE-LYON  │
+   │   -SW1     │  +trunk  │   -SW2     │                            │    -SW     │
+   └──┬───┬─────┘          └─────┬───┬──┘                            └──┬───┬────┘
+      │   └──────── ACC-PARIS-SW ┘   │                                  │   │
+   SRV-PARIS   (postes, bancaire, Wi-Fi, VOIP)                     SRV-LYON  ACC-LYON-SW
+                                                                              (postes)
 ```

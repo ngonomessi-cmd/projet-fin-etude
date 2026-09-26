@@ -21,12 +21,9 @@ ajoutées ici.
 
 | Hôte | VLAN | Adresse IP | Passerelle |
 |---|---|---|---|
-| PC-BUR-PARIS-1 | 10 | 10.10.0.10/22 | 10.10.0.1 |
-| PC-BUR-PARIS-2 | 10 | 10.10.0.11/22 | 10.10.0.1 |
-| PRINT-PARIS-1 | 10 | 10.10.0.20/22 (statique) | 10.10.0.1 |
+| PC-BUR-PARIS-1 | 10 | DHCP (plage 10.10.0.10–200) | 10.10.0.1 |
 | PC-BANCAIRE-PARIS-1 | 20 | 10.10.4.10/26 | 10.10.4.1 |
-| SRV-DHCP-DNS-PARIS | 30 | 10.10.4.70/27 (statique) | 10.10.4.65 |
-| SRV-FICHIERS-PARIS | 30 | 10.10.4.71/27 (statique) | 10.10.4.65 |
+| SRV-PARIS (DHCP+DNS+fichiers) | 30 | 10.10.4.70/27 (statique) | 10.10.4.65 |
 | LAPTOP-WIFI-PARIS-1 | 40 | DHCP (plage 10.10.8.10–200) | 10.10.8.1 |
 | IPPHONE-PARIS-1 | 50 | DHCP (plage 10.10.10.10–200) | 10.10.10.1 |
 
@@ -37,6 +34,8 @@ ajoutées ici.
 | RTR-PARIS ↔ ISP-RTR | 203.0.113.0/30 | RTR-PARIS Gi0/0 = .2 | ISP-RTR Gi0/0 = .1 |
 | RTR-PARIS ↔ FW-PARIS | 10.10.254.0/30 | RTR-PARIS Gi0/1 = .1 | FW-PARIS Eth0/0 (outside) = .2 |
 | FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.4/29 | FW-PARIS Eth0/1+0/2 (inside) = .5 | CORE-PARIS-SW1 = .6 · CORE-PARIS-SW2 = .7 |
+| CORE-PARIS-SW1 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/1 |
+| CORE-PARIS-SW2 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/2 |
 | Tunnel GRE Paris (Tunnel0) | 172.16.0.0/30 | RTR-PARIS = .1 | (RTR-LYON = .2) |
 
 ## Site Lyon
@@ -56,9 +55,7 @@ ajoutées ici.
 |---|---|---|---|
 | PC-BUR-LYON-1 | 10 | DHCP (plage 10.20.0.10–200) | 10.20.0.1 |
 | PC-BANCAIRE-LYON-1 | 20 | 10.20.1.10/27 | 10.20.1.1 |
-| SRV-DHCP-DNS-LYON | 30 | 10.20.1.40/28 (statique) | 10.20.1.33 |
-| LAPTOP-WIFI-LYON-1 | 40 | DHCP (plage 10.20.2.10–120) | 10.20.2.1 |
-| IPPHONE-LYON-1 | 50 | DHCP (plage 10.20.2.140–250) | 10.20.2.129 |
+| SRV-LYON (DHCP+DNS) | 30 | 10.20.1.40/28 (statique) | 10.20.1.33 |
 
 ## Liaisons routées Lyon
 

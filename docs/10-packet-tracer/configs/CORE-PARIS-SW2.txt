@@ -41,13 +41,12 @@ interface GigabitEthernet0/2
  switchport trunk native vlan 999
 exit
 
-! --- Liaisons vers la distribution ---
+! --- Liaison vers l'unique switch d'accès (2e lien redondant, sur son port Fa0/2) ---
 interface FastEthernet0/1
- description LIEN-VERS-DIST-PARIS-SW
+ description LIEN-VERS-ACC-PARIS-SW
  switchport mode trunk
- switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999
- ip dhcp snooping trust
 exit
 
 ! --- Spanning-tree : ce switch est root secondaire (bascule si SW1 tombe) ---

@@ -10,10 +10,6 @@ vlan 10
  name BUREAUTIQUE
 vlan 20
  name BANCAIRE-KHSCORE
-vlan 40
- name WIFI-INVITES
-vlan 50
- name VOIP
 vlan 99
  name MANAGEMENT
 vlan 999
@@ -25,7 +21,7 @@ spanning-tree mode rapid-pvst
 interface FastEthernet0/1
  description LIEN-VERS-CORE-LYON-SW
  switchport mode trunk
- switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk allowed vlan 10,20,99
  switchport trunk native vlan 999
 exit
 
@@ -49,24 +45,6 @@ interface FastEthernet0/3
  switchport port-security violation restrict
  spanning-tree portfast
  spanning-tree bpduguard enable
-exit
-
-interface FastEthernet0/4
- description AP-LYON
- switchport mode access
- switchport access vlan 40
- spanning-tree portfast
-exit
-
-interface FastEthernet0/5
- description IPPHONE-LYON-1
- switchport mode access
- switchport access vlan 10
- switchport voice vlan 50
- switchport port-security
- switchport port-security maximum 3
- switchport port-security violation restrict
- spanning-tree portfast
 exit
 
 interface Vlan99

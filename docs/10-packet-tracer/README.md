@@ -46,9 +46,18 @@ FortiGate) qui n'existent pas dans le catalogue de Packet Tracer. La maquette ut
   routage) entre les deux routeurs de site, représentant le VPN (Virtual Private Network — réseau privé
   virtuel) IPsec du dossier réel. Le tunnel GRE est fiable et intégralement supporté par PT ; l'ajout
   d'IPsec par-dessus (GRE over IPsec) est indiqué en option dans les configurations routeur.
-- **Échelle réduite** : quelques PC représentatifs par VLAN plutôt que les 920 postes réels — le plan
-  d'adressage (VLSM) reste néanmoins identique à celui du dossier, pour démontrer la cohérence entre la
-  conception papier et la maquette pratique.
+- **Échelle réduite** : un seul poste par VLAN plutôt que les 920 postes réels — le plan d'adressage
+  (VLSM) reste néanmoins identique à celui du dossier, pour démontrer la cohérence entre la conception
+  papier et la maquette pratique.
+- **Un seul switch d'accès et un seul serveur par site** (au lieu de deux) : les VLAN client (postes,
+  bancaire, Wi-Fi, VOIP) partagent le même commutateur d'accès, et un même serveur Packet Tracer cumule
+  DHCP, DNS et fichiers — cela ne change ni les VLAN, ni les règles de sécurité, seulement le nombre
+  d'appareils à placer et câbler.
+- **Wi-Fi et téléphonie IP démontrés uniquement à Paris** : la compétence (VLAN voix, VLAN invités
+  isolé) est identique à Lyon ; il suffirait d'y reproduire le même montage si besoin en soutenance.
+- **20 équipements au total** (au lieu de 28 dans une première version) : couche distribution supprimée
+  (les cœurs se connectent directement à l'accès), imprimante et second poste bureautique retirés
+  (aucune compétence réseau notée n'en dépendait).
 
 ## Vue d'ensemble logique
 
@@ -61,8 +70,11 @@ RTR-PARIS   RTR-LYON  ←── tunnel GRE (VPN inter-site) ──→ (reliés e
 FW-PARIS     FW-LYON        (ASA 5505, périmètre + NAT)
    │            │
 CORE-PARIS   CORE-LYON      (L3, HSRP à Paris)
+ -SW1/SW2       │
    │            │
-DIST-PARIS   ACC-LYON-SW
-   │
-ACC-PARIS-SW1/2 + AP + IP Phone + postes + imprimante + serveurs
+ACC-PARIS-SW   ACC-LYON-SW
+   │                │
+postes + AP +   postes
+IP Phone +
+serveur
 ```

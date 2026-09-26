@@ -1,15 +1,20 @@
-! ACC-PARIS-SW1 — Switch 2960-24TT — accès (postes bureautique + bancaire)
+! ACC-PARIS-SW — Switch 2960-24TT — accès unique du siège
+! (postes bureautique, poste bancaire, borne Wi-Fi, téléphone IP)
 enable
 configure terminal
-hostname ACC-PARIS-SW1
+hostname ACC-PARIS-SW
 enable secret Cisco123!
 no ip domain-lookup
-banner motd #KHS Bank - Acces PARIS SW1 - Acces reserve MOM-TECH#
+banner motd #KHS Bank - Acces PARIS - Acces reserve MOM-TECH#
 
 vlan 10
  name BUREAUTIQUE
 vlan 20
  name BANCAIRE-KHSCORE
+vlan 40
+ name WIFI-INVITES
+vlan 50
+ name VOIP
 vlan 99
  name MANAGEMENT
 vlan 999
@@ -18,26 +23,24 @@ exit
 
 spanning-tree mode rapid-pvst
 
+! --- Deux liaisons montantes redondantes, une vers chaque cœur (RSTP choisit
+!     le chemin actif ; si CORE-PARIS-SW1 tombe, ce lien bascule sur SW2). ---
 interface FastEthernet0/1
- description LIEN-VERS-DIST-PARIS-SW
+ description LIEN-VERS-CORE-PARIS-SW1
  switchport mode trunk
- switchport trunk allowed vlan 10,20,99
+ switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999
 exit
 
 interface FastEthernet0/2
- description PC-BUR-PARIS-1
- switchport mode access
- switchport access vlan 10
- switchport port-security
- switchport port-security maximum 2
- switchport port-security violation restrict
- spanning-tree portfast
- spanning-tree bpduguard enable
+ description LIEN-VERS-CORE-PARIS-SW2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk native vlan 999
 exit
 
 interface FastEthernet0/3
- description PC-BUR-PARIS-2
+ description PC-BUR-PARIS-1
  switchport mode access
  switchport access vlan 10
  switchport port-security
@@ -56,6 +59,25 @@ interface FastEthernet0/4
  switchport port-security violation restrict
  spanning-tree portfast
  spanning-tree bpduguard enable
+exit
+
+interface FastEthernet0/5
+ description AP-PARIS
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast
+exit
+
+! --- Port téléphone IP : VLAN voix dédiée + VLAN data pour un PC éventuel derrière le tél. ---
+interface FastEthernet0/6
+ description IPPHONE-PARIS-1
+ switchport mode access
+ switchport access vlan 10
+ switchport voice vlan 50
+ switchport port-security
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ spanning-tree portfast
 exit
 
 interface Vlan99

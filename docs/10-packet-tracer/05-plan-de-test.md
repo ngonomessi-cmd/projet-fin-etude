@@ -9,7 +9,7 @@ est concrètement observable dans la maquette Packet Tracer.
 |---|---|---|---|
 | PT01 | Connectivité locale | `ping 10.10.0.1` depuis PC-BUR-PARIS-1 | Réponse OK (passerelle HSRP) |
 | PT02 | Attribution DHCP | `ipconfig` sur PC-BUR-PARIS-1 | IP dans `10.10.0.0/22`, passerelle `10.10.0.1` |
-| PT03 | Inter-VLAN autorisé | `ping` de PC-BANCAIRE-PARIS-1 vers SRV-FICHIERS-PARIS (10.10.4.71) | Réponse OK |
+| PT03 | Inter-VLAN autorisé | `ping` de PC-BANCAIRE-PARIS-1 vers SRV-PARIS (10.10.4.70) | Réponse OK |
 | PT04 | Isolation VLAN invités | `ping 10.10.0.10` depuis LAPTOP-WIFI-PARIS-1 | **Échoue** (bloqué par `ACL-INVITES`) |
 | PT05 | Accès Internet des invités | `ping 203.0.113.10` (SRV-INTERNET-TEST) depuis LAPTOP-WIFI-PARIS-1 | Réponse OK (l'ACL bloque le LAN interne, pas Internet) |
 | PT06 | NAT sortant | `ping 203.0.113.10` depuis PC-BANCAIRE-PARIS-1, puis `show ip nat translations` sur RTR-PARIS | Une entrée de traduction apparaît |
