@@ -1,0 +1,112 @@
+! CORE-LYON-SW — Multilayer Switch 3560-24PS — cœur + distribution (site secondaire, sans HSRP)
+enable
+configure terminal
+hostname CORE-LYON-SW
+enable secret Cisco123!
+ip routing
+no ip domain-lookup
+banner motd #KHS Bank - Coeur reseau LYON - Acces reserve MOM-TECH#
+
+vlan 10
+ name BUREAUTIQUE
+vlan 20
+ name BANCAIRE-KHSCORE
+vlan 30
+ name SERVEURS
+vlan 40
+ name WIFI-INVITES
+vlan 50
+ name VOIP
+vlan 99
+ name MANAGEMENT
+vlan 999
+ name NATIVE-INUTILISE
+exit
+
+! --- Liaison routée vers le pare-feu (un seul cœur à Lyon : pas de VLAN de transit nécessaire) ---
+interface GigabitEthernet0/1
+ description LIEN-VERS-FW-LYON-INSIDE
+ no switchport
+ ip address 10.20.254.6 255.255.255.252
+exit
+
+! --- Liaison vers l'accès ---
+interface FastEthernet0/1
+ description LIEN-VERS-ACC-LYON-SW
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk native vlan 999
+exit
+
+! --- Port serveur (VLAN 30) ---
+interface FastEthernet0/2
+ description SRV-DHCP-DNS-LYON
+ switchport mode access
+ switchport access vlan 30
+ ip dhcp snooping trust
+ spanning-tree portfast
+exit
+
+spanning-tree mode rapid-pvst
+
+! --- SVI (pas d'HSRP : ce cœur est l'unique passerelle du site) ---
+interface Vlan10
+ ip address 10.20.0.1 255.255.255.0
+ ip helper-address 10.20.1.40
+exit
+
+interface Vlan20
+ ip address 10.20.1.1 255.255.255.224
+exit
+
+interface Vlan30
+ ip address 10.20.1.33 255.255.255.240
+exit
+
+interface Vlan40
+ ip address 10.20.2.1 255.255.255.128
+ ip helper-address 10.20.1.40
+ ip access-group ACL-INVITES in
+exit
+
+interface Vlan50
+ ip address 10.20.2.129 255.255.255.128
+ ip helper-address 10.20.1.40
+exit
+
+interface Vlan99
+ ip address 10.20.3.1 255.255.255.224
+exit
+
+! --- Routage : tout ce qui sort du site part par le pare-feu ---
+ip route 0.0.0.0 0.0.0.0 10.20.254.5
+
+! --- ACL d'isolement du VLAN invités (constat R5) ---
+ip access-list extended ACL-INVITES
+ deny ip 10.20.2.0 0.0.0.127 10.20.0.0 0.0.3.255
+ permit ip any any
+exit
+
+! --- Durcissement des ports d'accès ---
+interface range FastEthernet0/10-24
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+exit
+ip dhcp snooping
+ip dhcp snooping vlan 10,40,50
+
+! --- Gestion ---
+username admmomtech privilege 15 secret Cisco123!
+ip domain-name khsbank.internal
+crypto key generate rsa modulus 2048
+line vty 0 15
+ login local
+ transport input ssh
+exit
+
+end
+write memory

@@ -1,0 +1,73 @@
+! ACC-PARIS-SW2 — Switch 2960-24TT — accès (Wi-Fi, VOIP, imprimante)
+enable
+configure terminal
+hostname ACC-PARIS-SW2
+enable secret Cisco123!
+no ip domain-lookup
+banner motd #KHS Bank - Acces PARIS SW2 - Acces reserve MOM-TECH#
+
+vlan 10
+ name BUREAUTIQUE
+vlan 40
+ name WIFI-INVITES
+vlan 50
+ name VOIP
+vlan 99
+ name MANAGEMENT
+vlan 999
+ name NATIVE-INUTILISE
+exit
+
+spanning-tree mode rapid-pvst
+
+interface FastEthernet0/1
+ description LIEN-VERS-DIST-PARIS-SW
+ switchport mode trunk
+ switchport trunk allowed vlan 10,40,50,99
+ switchport trunk native vlan 999
+exit
+
+interface FastEthernet0/2
+ description AP-PARIS
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast
+exit
+
+! --- Port téléphone IP : VLAN voix dédiée + VLAN data pour un PC éventuel derrière le tél. ---
+interface FastEthernet0/3
+ description IPPHONE-PARIS-1
+ switchport mode access
+ switchport access vlan 10
+ switchport voice vlan 50
+ switchport port-security
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ spanning-tree portfast
+exit
+
+interface FastEthernet0/4
+ description PRINT-PARIS-1
+ switchport mode access
+ switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security violation restrict
+ spanning-tree portfast
+exit
+
+interface Vlan99
+ ip address 10.10.12.12 255.255.255.192
+ no shutdown
+exit
+ip default-gateway 10.10.12.1
+username admmomtech privilege 15 secret Cisco123!
+ip domain-name khsbank.internal
+crypto key generate rsa modulus 2048
+line vty 0 15
+ login local
+ transport input ssh
+exit
+
+end
+write memory

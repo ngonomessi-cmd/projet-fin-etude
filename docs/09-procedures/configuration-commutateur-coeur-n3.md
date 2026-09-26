@@ -132,7 +132,7 @@ CORE-PARIS(config-if)# ip address 10.10.8.1 255.255.255.0
 CORE-PARIS(config-if)# exit
 CORE-PARIS(config)# interface Vlan50
 CORE-PARIS(config-if)# description VOIP
-CORE-PARIS(config-if)# ip address 10.10.9.1 255.255.254.0
+CORE-PARIS(config-if)# ip address 10.10.10.1 255.255.254.0
 CORE-PARIS(config-if)# exit
 CORE-PARIS(config)# interface Vlan99
 CORE-PARIS(config-if)# description MANAGEMENT

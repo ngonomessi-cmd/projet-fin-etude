@@ -1,0 +1,86 @@
+! ACC-LYON-SW — Switch 2960-24TT — accès du site secondaire
+enable
+configure terminal
+hostname ACC-LYON-SW
+enable secret Cisco123!
+no ip domain-lookup
+banner motd #KHS Bank - Acces LYON - Acces reserve MOM-TECH#
+
+vlan 10
+ name BUREAUTIQUE
+vlan 20
+ name BANCAIRE-KHSCORE
+vlan 40
+ name WIFI-INVITES
+vlan 50
+ name VOIP
+vlan 99
+ name MANAGEMENT
+vlan 999
+ name NATIVE-INUTILISE
+exit
+
+spanning-tree mode rapid-pvst
+
+interface FastEthernet0/1
+ description LIEN-VERS-CORE-LYON-SW
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk native vlan 999
+exit
+
+interface FastEthernet0/2
+ description PC-BUR-LYON-1
+ switchport mode access
+ switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+exit
+
+interface FastEthernet0/3
+ description PC-BANCAIRE-LYON-1
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+exit
+
+interface FastEthernet0/4
+ description AP-LYON
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast
+exit
+
+interface FastEthernet0/5
+ description IPPHONE-LYON-1
+ switchport mode access
+ switchport access vlan 10
+ switchport voice vlan 50
+ switchport port-security
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ spanning-tree portfast
+exit
+
+interface Vlan99
+ ip address 10.20.3.10 255.255.255.224
+ no shutdown
+exit
+ip default-gateway 10.20.3.1
+username admmomtech privilege 15 secret Cisco123!
+ip domain-name khsbank.internal
+crypto key generate rsa modulus 2048
+line vty 0 15
+ login local
+ transport input ssh
+exit
+
+end
+write memory

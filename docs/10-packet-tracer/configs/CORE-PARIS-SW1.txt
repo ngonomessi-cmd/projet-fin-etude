@@ -1,0 +1,161 @@
+! CORE-PARIS-SW1 — Multilayer Switch 3560-24PS — cœur N3, membre HSRP ACTIF
+enable
+configure terminal
+hostname CORE-PARIS-SW1
+enable secret Cisco123!
+ip routing
+no ip domain-lookup
+banner motd #KHS Bank - Coeur reseau PARIS (SW1/HSRP actif) - Acces reserve MOM-TECH#
+
+! --- VLAN ---
+vlan 10
+ name BUREAUTIQUE
+vlan 20
+ name BANCAIRE-KHSCORE
+vlan 30
+ name SERVEURS
+vlan 40
+ name WIFI-INVITES
+vlan 50
+ name VOIP
+vlan 99
+ name MANAGEMENT
+vlan 100
+ name TRANSIT-FW
+vlan 999
+ name NATIVE-INUTILISE
+exit
+
+! --- Liaison vers le pare-feu : port d'accès dans le VLAN de transit partagé
+!     avec CORE-PARIS-SW2 (l'ASA 5505 en licence de base ne fait pas de trunk). ---
+interface GigabitEthernet0/1
+ description LIEN-VERS-FW-PARIS-INSIDE-TRANSIT
+ switchport mode access
+ switchport access vlan 100
+exit
+
+! --- Liaison vers CORE-PARIS-SW2 (trunk direct, porte HSRP + toutes les VLAN) ---
+interface GigabitEthernet0/2
+ description LIEN-VERS-CORE-PARIS-SW2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk native vlan 999
+exit
+
+! --- Liaisons vers la distribution ---
+interface FastEthernet0/1
+ description LIEN-VERS-DIST-PARIS-SW
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk native vlan 999
+ ip dhcp snooping trust
+exit
+
+! --- Ports serveurs (VLAN 30, accès direct au cœur) ---
+! Port de confiance DHCP snooping : c'est ici qu'est branché le vrai serveur DHCP,
+! sans ce "trust" ses réponses (OFFER/ACK) seraient bloquées par le snooping.
+interface FastEthernet0/2
+ description SRV-DHCP-DNS-PARIS
+ switchport mode access
+ switchport access vlan 30
+ ip dhcp snooping trust
+ spanning-tree portfast
+exit
+
+interface FastEthernet0/3
+ description SRV-FICHIERS-PARIS
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+exit
+
+! --- Spanning-tree : ce switch est root primaire ---
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20,30,40,50,99 root primary
+
+! --- Interfaces virtuelles (SVI) + HSRP (priorité haute = actif) ---
+interface Vlan10
+ ip address 10.10.0.2 255.255.252.0
+ standby 10 ip 10.10.0.1
+ standby 10 priority 110
+ standby 10 preempt
+ ip helper-address 10.10.4.70
+exit
+
+interface Vlan20
+ ip address 10.10.4.2 255.255.255.192
+ standby 20 ip 10.10.4.1
+ standby 20 priority 110
+ standby 20 preempt
+exit
+
+interface Vlan30
+ ip address 10.10.4.66 255.255.255.224
+ standby 30 ip 10.10.4.65
+ standby 30 priority 110
+ standby 30 preempt
+exit
+
+interface Vlan40
+ ip address 10.10.8.2 255.255.255.0
+ standby 40 ip 10.10.8.1
+ standby 40 priority 110
+ standby 40 preempt
+ ip helper-address 10.10.4.70
+ ip access-group ACL-INVITES in
+exit
+
+interface Vlan50
+ ip address 10.10.10.2 255.255.254.0
+ standby 50 ip 10.10.10.1
+ standby 50 priority 110
+ standby 50 preempt
+ ip helper-address 10.10.4.70
+exit
+
+interface Vlan99
+ ip address 10.10.12.2 255.255.255.192
+ standby 99 ip 10.10.12.1
+ standby 99 priority 110
+ standby 99 preempt
+exit
+
+! --- VLAN de transit vers le pare-feu (pas d'HSRP ici : chaque cœur utilise
+!     directement sa propre route vers l'ASA, présent sur le même segment L2) ---
+interface Vlan100
+ ip address 10.10.254.6 255.255.255.248
+exit
+
+! --- Routage : tout ce qui sort du site part par le pare-feu ---
+ip route 0.0.0.0 0.0.0.0 10.10.254.5
+
+! --- ACL d'isolement du VLAN invités (reprise du dossier, constat R5) : aucun accès
+!     aux réseaux internes de KHS Bank, seule la sortie vers Internet est autorisée. ---
+ip access-list extended ACL-INVITES
+ deny ip 10.10.8.0 0.0.0.255 10.10.0.0 0.0.15.255
+ permit ip any any
+exit
+
+! --- Durcissement des ports d'accès (repris de la procédure du dossier) ---
+interface range FastEthernet0/10-24
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+exit
+ip dhcp snooping
+ip dhcp snooping vlan 10,40,50
+
+! --- Gestion ---
+username admmomtech privilege 15 secret Cisco123!
+ip domain-name khsbank.internal
+crypto key generate rsa modulus 2048
+line vty 0 15
+ login local
+ transport input ssh
+exit
+
+end
+write memory

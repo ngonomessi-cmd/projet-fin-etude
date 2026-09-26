@@ -1,0 +1,42 @@
+! ISP-RTR — Router 2911 — simule Internet
+enable
+configure terminal
+hostname ISP-RTR
+enable secret Cisco123!
+no ip domain-lookup
+banner motd #Equipement ISP simule - hors perimetre KHS Bank#
+
+interface GigabitEthernet0/0
+ description LIEN-VERS-RTR-PARIS
+ ip address 203.0.113.1 255.255.255.252
+ no shutdown
+exit
+
+interface GigabitEthernet0/1
+ description LIEN-VERS-RTR-LYON
+ ip address 203.0.113.5 255.255.255.252
+ no shutdown
+exit
+
+interface GigabitEthernet0/2
+ description LIEN-VERS-SRV-INTERNET-TEST
+ ip address 203.0.113.9 255.255.255.252
+ no shutdown
+exit
+
+! Aucune route statique nécessaire : les 3 sous-réseaux /30 sont directement connectés.
+! ISP-RTR ne connaît pas les réseaux internes (10.10.0.0/16, 10.20.0.0/16) : c'est le NAT
+! sur les pare-feu de site qui rend le trafic sortant routable jusqu'ici.
+
+line con 0
+ password Cisco123!
+ login
+exit
+line vty 0 4
+ password Cisco123!
+ login
+ transport input ssh telnet
+exit
+
+end
+write memory

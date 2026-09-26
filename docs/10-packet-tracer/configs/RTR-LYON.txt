@@ -1,0 +1,56 @@
+! RTR-LYON — Router 2911 — routeur de bordure du site secondaire
+enable
+configure terminal
+hostname RTR-LYON
+enable secret Cisco123!
+no ip domain-lookup
+banner motd #KHS Bank - Routeur de bordure LYON - Acces reserve MOM-TECH#
+
+! --- Interfaces ---
+interface GigabitEthernet0/0
+ description LIEN-WAN-VERS-ISP
+ ip address 203.0.113.6 255.255.255.252
+ ip nat outside
+ no shutdown
+exit
+
+interface GigabitEthernet0/1
+ description LIEN-VERS-FW-LYON-OUTSIDE
+ ip address 10.20.254.1 255.255.255.252
+ ip nat inside
+ no shutdown
+exit
+
+! --- Tunnel GRE vers Paris (VPN inter-site) ---
+interface Tunnel0
+ description TUNNEL-GRE-VERS-PARIS
+ ip address 172.16.0.2 255.255.255.252
+ tunnel source GigabitEthernet0/0
+ tunnel destination 203.0.113.2
+ no shutdown
+exit
+
+! --- Routage ---
+ip route 0.0.0.0 0.0.0.0 203.0.113.5
+ip route 10.10.0.0 255.255.0.0 172.16.0.1
+
+! --- NAT : exemption du trafic inter-site ---
+access-list 100 deny   ip 10.20.0.0 0.0.255.255 10.10.0.0 0.0.255.255
+access-list 100 permit ip 10.20.0.0 0.0.255.255 any
+ip nat inside source list 100 interface GigabitEthernet0/0 overload
+
+! --- Sécurité de gestion ---
+line con 0
+ password Cisco123!
+ login
+exit
+line vty 0 4
+ login local
+ transport input ssh
+exit
+username admmomtech privilege 15 secret Cisco123!
+ip domain-name khsbank.internal
+crypto key generate rsa modulus 2048
+
+end
+write memory
