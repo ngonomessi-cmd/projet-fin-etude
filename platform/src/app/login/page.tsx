@@ -23,7 +23,7 @@ export default function PageConnexion() {
 
     if (mode === "inscription") {
       setErreur(
-        "Compte créé. Si la confirmation par e-mail est activée sur le projet Supabase, vérifiez votre boîte mail avant de vous connecter."
+        "Compte créé. Un e-mail de confirmation vient de vous être envoyé — cliquez sur le lien qu'il contient avant de vous connecter."
       );
       setMode("connexion");
       return;
