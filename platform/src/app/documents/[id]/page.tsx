@@ -74,6 +74,8 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
           {urlTelechargement && (
             <a
               href={urlTelechargement}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-4 inline-block rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               Télécharger le fichier (lien signé, valable 5 minutes)
