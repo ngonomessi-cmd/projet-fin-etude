@@ -3,6 +3,7 @@ import { NavBar } from "@/components/NavBar";
 import { LABEL_ROLE } from "@/lib/labels";
 import type { Profil } from "@/lib/types";
 import { SelecteurRole } from "./SelecteurRole";
+import { ChampTexteModifiable } from "./ChampTexteModifiable";
 
 export default async function PageUtilisateurs() {
   const supabase = await creerClientServeur();
@@ -38,8 +39,10 @@ export default async function PageUtilisateurs() {
       <main className="mx-auto max-w-3xl px-4 py-6">
         <h1 className="mb-1 text-xl font-semibold text-slate-900">Utilisateurs</h1>
         <p className="mb-6 text-sm text-slate-500">
-          Gestion des rôles RBAC (contrôle d&apos;accès basé sur les rôles). Chaque changement est
-          enregistré dans le journal d&apos;audit, via la fonction PostgreSQL changer_role_utilisateur.
+          Gestion des rôles RBAC (contrôle d&apos;accès basé sur les rôles) et des profils. Le nom et le
+          département se modifient directement dans le tableau (cliquez, modifiez, cliquez ailleurs
+          pour enregistrer). Chaque changement est enregistré dans le journal d&apos;audit, via les
+          fonctions PostgreSQL changer_role_utilisateur et modifier_profil_utilisateur.
         </p>
 
         <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
@@ -54,8 +57,12 @@ export default async function PageUtilisateurs() {
             <tbody>
               {utilisateurs.map((u) => (
                 <tr key={u.id} className="border-t border-slate-100">
-                  <td className="px-4 py-2 font-medium text-slate-900">{u.nom_complet}</td>
-                  <td className="px-4 py-2 text-slate-600">{u.departement}</td>
+                  <td className="px-2 py-1 font-medium text-slate-900">
+                    <ChampTexteModifiable utilisateurId={u.id} champ="nom_complet" valeurInitiale={u.nom_complet} />
+                  </td>
+                  <td className="px-2 py-1 text-slate-600">
+                    <ChampTexteModifiable utilisateurId={u.id} champ="departement" valeurInitiale={u.departement} />
+                  </td>
                   <td className="px-4 py-2">
                     <SelecteurRole utilisateurId={u.id} roleActuel={u.role} />
                   </td>
