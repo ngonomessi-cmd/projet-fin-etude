@@ -41,7 +41,12 @@ export function FormulaireDepot() {
 
       <label className="block text-sm">
         <span className="mb-1 block font-medium text-slate-700">Fichier</span>
-        <input name="fichier" type="file" required className="w-full text-sm" />
+        <input
+          name="fichier"
+          type="file"
+          required
+          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-200 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-300"
+        />
       </label>
 
       {erreur && <p className="text-sm text-red-600">{erreur}</p>}
