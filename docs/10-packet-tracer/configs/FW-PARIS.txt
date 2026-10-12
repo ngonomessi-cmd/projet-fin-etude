@@ -59,7 +59,9 @@ service-policy global_policy global
 ! --- Comptes et accès de gestion ---
 username admmomtech password Cisco123! privilege 15
 aaa authentication ssh console LOCAL
-crypto key generate rsa modulus 1024
+! (pas de "crypto key generate rsa" : l'ASA de Packet Tracer a déjà une paire de clés par
+!  défaut <Default-RSA-Key>, suffisante pour le SSH — en regénérer une déclenche une
+!  confirmation interactive [yes/no] qui casse le reste du collage.)
 ssh 10.10.0.0 255.255.252.0 inside
 ssh timeout 10
 
