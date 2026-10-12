@@ -19,7 +19,7 @@
 | SRV-PARIS | Server-PT | DHCP + DNS + fichiers (HTTP/FTP), un seul serveur |
 | PC-BUR-PARIS-1 | PC-PT | Poste bureautique (VLAN 10) |
 | PC-BANCAIRE-PARIS-1 | PC-PT | Poste application KHS-Core (VLAN 20) |
-| LAPTOP-WIFI-PARIS-1 | Laptop-PT | Poste Wi-Fi invité (VLAN 40) |
+| LAPTOP-WIFI-PARIS-1 | Laptop-PT | Poste invité (VLAN 40) — **branché en filaire**, cf. note ci-dessous |
 | IPPHONE-PARIS-1 | IP Phone-PT | Téléphonie (VLAN 50, voix) |
 
 ### Site Lyon (secondaire)
@@ -40,6 +40,11 @@
 |---|---|---|
 | ISP-RTR | Router 2911 | Représente le fournisseur d'accès Internet |
 | SRV-INTERNET-TEST | Server-PT | Cible de test (ping, DNS, HTTP) « côté Internet » |
+
+> **Note — LAPTOP-WIFI-PARIS-1 en filaire :** le module Wi-Fi (WPC300N) s'est révélé incompatible avec
+> le modèle Laptop-PT dans certaines versions de Packet Tracer ("Module Not Compatible"). Le laptop est
+> donc connecté par câble, sur un port d'accès VLAN 40 dédié de ACC-PARIS-SW — la compétence démontrée
+> (isolement du VLAN invités) reste strictement identique, seul le support physique change.
 
 **Total : 20 équipements** (contre 28 dans la version initiale — Wi-Fi et téléphonie ne sont démontrés
 qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un seul switch d'accès par site).
@@ -74,7 +79,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | ACC-PARIS-SW | FastEthernet0/3 | Automatique | PC-BUR-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/4 | Automatique | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/5 | Automatique | AP-PARIS | Port0 |
-| AP-PARIS | — (sans fil) | Wi-Fi | LAPTOP-WIFI-PARIS-1 | Carte Wi-Fi |
+| ACC-PARIS-SW | FastEthernet0/7 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/6 | Automatique | IPPHONE-PARIS-1 | Port Switch |
 | CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
 | CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |

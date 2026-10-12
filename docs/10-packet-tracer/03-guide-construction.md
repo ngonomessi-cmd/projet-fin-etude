@@ -23,8 +23,10 @@ Suivez le [plan de câblage](01-topologie-et-cablage.md#2-plan-de-câblage) dans
 utilisant le câble **« Automatique »** (l'icône éclair dans la palette de câbles) : Packet Tracer choisit
 alors automatiquement croisé/droit selon les deux extrémités.
 
-> Pour le laptop : ajoutez d'abord un **module sans fil** (WMP300N) via l'onglet **Physical → éteindre
-> l'appareil → glisser le module → rallumer**, avant de le relier en Wi-Fi à `AP-PARIS`.
+> Pour le laptop : reliez-le **en filaire** à `ACC-PARIS-SW` (FastEthernet0/7) comme n'importe quel PC —
+> le module Wi-Fi (WPC300N) s'est révélé incompatible avec ce modèle dans certaines versions de Packet
+> Tracer ("Module Not Compatible"), voir la note dans [01](01-topologie-et-cablage.md). La compétence
+> démontrée (isolement du VLAN invités) est identique.
 
 ## 3. Configurer, dans cet ordre
 
@@ -39,7 +41,8 @@ L'ordre compte : chaque étape dépend de la précédente pour être testable.
 5. **ACC-PARIS-SW**, puis **ACC-LYON-SW**.
 6. Configurez les **serveurs** (cf. [04](04-configuration-serveurs-et-postes.md)), puis les **PC en IP
    statique**, puis laissez le PC/laptop/téléphone en **DHCP** démarrer normalement.
-7. Configurez la **borne Wi-Fi** et connectez le laptop en Wi-Fi.
+7. Configurez la **borne Wi-Fi** (`AP-PARIS`) pour le SSID du VLAN invités — elle reste en place dans la
+   maquette même si le laptop de test, lui, y est relié en filaire (cf. note ci-dessus).
 
 ## 4. Copier-coller une configuration dans Packet Tracer
 
