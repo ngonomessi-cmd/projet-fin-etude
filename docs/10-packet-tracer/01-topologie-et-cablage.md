@@ -68,14 +68,14 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | RTR-LYON | GigabitEthernet0/0 | Automatique | ISP-RTR | GigabitEthernet0/1 |
 | ISP-RTR | GigabitEthernet0/2 | Automatique | SRV-INTERNET-TEST | FastEthernet0 |
 | RTR-PARIS | GigabitEthernet0/1 | Automatique | FW-PARIS | Ethernet0/0 (outside) |
-| FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | GigabitEthernet0/1 |
-| FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | GigabitEthernet0/1 |
+| FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | FastEthernet0/1 |
+| FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | FastEthernet0/1 |
 | RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
 | FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
-| CORE-PARIS-SW1 | GigabitEthernet0/2 | Automatique | CORE-PARIS-SW2 | GigabitEthernet0/2 |
-| CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | SRV-PARIS | FastEthernet0 |
-| CORE-PARIS-SW1 | FastEthernet0/1 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
-| CORE-PARIS-SW2 | FastEthernet0/1 | Automatique | ACC-PARIS-SW | FastEthernet0/2 |
+| CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | CORE-PARIS-SW2 | FastEthernet0/2 |
+| CORE-PARIS-SW1 | FastEthernet0/3 | Automatique | SRV-PARIS | FastEthernet0 |
+| CORE-PARIS-SW1 | FastEthernet0/4 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
+| CORE-PARIS-SW2 | FastEthernet0/3 | Automatique | ACC-PARIS-SW | FastEthernet0/2 |
 | ACC-PARIS-SW | FastEthernet0/3 | Automatique | PC-BUR-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/4 | Automatique | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/5 | Automatique | AP-PARIS | Port0 |

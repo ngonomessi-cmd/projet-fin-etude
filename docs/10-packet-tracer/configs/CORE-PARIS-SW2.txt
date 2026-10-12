@@ -27,14 +27,15 @@ vlan 999
 exit
 
 ! --- Liaison vers le pare-feu : port d'accès dans le VLAN de transit ---
-interface GigabitEthernet0/1
+! (FastEthernet0/1, câblage réel de la maquette — cf. note dans CORE-PARIS-SW1.txt)
+interface FastEthernet0/1
  description LIEN-VERS-FW-PARIS-INSIDE-TRANSIT
  switchport mode access
  switchport access vlan 100
 exit
 
 ! --- Liaison vers CORE-PARIS-SW1 ---
-interface GigabitEthernet0/2
+interface FastEthernet0/2
  description LIEN-VERS-CORE-PARIS-SW1
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,50,99
@@ -42,7 +43,7 @@ interface GigabitEthernet0/2
 exit
 
 ! --- Liaison vers l'unique switch d'accès (2e lien redondant, sur son port Fa0/2) ---
-interface FastEthernet0/1
+interface FastEthernet0/3
  description LIEN-VERS-ACC-PARIS-SW
  switchport mode trunk
  switchport trunk allowed vlan 10,20,40,50,99
