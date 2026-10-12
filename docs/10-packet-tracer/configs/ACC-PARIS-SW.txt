@@ -69,8 +69,11 @@ interface FastEthernet0/5
 exit
 
 ! --- Laptop invité en filaire (simplification : module Wi-Fi non compatible dans PT,
-!     cf. 01-topologie-et-cablage.md) : même VLAN 40 qu'une connexion sans fil réelle. ---
-interface FastEthernet0/7
+!     cf. 01-topologie-et-cablage.md) : même VLAN 40 qu'une connexion sans fil réelle.
+!     Sur FastEthernet0/6 (et non 0/7 comme prévu initialement) : câblage réel de la
+!     maquette, le câble du laptop et celui du téléphone IP ayant été inversés lors
+!     de la construction — sans incidence sur les compétences démontrées. ---
+interface FastEthernet0/6
  description LAPTOP-WIFI-PARIS-1
  switchport mode access
  switchport access vlan 40
@@ -80,8 +83,9 @@ interface FastEthernet0/7
  spanning-tree portfast
 exit
 
-! --- Port téléphone IP : VLAN voix dédiée + VLAN data pour un PC éventuel derrière le tél. ---
-interface FastEthernet0/6
+! --- Port téléphone IP : VLAN voix dédiée + VLAN data pour un PC éventuel derrière le tél.
+!     Sur FastEthernet0/7 (et non 0/6) : câblage réel, cf. note ci-dessus. ---
+interface FastEthernet0/7
  description IPPHONE-PARIS-1
  switchport mode access
  switchport access vlan 10
