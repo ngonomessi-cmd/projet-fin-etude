@@ -79,8 +79,8 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | ACC-PARIS-SW | FastEthernet0/3 | Automatique | PC-BUR-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/4 | Automatique | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/5 | Automatique | AP-PARIS | Port0 |
-| ACC-PARIS-SW | FastEthernet0/7 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
-| ACC-PARIS-SW | FastEthernet0/6 | Automatique | IPPHONE-PARIS-1 | Port Switch |
+| ACC-PARIS-SW | FastEthernet0/6 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/7 | Automatique | IPPHONE-PARIS-1 | Port Switch |
 | CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
 | CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
 | ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
