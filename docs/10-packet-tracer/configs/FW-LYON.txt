@@ -28,12 +28,19 @@ exit
 
 route outside 0.0.0.0 0.0.0.0 10.20.254.1
 
+! (la classe "inspection_default" n'existe pas par défaut sur l'ASA de Packet Tracer, contrairement
+!  à une ASA réelle : il faut la créer avant de l'utiliser.)
+class-map inspection_default
+ match default-inspection-traffic
+
 policy-map global_policy
  class inspection_default
   inspect icmp
   inspect http
   inspect ftp
   inspect dns
+
+service-policy global_policy global
 
 username admmomtech password Cisco123! privilege 15
 aaa authentication ssh console LOCAL
