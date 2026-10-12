@@ -27,38 +27,41 @@ vlan 999
 exit
 
 ! --- Liaison vers le pare-feu : port d'accès dans le VLAN de transit partagé
-!     avec CORE-PARIS-SW2 (l'ASA 5505 en licence de base ne fait pas de trunk). ---
-interface GigabitEthernet0/1
+!     avec CORE-PARIS-SW2 (l'ASA 5505 en licence de base ne fait pas de trunk).
+!     Sur FastEthernet0/1 (et non GigabitEthernet0/1 comme prévu initialement) :
+!     câblage réel de la maquette, les ports Gigabit n'ayant pas été utilisés lors
+!     de la construction — sans incidence sur les compétences démontrées. ---
+interface FastEthernet0/1
  description LIEN-VERS-FW-PARIS-INSIDE-TRANSIT
  switchport mode access
  switchport access vlan 100
 exit
 
 ! --- Liaison vers CORE-PARIS-SW2 (trunk direct, porte HSRP + toutes les VLAN) ---
-interface GigabitEthernet0/2
+interface FastEthernet0/2
  description LIEN-VERS-CORE-PARIS-SW2
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,50,99
  switchport trunk native vlan 999
 exit
 
-! --- Liaison vers l'unique switch d'accès (l'autre lien redondant part de SW2) ---
-interface FastEthernet0/1
- description LIEN-VERS-ACC-PARIS-SW
- switchport mode trunk
- switchport trunk allowed vlan 10,20,40,50,99
- switchport trunk native vlan 999
-exit
-
 ! --- Port serveur (VLAN 30, accès direct au cœur) ---
 ! Port de confiance DHCP snooping : c'est ici qu'est branché le vrai serveur DHCP,
 ! sans ce "trust" ses réponses (OFFER/ACK) seraient bloquées par le snooping.
-interface FastEthernet0/2
+interface FastEthernet0/3
  description SRV-PARIS-DHCP-DNS-FICHIERS
  switchport mode access
  switchport access vlan 30
  ip dhcp snooping trust
  spanning-tree portfast
+exit
+
+! --- Liaison vers l'unique switch d'accès (l'autre lien redondant part de SW2) ---
+interface FastEthernet0/4
+ description LIEN-VERS-ACC-PARIS-SW
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,40,50,99
+ switchport trunk native vlan 999
 exit
 
 ! --- Spanning-tree : ce switch est root primaire ---
