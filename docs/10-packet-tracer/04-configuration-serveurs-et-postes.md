@@ -48,7 +48,7 @@ que le NAT (Network Address Translation) fonctionne depuis les deux sites.
 |---|---|
 | PC-BUR-PARIS-1 | DHCP (automatique, VLAN 10) |
 | PC-BANCAIRE-PARIS-1 | IP statique `10.10.4.10` / `255.255.255.192` / passerelle `10.10.4.1` / DNS `10.10.4.70` |
-| LAPTOP-WIFI-PARIS-1 | Carte réseau **Wireless** ajoutée (Physical → glisser un module WMP300N), connexion au SSID `KHS-GUEST-PARIS`, DHCP |
+| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. [01](01-topologie-et-cablage.md)) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/7 |
 | IPPHONE-PARIS-1 | DHCP automatique via VLAN voix (aucune configuration manuelle) |
 | PC-BUR-LYON-1 | DHCP (VLAN 10) |
 | PC-BANCAIRE-LYON-1 | IP statique `10.20.1.10` / `255.255.255.224` / passerelle `10.20.1.1` / DNS `10.20.1.40` |
