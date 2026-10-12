@@ -68,6 +68,18 @@ interface FastEthernet0/5
  spanning-tree portfast
 exit
 
+! --- Laptop invité en filaire (simplification : module Wi-Fi non compatible dans PT,
+!     cf. 01-topologie-et-cablage.md) : même VLAN 40 qu'une connexion sans fil réelle. ---
+interface FastEthernet0/7
+ description LAPTOP-WIFI-PARIS-1
+ switchport mode access
+ switchport access vlan 40
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+exit
+
 ! --- Port téléphone IP : VLAN voix dédiée + VLAN data pour un PC éventuel derrière le tél. ---
 interface FastEthernet0/6
  description IPPHONE-PARIS-1

@@ -55,6 +55,10 @@ FortiGate) qui n'existent pas dans le catalogue de Packet Tracer. La maquette ut
   d'appareils à placer et câbler.
 - **Wi-Fi et téléphonie IP démontrés uniquement à Paris** : la compétence (VLAN voix, VLAN invités
   isolé) est identique à Lyon ; il suffirait d'y reproduire le même montage si besoin en soutenance.
+- **Laptop invité connecté en filaire plutôt qu'en Wi-Fi réel** : le module sans fil (WPC300N) s'est
+  révélé incompatible avec le modèle de laptop utilisé, selon la version de Packet Tracer ("Module Not
+  Compatible"). Le poste reste dans le même VLAN 40 (invités), avec les mêmes règles d'isolement — seul
+  le support physique change, pas la compétence réseau démontrée.
 - **20 équipements au total** (au lieu de 28 dans une première version) : couche distribution supprimée
   (les cœurs se connectent directement à l'accès), imprimante et second poste bureautique retirés
   (aucune compétence réseau notée n'en dépendait).
