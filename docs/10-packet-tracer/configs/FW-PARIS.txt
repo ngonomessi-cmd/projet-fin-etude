@@ -57,7 +57,8 @@ policy-map global_policy
 service-policy global_policy global
 
 ! --- Comptes et accès de gestion ---
-username admmomtech password Cisco123! privilege 15
+username admmomtech password Cisco123!
+username admmomtech privilege 15
 aaa authentication ssh console LOCAL
 ! (pas de "crypto key generate rsa" : l'ASA de Packet Tracer a déjà une paire de clés par
 !  défaut <Default-RSA-Key>, suffisante pour le SSH — en regénérer une déclenche une
