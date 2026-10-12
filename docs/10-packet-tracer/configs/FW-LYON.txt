@@ -1,5 +1,6 @@
 ! FW-LYON — ASA 5505 — pare-feu périmétrique du site secondaire
 enable
+
 configure terminal
 hostname FW-LYON
 
