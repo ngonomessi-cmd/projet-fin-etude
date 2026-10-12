@@ -1,6 +1,7 @@
 ! FW-PARIS — ASA 5505 — pare-feu périmétrique du siège
 ! Le NAT est géré par RTR-PARIS ; l'ASA assure ici le filtrage et l'inspection stateful.
 enable
+
 configure terminal
 hostname FW-PARIS
 
