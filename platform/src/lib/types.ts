@@ -39,3 +39,57 @@ export type EntreeAudit = {
   details: Record<string, unknown>;
   created_at: string;
 };
+
+// --- Messagerie interne (migration 0008_messagerie_interne.sql) -----------
+
+export type TypeConversation = "privee" | "groupe" | "canal";
+
+export type Conversation = {
+  id: string;
+  type: TypeConversation;
+  titre: string | null;
+  departement: string | null;
+  canal_general: boolean;
+  created_by: string;
+  created_at: string;
+};
+
+export type ParticipantConversation = {
+  conversation_id: string;
+  profil_id: string;
+  peut_publier: boolean;
+  archivee: boolean;
+  dernier_lu_at: string | null;
+  created_at: string;
+};
+
+export type Message = {
+  id: string;
+  conversation_id: string;
+  auteur_id: string;
+  contenu: string;
+  urgent: boolean;
+  modifie_at: string | null;
+  supprime_at: string | null;
+  created_at: string;
+};
+
+export type StatutAnalysePieceJointe = "non_analyse" | "propre" | "infecte";
+
+export type PieceJointeMessage = {
+  id: string;
+  message_id: string;
+  storage_path: string;
+  nom_fichier: string;
+  taille_octets: number;
+  type_mime: string;
+  statut_analyse: StatutAnalysePieceJointe;
+  created_at: string;
+};
+
+export type ParametresMessagerie = {
+  id: true;
+  duree_conservation_ans: number;
+  modifie_par: string | null;
+  modifie_at: string;
+};

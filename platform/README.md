@@ -33,9 +33,11 @@ code, la création des ressources cloud ci-dessous est **à faire manuellement**
 1. Créer un compte sur [supabase.com](https://supabase.com) puis un nouveau projet (région Europe
    recommandée pour la conformité RGPD).
 2. Dans **Project Settings → API**, récupérer `Project URL` et la clé `anon public`.
-3. Dans **SQL Editor**, exécuter l'intégralité du fichier
-   [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql). Il crée les tables, les
-   `GRANT` explicites, toutes les policies RLS, le bucket de stockage et les fonctions de workflow.
+3. Dans **SQL Editor**, exécuter dans l'ordre tous les fichiers de
+   [`supabase/migrations/`](supabase/migrations/) (`0001_init.sql` puis les suivants, jusqu'à
+   `0008_messagerie_interne.sql`). Chacun crée ses tables, ses `GRANT` explicites et ses policies RLS ;
+   `0001_init.sql` pose les bases (documents, audit, rôles) et `0008_messagerie_interne.sql` ajoute la
+   messagerie interne (§6 ci-dessous).
 4. (Optionnel, pour simplifier la démonstration) Dans **Authentication → Providers → Email**,
    désactiver « Confirm email » pour pouvoir se connecter immédiatement après l'inscription, sans
    boîte mail à vérifier.
@@ -112,3 +114,50 @@ Ou, de façon équivalente sans CLI : importer le dépôt GitHub dans le tableau
   qui refuse systématiquement, y compris pour une clé de service qui contournerait RLS.
 - **Fichiers** : chaque téléchargement passe par une URL signée à durée de vie limitée (5 minutes),
   jamais par une URL publique permanente.
+
+## 6. Messagerie interne
+
+Fonctionnalité ajoutée (`/messagerie`), inspirée de la note « La messagerie interne » de l'Espace
+Agents de la Cour suprême du Cameroun (conversations privées, groupes de travail de 60 agents au
+plus, canaux officiels, mention « Urgent », correction des messages pendant 15 minutes, archivage,
+confidentialité stricte, rétention réglable de 1 à 20 ans). La hiérarchie d'autorisation du document
+source (organigramme judiciaire : Premier Président, Procureur Général, présidents de chambre…) est
+en revanche **adaptée** au RBAC plat de KHS Bank (`lecteur`/`redacteur`/`validateur`/`administrateur`/
+`auditeur`) plutôt que recopiée telle quelle — le détail de l'adaptation est commenté en tête de
+[`supabase/migrations/0008_messagerie_interne.sql`](supabase/migrations/0008_messagerie_interne.sql).
+
+### Mise en service
+
+1. Exécuter `0008_messagerie_interne.sql` (cf. §1) : il crée les tables, le bucket de stockage
+   `messagerie-pieces-jointes`, le canal « Toute la banque » et un canal par département (peuplés
+   automatiquement selon le `departement`/`role` de chaque profil — aucune liste à tenir à jour).
+2. Pour le **temps réel** (nouveaux messages affichés sans recharger la page), vérifier dans
+   **Database → Replication** que la table `messages` est bien dans la publication
+   `supabase_realtime` (la migration le fait déjà via `alter publication`, cette étape sert juste à
+   le confirmer visuellement si besoin).
+3. Pour la **purge automatique** (messages plus vieux que la durée de conservation réglée par un
+   administrateur) et les **alertes par courriel** (agent non connecté ayant un message non lu),
+   renseigner dans Vercel les variables `SUPABASE_SERVICE_ROLE_KEY` et `CRON_SECRET` (cf.
+   `.env.local.example`) — `vercel.json` déclenche alors `/api/cron/messagerie` toutes les 15
+   minutes.
+4. Les alertes par courriel elles-mêmes nécessitent en plus `RESEND_API_KEY` et `RESEND_FROM_EMAIL`
+   (compte gratuit sur [resend.com](https://resend.com)) : **aucun fournisseur de courriel n'est
+   branché par défaut** dans cet environnement de démonstration — sans ces deux variables, la purge
+   de rétention continue de fonctionner mais aucun courriel n'est réellement envoyé. Limitation
+   assumée, à annoncer en soutenance comme les autres simplifications du projet.
+
+### Simplifications assumées par rapport au document source (à annoncer en soutenance)
+
+- **Pas d'escalade hiérarchique entre lecteur/rédacteur/validateur** : KHS Bank n'a pas
+  d'organigramme à niveaux comparable à celui d'une juridiction pour sa messagerie interne — seul
+  l'**auditeur** reprend la règle à l'identique (il n'ouvre jamais de conversation, il répond
+  seulement à celles où il est invité), parce que KHS Bank a justement déjà un rôle de ce nom dans
+  son RBAC documentaire (Lot F).
+- **Pas d'analyse antivirus réelle** des pièces jointes : la colonne `statut_analyse` existe
+  (`non_analyse`/`propre`/`infecte`) pour qu'un déploiement réel y branche un webhook de scan, mais
+  aucun moteur antivirus n'est disponible dans cet environnement — elle n'est donc volontairement
+  pas vérifiée par les policies RLS, pour ne pas bloquer la fonctionnalité sans scanner réel.
+- **Ajout de participants à un groupe uniquement à sa création**, pas d'ajout a posteriori dans
+  cette première version.
+- **Accusés de lecture par message** (qui a lu la dernière annonce d'un canal) non repris dans
+  l'interface — seul le compteur global de messages non lus (pastille rouge) l'est.
