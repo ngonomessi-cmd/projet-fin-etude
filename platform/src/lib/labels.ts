@@ -1,4 +1,4 @@
-import type { ClassificationDocument, RoleUtilisateur, StatutDocument } from "@/lib/types";
+import type { ClassificationDocument, RoleUtilisateur, StatutDocument, TypeConversation } from "@/lib/types";
 
 export const LABEL_ROLE: Record<RoleUtilisateur, string> = {
   lecteur: "Lecteur",
@@ -35,3 +35,30 @@ export const COULEUR_STATUT: Record<StatutDocument, string> = {
   rejete: "bg-red-100 text-red-800 border-red-300",
   publie: "bg-emerald-100 text-emerald-800 border-emerald-300",
 };
+
+export const LABEL_TYPE_CONVERSATION: Record<TypeConversation, string> = {
+  privee: "Conversation privée",
+  groupe: "Groupe de travail",
+  canal: "Canal officiel",
+};
+
+export const TAILLE_MAX_PIECE_JOINTE_OCTETS = 4 * 1024 * 1024;
+
+export const TYPES_MIME_AUTORISES_PIECE_JOINTE = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "application/vnd.oasis.opendocument.text",
+  "application/vnd.oasis.opendocument.spreadsheet",
+  "application/vnd.oasis.opendocument.presentation",
+  "text/plain",
+  "text/csv",
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+] as const;
