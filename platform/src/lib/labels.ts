@@ -42,7 +42,7 @@ export const LABEL_TYPE_CONVERSATION: Record<TypeConversation, string> = {
   canal: "Canal officiel",
 };
 
-export const TAILLE_MAX_PIECE_JOINTE_OCTETS = 4 * 1024 * 1024;
+export const TAILLE_MAX_PIECE_JOINTE_OCTETS = 10 * 1024 * 1024;
 
 export const TYPES_MIME_AUTORISES_PIECE_JOINTE = [
   "application/pdf",

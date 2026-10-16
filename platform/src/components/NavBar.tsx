@@ -3,6 +3,7 @@ import { LABEL_ROLE } from "@/lib/labels";
 import type { Profil } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
 import { NavLinks, type Lien } from "@/components/NavLinks";
+import { PresenceMessagerie } from "@/components/PresenceMessagerie";
 
 const LIENS: Lien[] = [
   { href: "/documents", label: "Documents", icone: "documents" },
@@ -40,6 +41,7 @@ export async function NavBar() {
 
   return (
     <aside className="flex w-60 shrink-0 flex-col bg-navy-950 px-4 py-7 text-white">
+      {profil && <PresenceMessagerie />}
       <div className="mb-5 flex items-center gap-2.5 border-b border-navy-line px-1.5 pb-8">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
           <span className="font-serif text-lg font-bold text-navy-950">K</span>

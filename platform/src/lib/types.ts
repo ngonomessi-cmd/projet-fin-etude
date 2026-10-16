@@ -15,6 +15,7 @@ export type Profil = {
   departement: string;
   role: RoleUtilisateur;
   created_at: string;
+  derniere_activite_at?: string | null;
 };
 
 export type Document = {
@@ -59,6 +60,7 @@ export type ParticipantConversation = {
   profil_id: string;
   peut_publier: boolean;
   archivee: boolean;
+  sourdine: boolean;
   dernier_lu_at: string | null;
   created_at: string;
 };
@@ -71,7 +73,16 @@ export type Message = {
   urgent: boolean;
   modifie_at: string | null;
   supprime_at: string | null;
+  transfere_de_message_id: string | null;
   created_at: string;
+};
+
+// migration 0010_messagerie_fonctionnalites_avancees.sql
+export type StatutMessage = {
+  message_id: string;
+  profil_id: string;
+  recu_at: string | null;
+  lu_at: string | null;
 };
 
 export type StatutAnalysePieceJointe = "non_analyse" | "propre" | "infecte";

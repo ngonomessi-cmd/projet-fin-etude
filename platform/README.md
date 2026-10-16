@@ -117,47 +117,95 @@ Ou, de façon équivalente sans CLI : importer le dépôt GitHub dans le tableau
 
 ## 6. Messagerie interne
 
-Fonctionnalité ajoutée (`/messagerie`), inspirée de la note « La messagerie interne » de l'Espace
-Agents de la Cour suprême du Cameroun (conversations privées, groupes de travail de 60 agents au
-plus, canaux officiels, mention « Urgent », correction des messages pendant 15 minutes, archivage,
-confidentialité stricte, rétention réglable de 1 à 20 ans). La hiérarchie d'autorisation du document
-source (organigramme judiciaire : Premier Président, Procureur Général, présidents de chambre…) est
-en revanche **adaptée** au RBAC plat de KHS Bank (`lecteur`/`redacteur`/`validateur`/`administrateur`/
-`auditeur`) plutôt que recopiée telle quelle — le détail de l'adaptation est commenté en tête de
-[`supabase/migrations/0008_messagerie_interne.sql`](supabase/migrations/0008_messagerie_interne.sql).
+Fonctionnalité ajoutée (`/messagerie`), construite en deux passes à partir de deux notes
+d'inspiration différentes :
+
+1. **`0008_messagerie_interne.sql`** — d'après la note « La messagerie interne » de l'Espace Agents
+   de la Cour suprême du Cameroun : conversations privées, groupes de travail (60 agents au plus),
+   canaux officiels, mention « Urgent », correction des messages pendant 15 minutes, archivage,
+   confidentialité stricte.
+2. **`0010_messagerie_fonctionnalites_avancees.sql`** — d'après une note décrivant la messagerie
+   d'un autre site (équipe interne séparée des visiteurs via une table `equipe_membres`, pages
+   `/equipe/...`) : accusés de lecture façon WhatsApp, présence, transfert, sourdine, recherche et
+   filtres, analyse antivirus des pièces jointes, alertes e-mail en quasi temps réel, rétention à 3
+   ans, panneau Détails.
+
+Dans les deux cas, la hiérarchie d'autorisation et l'architecture des comptes sont **adaptées** au
+RBAC plat de KHS Bank plutôt que recopiées telles quelles — KHS Bank n'a pas de table de membres
+d'équipe séparée (tous les comptes `profiles` sont déjà des agents internes) ni de pages `/equipe/...`
+(on reste sur `/messagerie` et `/admin/utilisateurs`). Correspondance retenue pour la hiérarchie à 4
+niveaux de la seconde note :
+
+| Niveau de la note source | Rôle KHS Bank |
+|---|---|
+| 1 Direction | `administrateur` (écrit à tous) |
+| 2 Responsable de service | `validateur` (écrit à tous) |
+| 3 Collaborateur | `redacteur` (tous sauf `administrateur`) |
+| 4 Stagiaire | `lecteur` (son département, hors `administrateur`) |
+| — | `auditeur` : propre au RBAC documentaire KHS Bank (Lot F), reste à part — jamais initiateur, répond seulement aux conversations où il est invité |
+
+Le détail de chaque adaptation est commenté en tête des fichiers de migration correspondants.
 
 ### Mise en service
 
-1. Exécuter `0008_messagerie_interne.sql` (cf. §1) : il crée les tables, le bucket de stockage
-   `messagerie-pieces-jointes`, le canal « Toute la banque » et un canal par département (peuplés
-   automatiquement selon le `departement`/`role` de chaque profil — aucune liste à tenir à jour).
-2. Pour le **temps réel** (nouveaux messages affichés sans recharger la page), vérifier dans
-   **Database → Replication** que la table `messages` est bien dans la publication
-   `supabase_realtime` (la migration le fait déjà via `alter publication`, cette étape sert juste à
-   le confirmer visuellement si besoin).
-3. Pour la **purge automatique** (messages plus vieux que la durée de conservation réglée par un
-   administrateur) et les **alertes par courriel** (agent non connecté ayant un message non lu),
-   renseigner dans Vercel les variables `SUPABASE_SERVICE_ROLE_KEY` et `CRON_SECRET` (cf.
-   `.env.local.example`) — `vercel.json` déclenche alors `/api/cron/messagerie` toutes les 15
-   minutes.
-4. Les alertes par courriel elles-mêmes nécessitent en plus `RESEND_API_KEY` et `RESEND_FROM_EMAIL`
-   (compte gratuit sur [resend.com](https://resend.com)) : **aucun fournisseur de courriel n'est
-   branché par défaut** dans cet environnement de démonstration — sans ces deux variables, la purge
-   de rétention continue de fonctionner mais aucun courriel n'est réellement envoyé. Limitation
-   assumée, à annoncer en soutenance comme les autres simplifications du projet.
+1. Exécuter dans l'ordre `0008_messagerie_interne.sql`,
+   `0009_correctif_recursion_participants.sql` (corrige une récursion RLS infinie sur
+   `conversation_participants`, constatée à l'usage réel) puis
+   `0010_messagerie_fonctionnalites_avancees.sql`. La première crée les tables, le bucket de
+   stockage `messagerie-pieces-jointes`, le canal « Toute la banque » et un canal par département
+   (peuplés automatiquement selon le `departement`/`role` de chaque profil — aucune liste à tenir à
+   jour) ; la troisième ajoute la hiérarchie à 4 niveaux, les accusés de lecture, la présence, le
+   transfert, la sourdine et porte la rétention par défaut à 3 ans.
+2. Pour le **temps réel** (nouveaux messages et accusés de lecture affichés sans recharger la
+   page), vérifier dans **Database → Replication** que les tables `messages` et `message_statuts`
+   sont bien dans la publication `supabase_realtime` (les migrations le font déjà via
+   `alter publication`, cette étape sert juste à le confirmer visuellement si besoin).
+3. Pour la **purge automatique** (nuit à 3h30, cf. `vercel.json`) et les **alertes par courriel**
+   (envoyées à l'envoi de chaque message, cf. ci-dessous), renseigner dans Vercel
+   `SUPABASE_SERVICE_ROLE_KEY` — seule façon de lire l'adresse e-mail d'un destinataire
+   (`auth.admin.getUserById`) — et `CRON_SECRET` pour la route de purge (cf. `.env.local.example`).
+4. Les alertes par courriel elles-mêmes nécessitent en plus `RESEND_API_KEY`, `RESEND_FROM_EMAIL` et
+   `NEXT_PUBLIC_SITE_URL` (compte gratuit sur [resend.com](https://resend.com)) : **aucun
+   fournisseur de courriel n'est branché par défaut** dans cet environnement de démonstration — sans
+   ces variables, l'envoi de messages continue de fonctionner mais aucun courriel n'est réellement
+   envoyé. Limitation assumée, à annoncer en soutenance comme les autres simplifications du projet.
+5. Optionnel : `CLOUDMERSIVE_API_KEY` (offre gratuite, 800 analyses/mois sur
+   [cloudmersive.com](https://cloudmersive.com)) ajoute une seconde couche d'analyse antivirus des
+   pièces jointes, en plus des contrôles intégrés (toujours actifs, cf. ci-dessous).
 
-### Simplifications assumées par rapport au document source (à annoncer en soutenance)
+### Accusés de lecture, présence et antivirus — comment ça marche concrètement
 
-- **Pas d'escalade hiérarchique entre lecteur/rédacteur/validateur** : KHS Bank n'a pas
-  d'organigramme à niveaux comparable à celui d'une juridiction pour sa messagerie interne — seul
-  l'**auditeur** reprend la règle à l'identique (il n'ouvre jamais de conversation, il répond
-  seulement à celles où il est invité), parce que KHS Bank a justement déjà un rôle de ce nom dans
-  son RBAC documentaire (Lot F).
-- **Pas d'analyse antivirus réelle** des pièces jointes : la colonne `statut_analyse` existe
-  (`non_analyse`/`propre`/`infecte`) pour qu'un déploiement réel y branche un webhook de scan, mais
-  aucun moteur antivirus n'est disponible dans cet environnement — elle n'est donc volontairement
-  pas vérifiée par les policies RLS, pour ne pas bloquer la fonctionnalité sans scanner réel.
-- **Ajout de participants à un groupe uniquement à sa création**, pas d'ajout a posteriori dans
-  cette première version.
-- **Accusés de lecture par message** (qui a lu la dernière annonce d'un canal) non repris dans
-  l'interface — seul le compteur global de messages non lus (pastille rouge) l'est.
+- **Coches façon WhatsApp** (✓ envoyé, ✓✓ grises = reçu, ✓✓ bleues = lu) : une ligne
+  `message_statuts` par (message, destinataire) est semée automatiquement à l'envoi (déclencheur
+  PostgreSQL). « Reçu » est marqué par une écoute Supabase Realtime **globale**, montée une seule
+  fois pour toute la session (`PresenceMessagerie.tsx`, dans `NavBar`) — pas seulement dans la
+  conversation ouverte ; RLS s'applique au flux Realtime exactement comme à une requête normale,
+  cet abonnement sans filtre ne reçoit donc que les messages des conversations dont l'agent est déjà
+  participant. « Lu » est marqué quand la conversation est affichée et l'onglet visible
+  (`document.visibilityState === "visible"`). Une relecture de secours toutes les 4 secondes
+  complète l'abonnement Realtime dans le fil de discussion, au cas où un évènement serait manqué.
+- **Présence** : le même composant signale toutes les 30 secondes (`profiles.derniere_activite_at`)
+  tant que l'onglet est visible — sert à la fois au statut « reçu » (approché) et à la règle
+  « hors ligne depuis plus de 2 minutes » des alertes e-mail.
+- **Antivirus** (`lib/messagerie/antivirus.ts`) : contrôles intégrés toujours actifs (type réel du
+  fichier comparé au type déclaré via les octets de signature, exécutables cachés même sous une
+  extension trompeuse, macro Office détectée dans un fichier `.docx`/`.xlsx`/`.pptx`, JavaScript
+  détecté dans un PDF), puis Cloudmersive Virus Scan API en complément si la clé est configurée.
+  Ce ne sont pas des signatures virales complètes : les contrôles intégrés sont ciblés, pas un
+  moteur antivirus généraliste.
+
+### Simplifications assumées (à annoncer en soutenance)
+
+- **Hiérarchie à 4 niveaux sans équivalent exact pour `lecteur`/`redacteur`** : la note source
+  distingue Collaborateur/Stagiaire par fonction réelle dans l'entreprise, KHS Bank les distingue
+  par rôle RBAC documentaire (Lot F) — rapprochement raisonnable mais pas une correspondance
+  métier garantie à 100 %.
+- **Transfert de message limité au texte** : les pièces jointes ne sont pas reprises (aurait
+  demandé de dupliquer l'objet dans Supabase Storage vers un nouveau chemin, hors scope de cette
+  version).
+- **Ajout de participants à un groupe uniquement à sa création**, pas d'ajout a posteriori.
+- **Présence approchée par heartbeat** (30 s), pas une vraie détection de déconnexion instantanée
+  (WebSocket `presence` de Supabase Realtime aurait été plus précis, mais plus complexe à mettre en
+  cohérence avec la règle simple « hors ligne depuis plus de 2 minutes »).
+- **Recherche de conversations côté client** (texte déjà chargé), pas une recherche plein texte
+  côté base — suffisant au volume d'une démonstration, pas forcément au-delà.

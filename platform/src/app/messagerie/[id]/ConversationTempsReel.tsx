@@ -7,12 +7,15 @@ import {
   modifierMessageAction,
   supprimerMessageAction,
   marquerConversationLueAction,
+  transfererMessageAction,
 } from "../actions";
-import type { Message, PieceJointeMessage } from "@/lib/types";
+import type { Message, PieceJointeMessage, StatutMessage } from "@/lib/types";
 
-type MessageAffiche = Message & { pieces: (PieceJointeMessage & { url: string | null })[] };
+type MessageAffiche = Message & { pieces: (PieceJointeMessage & { url: string | null })[]; statuts: StatutMessage[] };
+type ConversationCible = { id: string; nom: string };
 
 const FENETRE_CORRECTION_MS = 15 * 60 * 1000;
+const INTERVALLE_RELECTURE_MS = 4000;
 
 export function ConversationTempsReel({
   conversationId,
@@ -20,14 +23,18 @@ export function ConversationTempsReel({
   utilisateurId,
   peutPublier,
   peutUrgent,
-  nomAuteur,
+  nomsParId,
+  nombreAutresParticipants,
+  conversationsCibles,
 }: {
   conversationId: string;
   messagesInitiaux: MessageAffiche[];
   utilisateurId: string;
   peutPublier: boolean;
   peutUrgent: boolean;
-  nomAuteur: (auteurId: string) => string;
+  nomsParId: Record<string, string>;
+  nombreAutresParticipants: number;
+  conversationsCibles: ConversationCible[];
 }) {
   const [messages, setMessages] = useState<MessageAffiche[]>(messagesInitiaux);
   const [erreurEnvoi, setErreurEnvoi] = useState<string | null>(null);
@@ -35,6 +42,10 @@ export function ConversationTempsReel({
   const supabaseRef = useRef(creerClientNavigateur());
   const formRef = useRef<HTMLFormElement>(null);
   const finRef = useRef<HTMLDivElement>(null);
+
+  function nomAuteur(auteurId: string) {
+    return auteurId === utilisateurId ? "Vous" : (nomsParId[auteurId] ?? "Agent");
+  }
 
   useEffect(() => {
     const supabase = supabaseRef.current;
@@ -45,10 +56,7 @@ export function ConversationTempsReel({
         { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` },
         (payload) => {
           const nouveau = payload.new as Message;
-          setMessages((prev) => (prev.some((m) => m.id === nouveau.id) ? prev : [...prev, { ...nouveau, pieces: [] }]));
-          if (nouveau.auteur_id !== utilisateurId) {
-            marquerConversationLueAction(conversationId);
-          }
+          setMessages((prev) => (prev.some((m) => m.id === nouveau.id) ? prev : [...prev, { ...nouveau, pieces: [], statuts: [] }]));
         }
       )
       .on(
@@ -59,12 +67,55 @@ export function ConversationTempsReel({
           setMessages((prev) => prev.map((m) => (m.id === maj.id ? { ...m, ...maj } : m)));
         }
       )
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "message_statuts" }, (payload) => {
+        const statut = payload.new as StatutMessage;
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === statut.message_id
+              ? { ...m, statuts: [...m.statuts.filter((s) => s.profil_id !== statut.profil_id), statut] }
+              : m
+          )
+        );
+      })
       .subscribe();
 
     return () => {
       supabase.removeChannel(canal);
     };
-  }, [conversationId, utilisateurId]);
+  }, [conversationId]);
+
+  // Relecture de secours (3-5 s) : au cas où un évènement Realtime serait
+  // manqué, on revient chercher les accusés des messages affichés.
+  useEffect(() => {
+    const idsMessages = messages.map((m) => m.id);
+    if (idsMessages.length === 0) return;
+
+    const intervalle = setInterval(async () => {
+      const { data } = await supabaseRef.current.from("message_statuts").select("*").in("message_id", idsMessages);
+      if (!data) return;
+      const parMessage = new Map<string, StatutMessage[]>();
+      for (const s of data as StatutMessage[]) {
+        parMessage.set(s.message_id, [...(parMessage.get(s.message_id) ?? []), s]);
+      }
+      setMessages((prev) => prev.map((m) => (parMessage.has(m.id) ? { ...m, statuts: parMessage.get(m.id)! } : m)));
+    }, INTERVALLE_RELECTURE_MS);
+
+    return () => clearInterval(intervalle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
+
+  // Marque la conversation comme lue dès qu'elle est affichée et que
+  // l'onglet est visible, et à chaque nouveau message tant que c'est le cas.
+  useEffect(() => {
+    function marquerSiVisible() {
+      if (document.visibilityState === "visible") {
+        marquerConversationLueAction(conversationId);
+      }
+    }
+    marquerSiVisible();
+    document.addEventListener("visibilitychange", marquerSiVisible);
+    return () => document.removeEventListener("visibilitychange", marquerSiVisible);
+  }, [conversationId, messages.length]);
 
   useEffect(() => {
     finRef.current?.scrollIntoView({ block: "end" });
@@ -82,12 +133,27 @@ export function ConversationTempsReel({
     formRef.current?.reset();
   }
 
+  function surToucheTextarea(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      formRef.current?.requestSubmit();
+    }
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex-1 space-y-4 overflow-y-auto py-4">
         {messages.length === 0 && <p className="text-center text-sm text-paper-soft">Aucun message pour l&apos;instant.</p>}
         {messages.map((message) => (
-          <MessageItem key={message.id} message={message} estAuteur={message.auteur_id === utilisateurId} nomAuteur={nomAuteur(message.auteur_id)} />
+          <MessageItem
+            key={message.id}
+            message={message}
+            estAuteur={message.auteur_id === utilisateurId}
+            nomAuteur={nomAuteur(message.auteur_id)}
+            nombreAutresParticipants={nombreAutresParticipants}
+            conversationsCibles={conversationsCibles}
+            nomMessageOrigine={message.transfere_de_message_id ? "message transféré" : null}
+          />
         ))}
         <div ref={finRef} />
       </div>
@@ -100,7 +166,8 @@ export function ConversationTempsReel({
               required
               rows={2}
               maxLength={10000}
-              placeholder="Écrire un message…"
+              placeholder="Écrire un message… (Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne)"
+              onKeyDown={surToucheTextarea}
               className="w-full resize-none border-0 text-sm outline-none"
             />
             <div className="mt-1.5 flex items-center justify-between gap-3">
@@ -146,10 +213,40 @@ export function ConversationTempsReel({
   );
 }
 
-function MessageItem({ message, estAuteur, nomAuteur }: { message: MessageAffiche; estAuteur: boolean; nomAuteur: string }) {
+function Coches({ statuts, nombreAutresParticipants }: { statuts: StatutMessage[]; nombreAutresParticipants: number }) {
+  if (nombreAutresParticipants <= 0) return null;
+  const tousLus = statuts.filter((s) => s.lu_at).length >= nombreAutresParticipants;
+  const tousRecus = statuts.filter((s) => s.recu_at).length >= nombreAutresParticipants;
+
+  const couleur = tousLus ? "#2563EB" : "currentColor";
+  return (
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke={couleur} strokeWidth="1.6" aria-hidden="true" className="inline-block align-middle">
+      <path d="m1 5.5 2.8 3L9 2" />
+      {(tousRecus || tousLus) && <path d="m6.5 5.5 2.8 3L15 2" />}
+    </svg>
+  );
+}
+
+function MessageItem({
+  message,
+  estAuteur,
+  nomAuteur,
+  nombreAutresParticipants,
+  conversationsCibles,
+  nomMessageOrigine,
+}: {
+  message: MessageAffiche;
+  estAuteur: boolean;
+  nomAuteur: string;
+  nombreAutresParticipants: number;
+  conversationsCibles: ConversationCible[];
+  nomMessageOrigine: string | null;
+}) {
   const [enEdition, setEnEdition] = useState(false);
   const [brouillon, setBrouillon] = useState(message.contenu);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [menuOuvert, setMenuOuvert] = useState<"infos" | "transferer" | null>(null);
+  const [transfertEnCours, setTransfertEnCours] = useState(false);
 
   const peutCorriger = estAuteur && !message.supprime_at && Date.now() - new Date(message.created_at).getTime() < FENETRE_CORRECTION_MS;
 
@@ -167,82 +264,187 @@ function MessageItem({ message, estAuteur, nomAuteur }: { message: MessageAffich
     await supprimerMessageAction(message.id);
   }
 
-  const classesBulle = message.urgent
-    ? "border border-[#E7C9C4] border-l-[3px] border-l-red-700 bg-red-50 rounded-xl rounded-bl-sm"
-    : estAuteur
-      ? "bg-navy-950 text-white rounded-xl rounded-br-sm"
-      : "border border-paper-200 bg-white rounded-xl rounded-bl-sm";
+  async function transferer(conversationCibleId: string) {
+    setTransfertEnCours(true);
+    await transfererMessageAction(message.id, conversationCibleId);
+    setTransfertEnCours(false);
+    setMenuOuvert(null);
+  }
 
   return (
-    <div className={`flex ${estAuteur ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[75%] px-3.5 py-2.5 text-sm ${classesBulle}`}>
-        <div className={`mb-1 flex items-center gap-2 text-xs ${estAuteur && !message.urgent ? "text-white/60" : "text-paper-muted"}`}>
-          <span className={`font-semibold ${estAuteur && !message.urgent ? "text-white/80" : "text-[#1c2029]"}`}>{nomAuteur}</span>
-          <span>{new Date(message.created_at).toLocaleString("fr-FR")}</span>
-          {message.urgent && <span className="font-bold tracking-wide text-red-700">URGENT</span>}
-          {message.modifie_at && !message.supprime_at && <span>(modifié)</span>}
+    <div className={`group flex ${estAuteur ? "justify-end" : "justify-start"}`}>
+      <div className="flex max-w-[75%] items-end gap-1.5">
+        {estAuteur && (
+          <div className="relative mb-1 hidden shrink-0 gap-1 group-hover:flex">
+            <BoutonAction titre="Infos" onClick={() => setMenuOuvert(menuOuvert === "infos" ? null : "infos")}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4M12 8h.01" />
+              </svg>
+            </BoutonAction>
+            {menuOuvert === "infos" && (
+              <PopoverInfos statuts={message.statuts} onFermer={() => setMenuOuvert(null)} />
+            )}
+          </div>
+        )}
+
+        <div className={`px-3.5 py-2.5 text-sm ${bulleClasses(message, estAuteur)}`}>
+          <div className={`mb-1 flex items-center gap-2 text-xs ${estAuteur && !message.urgent ? "text-white/60" : "text-paper-muted"}`}>
+            <span className={`font-semibold ${estAuteur && !message.urgent ? "text-white/80" : "text-[#1c2029]"}`}>{nomAuteur}</span>
+            <span>{new Date(message.created_at).toLocaleString("fr-FR")}</span>
+            {message.urgent && <span className="font-bold tracking-wide text-red-700">URGENT</span>}
+            {message.modifie_at && !message.supprime_at && <span>(modifié)</span>}
+          </div>
+
+          {nomMessageOrigine && !message.supprime_at && (
+            <p className={`mb-1 text-xs italic ${estAuteur && !message.urgent ? "text-white/60" : "text-paper-soft"}`}>↪ Transféré</p>
+          )}
+
+          {message.supprime_at ? (
+            <p className={`italic ${estAuteur ? "text-white/50" : "text-paper-soft"}`}>Message supprimé par son auteur</p>
+          ) : enEdition ? (
+            <div className="space-y-1.5">
+              <textarea
+                value={brouillon}
+                onChange={(e) => setBrouillon(e.target.value)}
+                rows={2}
+                maxLength={10000}
+                className="w-full resize-none rounded border border-paper-200 px-2 py-1 text-sm text-[#1c2029]"
+              />
+              {erreur && <p className="text-xs text-red-600">{erreur}</p>}
+              <div className="flex gap-2 text-xs">
+                <button onClick={enregistrer} className="rounded bg-navy-950 px-2 py-1 text-white">
+                  Enregistrer
+                </button>
+                <button onClick={() => setEnEdition(false)} className="rounded border border-paper-200 px-2 py-1 text-[#1c2029]">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap">{message.contenu}</p>
+          )}
+
+          {message.pieces.length > 0 && !message.supprime_at && (
+            <ul className="mt-2 space-y-1">
+              {message.pieces.map((piece) => (
+                <li key={piece.id}>
+                  {piece.url ? (
+                    <a
+                      href={piece.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs ${estAuteur && !message.urgent ? "border-white/20 bg-white/10 text-white" : "border-paper-200 bg-paper-50 text-[#1c2029]"}`}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
+                      </svg>
+                      {piece.nom_fichier}
+                    </a>
+                  ) : (
+                    <span className="text-xs text-paper-soft">{piece.nom_fichier} (lien expiré, rechargez la page)</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-1.5 flex items-center justify-between gap-3">
+            {peutCorriger && !enEdition ? (
+              <div className={`flex gap-3 text-xs ${estAuteur && !message.urgent ? "text-white/50" : "text-paper-soft"}`}>
+                <button onClick={() => setEnEdition(true)} className="hover:underline">
+                  Modifier
+                </button>
+                <button onClick={supprimer} className="hover:text-red-500 hover:underline">
+                  Supprimer
+                </button>
+              </div>
+            ) : (
+              <span />
+            )}
+            {estAuteur && !message.supprime_at && <Coches statuts={message.statuts} nombreAutresParticipants={nombreAutresParticipants} />}
+          </div>
         </div>
 
-        {message.supprime_at ? (
-          <p className={`italic ${estAuteur ? "text-white/50" : "text-paper-soft"}`}>Message supprimé par son auteur</p>
-        ) : enEdition ? (
-          <div className="space-y-1.5">
-            <textarea
-              value={brouillon}
-              onChange={(e) => setBrouillon(e.target.value)}
-              rows={2}
-              maxLength={10000}
-              className="w-full resize-none rounded border border-paper-200 px-2 py-1 text-sm text-[#1c2029]"
-            />
-            {erreur && <p className="text-xs text-red-600">{erreur}</p>}
-            <div className="flex gap-2 text-xs">
-              <button onClick={enregistrer} className="rounded bg-navy-950 px-2 py-1 text-white">
-                Enregistrer
-              </button>
-              <button onClick={() => setEnEdition(false)} className="rounded border border-paper-200 px-2 py-1 text-[#1c2029]">
-                Annuler
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p className="whitespace-pre-wrap">{message.contenu}</p>
-        )}
-
-        {message.pieces.length > 0 && !message.supprime_at && (
-          <ul className="mt-2 space-y-1">
-            {message.pieces.map((piece) => (
-              <li key={piece.id}>
-                {piece.url ? (
-                  <a
-                    href={piece.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs ${estAuteur && !message.urgent ? "border-white/20 bg-white/10 text-white" : "border-paper-200 bg-paper-50 text-[#1c2029]"}`}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                      <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
-                    </svg>
-                    {piece.nom_fichier}
-                  </a>
+        {!message.supprime_at && (
+          <div className="relative mb-1 hidden shrink-0 gap-1 group-hover:flex">
+            <BoutonAction titre="Transférer" onClick={() => setMenuOuvert(menuOuvert === "transferer" ? null : "transferer")}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="m17 1 4 4-4 4" />
+                <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                <path d="m7 23-4-4 4-4" />
+                <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+              </svg>
+            </BoutonAction>
+            {menuOuvert === "transferer" && (
+              <div className="absolute top-6 z-20 w-56 rounded-lg border border-paper-200 bg-white p-2 shadow-lg">
+                <p className="mb-1 px-1 text-xs font-semibold text-paper-muted">Transférer vers…</p>
+                {conversationsCibles.length === 0 ? (
+                  <p className="px-1 py-1 text-xs text-paper-soft">Aucune autre conversation disponible.</p>
                 ) : (
-                  <span className="text-xs text-paper-soft">{piece.nom_fichier} (lien expiré, rechargez la page)</span>
+                  <ul className="max-h-48 overflow-y-auto">
+                    {conversationsCibles.map((c) => (
+                      <li key={c.id}>
+                        <button
+                          disabled={transfertEnCours}
+                          onClick={() => transferer(c.id)}
+                          className="w-full rounded px-2 py-1.5 text-left text-sm text-[#1c2029] hover:bg-paper-50 disabled:opacity-50"
+                        >
+                          {c.nom}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {peutCorriger && !enEdition && (
-          <div className={`mt-1.5 flex gap-3 text-xs ${estAuteur && !message.urgent ? "text-white/50" : "text-paper-soft"}`}>
-            <button onClick={() => setEnEdition(true)} className="hover:underline">
-              Modifier
-            </button>
-            <button onClick={supprimer} className="hover:text-red-500 hover:underline">
-              Supprimer
-            </button>
+              </div>
+            )}
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function bulleClasses(message: MessageAffiche, estAuteur: boolean) {
+  if (message.urgent) return "border border-[#E7C9C4] border-l-[3px] border-l-red-700 bg-red-50 rounded-xl rounded-bl-sm";
+  if (estAuteur) return "bg-navy-950 text-white rounded-xl rounded-br-sm";
+  return "border border-paper-200 bg-white rounded-xl rounded-bl-sm";
+}
+
+function BoutonAction({ titre, onClick, children }: { titre: string; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      title={titre}
+      onClick={onClick}
+      className="flex h-6 w-6 items-center justify-center rounded-full border border-paper-200 bg-white text-paper-muted hover:bg-paper-50"
+    >
+      {children}
+    </button>
+  );
+}
+
+function PopoverInfos({ statuts, onFermer }: { statuts: StatutMessage[]; onFermer: () => void }) {
+  return (
+    <>
+      <div className="fixed inset-0 z-10" onClick={onFermer} />
+      <div className="absolute top-6 right-0 z-20 w-56 rounded-lg border border-paper-200 bg-white p-2 shadow-lg">
+        <p className="mb-1 px-1 text-xs font-semibold text-paper-muted">Réception / lecture</p>
+        {statuts.length === 0 ? (
+          <p className="px-1 py-1 text-xs text-paper-soft">Pas encore reçu.</p>
+        ) : (
+          <ul className="space-y-1 px-1 py-1 text-xs text-[#1c2029]">
+            {statuts.map((s) => (
+              <li key={s.profil_id}>
+                {s.lu_at
+                  ? `Lu à ${new Date(s.lu_at).toLocaleTimeString("fr-FR")}`
+                  : s.recu_at
+                    ? `Reçu à ${new Date(s.recu_at).toLocaleTimeString("fr-FR")}`
+                    : "Pas encore reçu"}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }
