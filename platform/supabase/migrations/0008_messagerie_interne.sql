@@ -70,13 +70,10 @@ alter table public.conversations enable row level security;
 
 grant select, insert on public.conversations to authenticated;
 
-create policy "conversations_lecture_participant"
-  on public.conversations for select
-  to authenticated
-  using (exists (
-    select 1 from public.conversation_participants cp
-    where cp.conversation_id = conversations.id and cp.profil_id = auth.uid()
-  ));
+-- La policy SELECT ("conversations_lecture_participant") est créée plus bas
+-- (fin de la § 3), une fois la table conversation_participants en place : son
+-- USING référence cette table, que PostgreSQL doit pouvoir résoudre dès la
+-- création de la policy, pas seulement à l'exécution de chaque requête.
 
 -- Les canaux ne sont jamais créés directement par un utilisateur : ils le sont
 -- par le déclencheur de synchronisation (cf. § 6). Seules privee/groupe
@@ -142,6 +139,17 @@ create policy "participants_maj_propre_statut"
   to authenticated
   using (profil_id = auth.uid())
   with check (profil_id = auth.uid());
+
+-- Policy SELECT de "conversations" déclarée ici (et non § 2) : son USING
+-- référence conversation_participants, qui doit déjà exister à la création
+-- de la policy.
+create policy "conversations_lecture_participant"
+  on public.conversations for select
+  to authenticated
+  using (exists (
+    select 1 from public.conversation_participants cp
+    where cp.conversation_id = conversations.id and cp.profil_id = auth.uid()
+  ));
 
 -- ----------------------------------------------------------------------------
 -- 4. Messages
