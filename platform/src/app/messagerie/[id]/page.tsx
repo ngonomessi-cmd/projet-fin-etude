@@ -67,35 +67,50 @@ export default async function PageConversation({ params }: { params: Promise<{ i
       ? (participants.find((p) => p.profil_id !== user.id)?.profiles?.nom_complet ?? "Conversation privée")
       : (conversation.titre ?? LABEL_TYPE_CONVERSATION[conversation.type]);
 
-  return (
-    <>
-      <NavBar />
-      <main className="mx-auto flex h-[calc(100vh-57px)] max-w-3xl flex-col px-4 py-6">
-        <div className="mb-3 flex items-center justify-between border-b border-slate-200 pb-3">
-          <div>
-            <h1 className="text-lg font-semibold text-slate-900">{titre}</h1>
-            <p className="text-xs text-slate-500">
-              {LABEL_TYPE_CONVERSATION[conversation.type]}
-              {conversation.type !== "privee" && ` · ${participants.length} participant${participants.length > 1 ? "s" : ""}`}
-              {conversation.type === "canal" &&
-                ` · publient : ${participants
-                  .filter((p) => p.peut_publier)
-                  .map((p) => p.profiles?.nom_complet)
-                  .join(", ")}`}
-            </p>
-          </div>
-          <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
-        </div>
+  const initiales = titre
+    .split(" ")
+    .filter(Boolean)
+    .map((mot) => mot[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
-        <ConversationTempsReel
-          conversationId={id}
-          messagesInitiaux={messages.map((m) => ({ ...m, pieces: piecesAvecUrl.filter((p) => p.message_id === m.id) }))}
-          utilisateurId={user.id}
-          peutPublier={maParticipation.peut_publier}
-          peutUrgent={profil.role === "administrateur" || profil.role === "validateur"}
-          nomAuteur={(auteurId) => (auteurId === user.id ? "Vous" : (profilsParId.get(auteurId)?.nom_complet ?? "Agent"))}
-        />
+  return (
+    <div className="flex min-h-screen">
+      <NavBar />
+      <main className="flex min-w-0 flex-1 flex-col">
+        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-8 py-6">
+          <div className="mb-3 flex items-center justify-between border-b border-paper-200 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5B5447] text-xs font-bold text-white">
+                {initiales}
+              </div>
+              <div>
+                <h1 className="font-serif text-lg font-semibold">{titre}</h1>
+                <p className="text-xs text-paper-muted">
+                  {LABEL_TYPE_CONVERSATION[conversation.type]}
+                  {conversation.type !== "privee" && ` · ${participants.length} participant${participants.length > 1 ? "s" : ""}`}
+                  {conversation.type === "canal" &&
+                    ` · publient : ${participants
+                      .filter((p) => p.peut_publier)
+                      .map((p) => p.profiles?.nom_complet)
+                      .join(", ")}`}
+                </p>
+              </div>
+            </div>
+            <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+          </div>
+
+          <ConversationTempsReel
+            conversationId={id}
+            messagesInitiaux={messages.map((m) => ({ ...m, pieces: piecesAvecUrl.filter((p) => p.message_id === m.id) }))}
+            utilisateurId={user.id}
+            peutPublier={maParticipation.peut_publier}
+            peutUrgent={profil.role === "administrateur" || profil.role === "validateur"}
+            nomAuteur={(auteurId) => (auteurId === user.id ? "Vous" : (profilsParId.get(auteurId)?.nom_complet ?? "Agent"))}
+          />
+        </div>
       </main>
-    </>
+    </div>
   );
 }

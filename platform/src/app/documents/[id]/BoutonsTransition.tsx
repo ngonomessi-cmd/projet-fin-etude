@@ -60,15 +60,15 @@ export function BoutonsTransition({
   if (boutons.length === 0) return null;
 
   return (
-    <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+    <div className="mt-4 space-y-3 border-t border-paper-200 pt-4">
       {(statutActuel === "en_verification" && peutValider) && (
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">Commentaire (facultatif)</span>
+          <span className="mb-1 block font-medium text-[#1c2029]">Commentaire (facultatif)</span>
           <textarea
             value={commentaire}
             onChange={(e) => setCommentaire(e.target.value)}
             rows={2}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
             placeholder="Motif de validation ou de rejet…"
           />
         </label>

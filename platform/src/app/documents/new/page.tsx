@@ -3,17 +3,19 @@ import { FormulaireDepot } from "./FormulaireDepot";
 
 export default function PageNouveauDocument() {
   return (
-    <>
+    <div className="flex min-h-screen">
       <NavBar />
-      <main className="mx-auto max-w-xl px-4 py-6">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">Déposer un document</h1>
-        <p className="mb-6 text-sm text-slate-500">
-          Étape « dépôt » du workflow. Le document est créé à l&apos;état « Brouillon » puis doit être
-          soumis à la vérification depuis sa page de détail.
-        </p>
+      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+        <div className="mx-auto max-w-xl">
+          <h1 className="mb-1 font-serif text-xl font-semibold">Déposer un document</h1>
+          <p className="mb-6 text-sm text-paper-muted">
+            Étape « dépôt » du workflow. Le document est créé à l&apos;état « Brouillon » puis doit être
+            soumis à la vérification depuis sa page de détail.
+          </p>
 
-        <FormulaireDepot />
+          <FormulaireDepot />
+        </div>
       </main>
-    </>
+    </div>
   );
 }

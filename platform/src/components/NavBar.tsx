@@ -1,15 +1,25 @@
-import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { LABEL_ROLE } from "@/lib/labels";
-import type { Profil, RoleUtilisateur } from "@/lib/types";
+import type { Profil } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
+import { NavLinks, type Lien } from "@/components/NavLinks";
 
-const LIENS: { href: string; label: string; roles?: RoleUtilisateur[] }[] = [
-  { href: "/documents", label: "Documents" },
-  { href: "/messagerie", label: "Messagerie" },
-  { href: "/audit", label: "Journal d'audit" },
-  { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"] },
+const LIENS: Lien[] = [
+  { href: "/documents", label: "Documents", icone: "documents" },
+  { href: "/messagerie", label: "Messagerie", icone: "messagerie" },
+  { href: "/audit", label: "Journal d'audit", icone: "audit" },
+  { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"], icone: "utilisateurs" },
 ];
+
+function initiales(nomComplet: string) {
+  return nomComplet
+    .split(" ")
+    .filter(Boolean)
+    .map((mot) => mot[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 export async function NavBar() {
   const supabase = await creerClientServeur();
@@ -26,39 +36,40 @@ export async function NavBar() {
     messagesNonLus = compteur ?? 0;
   }
 
+  const liens = LIENS.map((lien) => (lien.href === "/messagerie" ? { ...lien, badge: messagesNonLus } : lien));
+
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-6">
-          <Link href="/documents" className="font-semibold text-slate-900">
-            GED KHS Bank
-          </Link>
-          <nav className="flex gap-4 text-sm">
-            {LIENS.filter((lien) => !lien.roles || (profil && lien.roles.includes(profil.role))).map(
-              (lien) => (
-                <Link key={lien.href} href={lien.href} className="relative text-slate-600 hover:text-slate-900">
-                  {lien.label}
-                  {lien.href === "/messagerie" && messagesNonLus > 0 && (
-                    <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-semibold text-white align-middle">
-                      {messagesNonLus}
-                    </span>
-                  )}
-                </Link>
-              )
-            )}
-          </nav>
+    <aside className="flex w-60 shrink-0 flex-col bg-navy-950 px-4 py-7 text-white">
+      <div className="mb-5 flex items-center gap-2.5 border-b border-navy-line px-1.5 pb-8">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
+          <span className="font-serif text-lg font-bold text-navy-950">K</span>
         </div>
-        {profil && (
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-slate-700">
-              {profil.nom_complet} ·{" "}
-              <span className="font-medium text-slate-900">{LABEL_ROLE[profil.role]}</span> ·{" "}
-              {profil.departement}
-            </span>
+        <div className="min-w-0">
+          <div className="whitespace-nowrap font-serif text-base leading-tight font-semibold">KHS Bank</div>
+          <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+        </div>
+      </div>
+
+      <NavLinks liens={liens} role={profil?.role ?? null} />
+
+      {profil && (
+        <div className="mt-auto border-t border-navy-line pt-4">
+          <div className="flex items-center gap-2.5 px-1.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold">
+              {initiales(profil.nom_complet)}
+            </div>
+            <div className="min-w-0">
+              <div className="truncate text-[13px] font-semibold">{profil.nom_complet}</div>
+              <div className="text-[11px] text-white/55">
+                {LABEL_ROLE[profil.role]} · {profil.departement}
+              </div>
+            </div>
+          </div>
+          <div className="mt-2.5 px-1.5">
             <SignOutButton />
           </div>
-        )}
-      </div>
-    </header>
+        </div>
+      )}
+    </aside>
   );
 }

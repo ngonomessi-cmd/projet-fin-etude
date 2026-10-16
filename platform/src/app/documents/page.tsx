@@ -27,68 +27,70 @@ export default async function PageDocuments() {
   const peutDeposer = profil.role === "redacteur" || profil.role === "administrateur";
 
   return (
-    <>
+    <div className="flex min-h-screen">
       <NavBar />
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-slate-900">Documents</h1>
-            <p className="text-sm text-slate-500">
-              Liste filtrée automatiquement par les policies RLS (Row Level Security) de Supabase — ce
-              que vous voyez dépend uniquement de votre rôle et de votre département.
-            </p>
+      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="font-serif text-2xl font-semibold">Documents</h1>
+              <p className="text-sm text-paper-muted">
+                Liste filtrée automatiquement par les policies RLS (Row Level Security) de Supabase — ce
+                que vous voyez dépend uniquement de votre rôle et de votre département.
+              </p>
+            </div>
+            {peutDeposer && (
+              <Link
+                href="/documents/new"
+                className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
+              >
+                Déposer un document
+              </Link>
+            )}
           </div>
-          {peutDeposer && (
-            <Link
-              href="/documents/new"
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-            >
-              Déposer un document
-            </Link>
+
+          {documents.length === 0 ? (
+            <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
+              Aucun document visible pour votre compte.
+            </p>
+          ) : (
+            <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="bg-paper-50 text-left text-paper-muted">
+                  <tr>
+                    <th className="px-4 py-2.5 font-medium">Titre</th>
+                    <th className="px-4 py-2.5 font-medium">Classification</th>
+                    <th className="px-4 py-2.5 font-medium">Statut</th>
+                    <th className="px-4 py-2.5 font-medium">Département</th>
+                    <th className="px-4 py-2.5 font-medium">Mis à jour</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {documents.map((doc) => (
+                    <tr key={doc.id} className="border-t border-paper-200 hover:bg-paper-50">
+                      <td className="px-4 py-2.5">
+                        <Link href={`/documents/${doc.id}`} className="font-medium text-[#1c2029] hover:text-gold-600 hover:underline">
+                          {doc.titre}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Badge texte={LABEL_CLASSIFICATION[doc.classification]} classesCouleur={COULEUR_CLASSIFICATION[doc.classification]} />
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Badge texte={LABEL_STATUT[doc.statut]} classesCouleur={COULEUR_STATUT[doc.statut]} />
+                      </td>
+                      <td className="px-4 py-2.5 text-paper-muted">{doc.departement}</td>
+                      <td className="px-4 py-2.5 text-paper-soft">
+                        {new Date(doc.updated_at).toLocaleString("fr-FR")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-
-        {documents.length === 0 ? (
-          <p className="rounded-md border border-slate-200 bg-white p-6 text-sm text-slate-500">
-            Aucun document visible pour votre compte.
-          </p>
-        ) : (
-          <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-slate-500">
-                <tr>
-                  <th className="px-4 py-2">Titre</th>
-                  <th className="px-4 py-2">Classification</th>
-                  <th className="px-4 py-2">Statut</th>
-                  <th className="px-4 py-2">Département</th>
-                  <th className="px-4 py-2">Mis à jour</th>
-                </tr>
-              </thead>
-              <tbody>
-                {documents.map((doc) => (
-                  <tr key={doc.id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="px-4 py-2">
-                      <Link href={`/documents/${doc.id}`} className="font-medium text-slate-900 hover:underline">
-                        {doc.titre}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-2">
-                      <Badge texte={LABEL_CLASSIFICATION[doc.classification]} classesCouleur={COULEUR_CLASSIFICATION[doc.classification]} />
-                    </td>
-                    <td className="px-4 py-2">
-                      <Badge texte={LABEL_STATUT[doc.statut]} classesCouleur={COULEUR_STATUT[doc.statut]} />
-                    </td>
-                    <td className="px-4 py-2 text-slate-600">{doc.departement}</td>
-                    <td className="px-4 py-2 text-slate-500">
-                      {new Date(doc.updated_at).toLocaleString("fr-FR")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
       </main>
-    </>
+    </div>
   );
 }

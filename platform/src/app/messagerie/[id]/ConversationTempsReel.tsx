@@ -84,8 +84,8 @@ export function ConversationTempsReel({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex-1 space-y-3 overflow-y-auto py-3">
-        {messages.length === 0 && <p className="text-center text-sm text-slate-400">Aucun message pour l&apos;instant.</p>}
+      <div className="flex-1 space-y-4 overflow-y-auto py-4">
+        {messages.length === 0 && <p className="text-center text-sm text-paper-soft">Aucun message pour l&apos;instant.</p>}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} estAuteur={message.auteur_id === utilisateurId} nomAuteur={nomAuteur(message.auteur_id)} />
         ))}
@@ -93,41 +93,52 @@ export function ConversationTempsReel({
       </div>
 
       {peutPublier ? (
-        <form ref={formRef} action={envoyer} className="space-y-2 border-t border-slate-200 pt-3">
-          <textarea
-            name="contenu"
-            required
-            rows={2}
-            maxLength={10000}
-            placeholder="Écrire un message…"
-            className="w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-sm"
-          />
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <input
-                name="fichier"
-                type="file"
-                className="text-xs text-slate-500 file:mr-2 file:rounded file:border-0 file:bg-slate-200 file:px-2 file:py-1 file:text-xs file:font-medium file:text-slate-700 hover:file:bg-slate-300"
-              />
-              {peutUrgent && (
-                <label className="flex items-center gap-1 text-xs text-red-700">
-                  <input type="checkbox" name="urgent" className="rounded border-slate-300" />
-                  Urgent
-                </label>
-              )}
+        <form ref={formRef} action={envoyer} className="border-t border-paper-200 pt-4 pb-1">
+          <div className="rounded-xl border border-paper-200 bg-white p-3">
+            <textarea
+              name="contenu"
+              required
+              rows={2}
+              maxLength={10000}
+              placeholder="Écrire un message…"
+              className="w-full resize-none border-0 text-sm outline-none"
+            />
+            <div className="mt-1.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5 text-paper-muted">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
+                  </svg>
+                  <input
+                    name="fichier"
+                    type="file"
+                    className="max-w-40 text-xs text-paper-muted file:mr-2 file:rounded file:border-0 file:bg-paper-100 file:px-2 file:py-1 file:text-xs file:font-medium file:text-[#1c2029] hover:file:bg-paper-200"
+                  />
+                </div>
+                {peutUrgent && (
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-red-700">
+                    <input type="checkbox" name="urgent" className="accent-red-700" />
+                    Urgent
+                  </label>
+                )}
+              </div>
+              <button
+                type="submit"
+                disabled={enCours}
+                className="flex items-center gap-2 rounded-md bg-gold-500 px-4 py-1.5 text-sm font-bold text-navy-950 hover:bg-gold-600 hover:text-white disabled:opacity-50"
+              >
+                {enCours ? "Envoi…" : "Envoyer"}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                  <path d="M22 2 11 13" />
+                  <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+                </svg>
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={enCours}
-              className="rounded-md bg-slate-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-            >
-              {enCours ? "Envoi…" : "Envoyer"}
-            </button>
           </div>
-          {erreurEnvoi && <p className="text-sm text-red-600">{erreurEnvoi}</p>}
+          {erreurEnvoi && <p className="mt-1.5 text-sm text-red-600">{erreurEnvoi}</p>}
         </form>
       ) : (
-        <p className="border-t border-slate-200 pt-3 text-center text-sm text-slate-400">
+        <p className="border-t border-paper-200 pt-3 text-center text-sm text-paper-soft">
           Vous êtes membre de ce canal mais ne pouvez pas y publier.
         </p>
       )}
@@ -156,51 +167,65 @@ function MessageItem({ message, estAuteur, nomAuteur }: { message: MessageAffich
     await supprimerMessageAction(message.id);
   }
 
+  const classesBulle = message.urgent
+    ? "border border-[#E7C9C4] border-l-[3px] border-l-red-700 bg-red-50 rounded-xl rounded-bl-sm"
+    : estAuteur
+      ? "bg-navy-950 text-white rounded-xl rounded-br-sm"
+      : "border border-paper-200 bg-white rounded-xl rounded-bl-sm";
+
   return (
     <div className={`flex ${estAuteur ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[80%] rounded-lg border px-3 py-2 text-sm ${message.urgent ? "border-red-400 bg-red-50" : "border-slate-200 bg-white"}`}>
-        <div className="mb-0.5 flex items-center gap-2 text-xs text-slate-500">
-          <span className="font-medium text-slate-700">{nomAuteur}</span>
+      <div className={`max-w-[75%] px-3.5 py-2.5 text-sm ${classesBulle}`}>
+        <div className={`mb-1 flex items-center gap-2 text-xs ${estAuteur && !message.urgent ? "text-white/60" : "text-paper-muted"}`}>
+          <span className={`font-semibold ${estAuteur && !message.urgent ? "text-white/80" : "text-[#1c2029]"}`}>{nomAuteur}</span>
           <span>{new Date(message.created_at).toLocaleString("fr-FR")}</span>
-          {message.urgent && <span className="font-semibold text-red-700">URGENT</span>}
+          {message.urgent && <span className="font-bold tracking-wide text-red-700">URGENT</span>}
           {message.modifie_at && !message.supprime_at && <span>(modifié)</span>}
         </div>
 
         {message.supprime_at ? (
-          <p className="italic text-slate-400">Message supprimé par son auteur</p>
+          <p className={`italic ${estAuteur ? "text-white/50" : "text-paper-soft"}`}>Message supprimé par son auteur</p>
         ) : enEdition ? (
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <textarea
               value={brouillon}
               onChange={(e) => setBrouillon(e.target.value)}
               rows={2}
               maxLength={10000}
-              className="w-full resize-none rounded border border-slate-300 px-2 py-1 text-sm"
+              className="w-full resize-none rounded border border-paper-200 px-2 py-1 text-sm text-[#1c2029]"
             />
             {erreur && <p className="text-xs text-red-600">{erreur}</p>}
             <div className="flex gap-2 text-xs">
-              <button onClick={enregistrer} className="rounded bg-slate-900 px-2 py-1 text-white">
+              <button onClick={enregistrer} className="rounded bg-navy-950 px-2 py-1 text-white">
                 Enregistrer
               </button>
-              <button onClick={() => setEnEdition(false)} className="rounded border border-slate-300 px-2 py-1">
+              <button onClick={() => setEnEdition(false)} className="rounded border border-paper-200 px-2 py-1 text-[#1c2029]">
                 Annuler
               </button>
             </div>
           </div>
         ) : (
-          <p className="whitespace-pre-wrap text-slate-900">{message.contenu}</p>
+          <p className="whitespace-pre-wrap">{message.contenu}</p>
         )}
 
         {message.pieces.length > 0 && !message.supprime_at && (
-          <ul className="mt-1 space-y-0.5">
+          <ul className="mt-2 space-y-1">
             {message.pieces.map((piece) => (
               <li key={piece.id}>
                 {piece.url ? (
-                  <a href={piece.url} className="text-xs text-blue-600 underline" target="_blank" rel="noreferrer">
-                    📎 {piece.nom_fichier}
+                  <a
+                    href={piece.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs ${estAuteur && !message.urgent ? "border-white/20 bg-white/10 text-white" : "border-paper-200 bg-paper-50 text-[#1c2029]"}`}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
+                    </svg>
+                    {piece.nom_fichier}
                   </a>
                 ) : (
-                  <span className="text-xs text-slate-400">📎 {piece.nom_fichier} (lien expiré, rechargez la page)</span>
+                  <span className="text-xs text-paper-soft">{piece.nom_fichier} (lien expiré, rechargez la page)</span>
                 )}
               </li>
             ))}
@@ -208,11 +233,11 @@ function MessageItem({ message, estAuteur, nomAuteur }: { message: MessageAffich
         )}
 
         {peutCorriger && !enEdition && (
-          <div className="mt-1 flex gap-2 text-xs text-slate-400">
-            <button onClick={() => setEnEdition(true)} className="hover:text-slate-700 hover:underline">
+          <div className={`mt-1.5 flex gap-3 text-xs ${estAuteur && !message.urgent ? "text-white/50" : "text-paper-soft"}`}>
+            <button onClick={() => setEnEdition(true)} className="hover:underline">
               Modifier
             </button>
-            <button onClick={supprimer} className="hover:text-red-700 hover:underline">
+            <button onClick={supprimer} className="hover:text-red-500 hover:underline">
               Supprimer
             </button>
           </div>
