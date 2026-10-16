@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
 
 export default function PageConnexion() {
+  return (
+    <Suspense fallback={null}>
+      <FormulaireConnexion />
+    </Suspense>
+  );
+}
+
+function FormulaireConnexion() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Lien profond depuis une alerte e-mail de la messagerie (cf.
+  // lib/messagerie/alertes.ts) : .../login?redirect=/messagerie/<id> — on
+  // y retourne après connexion au lieu de l'accueil par défaut.
+  const redirection = searchParams.get("redirect") || "/documents";
   const [mode, setMode] = useState<"connexion" | "inscription">("connexion");
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
@@ -29,7 +42,7 @@ export default function PageConnexion() {
       return;
     }
 
-    router.push("/documents");
+    router.push(redirection);
     router.refresh();
   }
 

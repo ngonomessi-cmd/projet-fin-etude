@@ -7,6 +7,8 @@ import {
   TAILLE_MAX_PIECE_JOINTE_OCTETS,
   TYPES_MIME_AUTORISES_PIECE_JOINTE,
 } from "@/lib/labels";
+import { analyserPieceJointe } from "@/lib/messagerie/antivirus";
+import { envoyerAlertesPourMessage } from "@/lib/messagerie/alertes";
 
 export type ResultatMessagerie = { erreur: string | null };
 
@@ -59,12 +61,25 @@ export async function envoyerMessageAction(conversationId: string, formData: For
   if (!contenu) return { erreur: "Le message ne peut pas être vide." };
   if (contenu.length > 10000) return { erreur: "Message trop long (10 000 caractères au plus)." };
 
+  let tamponFichier: Buffer | null = null;
+
   if (fichier && fichier.size > 0) {
     if (fichier.size > TAILLE_MAX_PIECE_JOINTE_OCTETS) {
-      return { erreur: "Pièce jointe trop volumineuse (4 Mo au plus)." };
+      return { erreur: "Pièce jointe trop volumineuse (10 Mo au plus)." };
     }
     if (!TYPES_MIME_AUTORISES_PIECE_JOINTE.includes(fichier.type as (typeof TYPES_MIME_AUTORISES_PIECE_JOINTE)[number])) {
       return { erreur: "Type de fichier non autorisé pour une pièce jointe." };
+    }
+
+    // Analyse de sécurité AVANT tout envoi (cf. lib/messagerie/antivirus.ts) :
+    // "la base refuse tout message dont la pièce jointe n'a pas été
+    // analysée" — en pratique, on analyse donc avant même d'insérer le
+    // message, pour ne jamais créer un message avec une pièce jointe non
+    // scannée ou infectée.
+    tamponFichier = Buffer.from(await fichier.arrayBuffer());
+    const resultatAnalyse = await analyserPieceJointe(tamponFichier, fichier.name, fichier.type || "application/octet-stream");
+    if (!resultatAnalyse.propre) {
+      return { erreur: resultatAnalyse.motif ?? "Pièce jointe refusée par l'analyse de sécurité." };
     }
   }
 
@@ -80,13 +95,13 @@ export async function envoyerMessageAction(conversationId: string, formData: For
     return { erreur: `Message non envoyé : ${erreurMessage?.message}` };
   }
 
-  // 2. Pièce jointe éventuelle, sous "<message_id>/<nom_du_fichier>" (même
-  //    convention que le bucket "documents-ged").
-  if (fichier && fichier.size > 0) {
+  // 2. Pièce jointe éventuelle (déjà analysée ci-dessus), sous
+  //    "<message_id>/<nom_du_fichier>" (même convention que "documents-ged").
+  if (fichier && fichier.size > 0 && tamponFichier) {
     const cheminStockage = `${message.id}/${fichier.name}`;
     const { error: erreurUpload } = await supabase.storage
       .from("messagerie-pieces-jointes")
-      .upload(cheminStockage, fichier, { contentType: fichier.type || undefined });
+      .upload(cheminStockage, tamponFichier, { contentType: fichier.type || undefined });
 
     if (erreurUpload) {
       return { erreur: `Message envoyé, mais pièce jointe refusée : ${erreurUpload.message}` };
@@ -98,8 +113,14 @@ export async function envoyerMessageAction(conversationId: string, formData: For
       nom_fichier: fichier.name,
       taille_octets: fichier.size,
       type_mime: fichier.type || "application/octet-stream",
+      statut_analyse: "propre",
     });
   }
+
+  // 3. Alertes e-mail (destinataires hors ligne depuis plus de 2 minutes,
+  //    au plus une par heure et par conversation) — toujours attendue
+  //    (await), jamais laissée partir "en l'air" depuis une Server Action.
+  await envoyerAlertesPourMessage(message.id).catch(() => null);
 
   revalidatePath(`/messagerie/${conversationId}`);
   return { erreur: null };
@@ -168,17 +189,44 @@ export async function archiverConversationAction(conversationId: string, archive
 
 export async function marquerConversationLueAction(conversationId: string): Promise<void> {
   const supabase = await creerClientServeur();
+  // Fonction RPC unique (migration 0010) : met à jour à la fois
+  // conversation_participants.dernier_lu_at (badge de non-lus) et les
+  // accusés message_statuts.lu_at/recu_at (coches façon WhatsApp).
+  await supabase.rpc("marquer_conversation_lue", { p_conversation_id: conversationId });
+}
+
+export async function basculerSourdineAction(conversationId: string, sourdine: boolean): Promise<ResultatMessagerie> {
+  const supabase = await creerClientServeur();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
 
-  await supabase
+  const { error } = await supabase
     .from("conversation_participants")
-    .update({ dernier_lu_at: new Date().toISOString() })
+    .update({ sourdine })
     .eq("conversation_id", conversationId)
     .eq("profil_id", user.id);
+
+  if (error) return { erreur: error.message };
+
+  revalidatePath("/messagerie");
+  return { erreur: null };
+}
+
+export async function transfererMessageAction(messageId: string, conversationCibleId: string): Promise<ResultatMessagerie> {
+  const supabase = await creerClientServeur();
+
+  const { error } = await supabase.rpc("transferer_message", {
+    p_message_id: messageId,
+    p_conversation_cible_id: conversationCibleId,
+  });
+
+  if (error) return { erreur: error.message };
+
+  revalidatePath(`/messagerie/${conversationCibleId}`);
+  return { erreur: null };
 }
 
 export async function changerDureeConservationAction(annees: number): Promise<ResultatMessagerie> {

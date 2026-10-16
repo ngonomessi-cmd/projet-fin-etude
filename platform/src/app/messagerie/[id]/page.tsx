@@ -4,8 +4,10 @@ import { NavBar } from "@/components/NavBar";
 import { marquerConversationLueAction } from "../actions";
 import { ConversationTempsReel } from "./ConversationTempsReel";
 import { ArchiverBouton } from "./ArchiverBouton";
+import { SourdineBouton } from "./SourdineBouton";
+import { PanneauDetails } from "./PanneauDetails";
 import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
-import type { Conversation, Message, ParticipantConversation, PieceJointeMessage, Profil } from "@/lib/types";
+import type { Conversation, Message, ParticipantConversation, PieceJointeMessage, Profil, StatutMessage } from "@/lib/types";
 
 export default async function PageConversation({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -22,13 +24,19 @@ export default async function PageConversation({ params }: { params: Promise<{ i
   if (!conversationData) notFound();
   const conversation = conversationData as Conversation;
 
-  const [{ data: profilData }, { data: participantsData }, { data: messagesData }] = await Promise.all([
+  const [{ data: profilData }, { data: participantsData }, { data: messagesData }, { data: ciblesData }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase
       .from("conversation_participants")
       .select("*, profiles(id, nom_complet, role, departement)")
       .eq("conversation_id", id),
     supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true }),
+    supabase
+      .from("conversation_participants")
+      .select("conversation_id, peut_publier, conversations(id, type, titre)")
+      .eq("profil_id", user.id)
+      .eq("peut_publier", true)
+      .neq("conversation_id", id),
   ]);
 
   const profil = profilData as Profil;
@@ -39,16 +47,28 @@ export default async function PageConversation({ params }: { params: Promise<{ i
   const maParticipation = participants.find((p) => p.profil_id === user.id);
   if (!maParticipation) notFound();
 
-  const { data: piecesData } = messages.length
-    ? await supabase
-        .from("pieces_jointes_message")
-        .select("*")
-        .in(
-          "message_id",
-          messages.map((m) => m.id)
-        )
-    : { data: [] as PieceJointeMessage[] };
+  const [{ data: piecesData }, { data: statutsData }] = await Promise.all([
+    messages.length
+      ? supabase
+          .from("pieces_jointes_message")
+          .select("*")
+          .in(
+            "message_id",
+            messages.map((m) => m.id)
+          )
+      : Promise.resolve({ data: [] as PieceJointeMessage[] }),
+    messages.length
+      ? supabase
+          .from("message_statuts")
+          .select("*")
+          .in(
+            "message_id",
+            messages.map((m) => m.id)
+          )
+      : Promise.resolve({ data: [] as StatutMessage[] }),
+  ]);
   const pieces = (piecesData ?? []) as PieceJointeMessage[];
+  const statuts = (statutsData ?? []) as StatutMessage[];
 
   const piecesAvecUrl = await Promise.all(
     pieces.map(async (piece) => {
@@ -61,6 +81,23 @@ export default async function PageConversation({ params }: { params: Promise<{ i
   await marquerConversationLueAction(id);
 
   const profilsParId = new Map(participants.map((p) => [p.profil_id, p.profiles]));
+  // Un Server Component ne peut pas passer une fonction à un Client
+  // Component (seules les Server Actions le peuvent) : on passe donc une
+  // table de correspondance sérialisable plutôt qu'une closure "nomAuteur".
+  const nomsParId: Record<string, string> = {};
+  for (const p of participants) {
+    if (p.profiles) nomsParId[p.profil_id] = p.profiles.nom_complet;
+  }
+
+  type ConversationAllegee = Pick<Conversation, "id" | "type" | "titre">;
+  type Cible = { conversation_id: string; conversations: ConversationAllegee | ConversationAllegee[] | null };
+  const conversationsCibles = ((ciblesData ?? []) as Cible[])
+    .map((c) => (Array.isArray(c.conversations) ? c.conversations[0] : c.conversations))
+    .filter((c): c is ConversationAllegee => c !== null && c !== undefined)
+    .map((c) => ({
+      id: c.id,
+      nom: c.type === "privee" ? "Conversation privée" : (c.titre ?? LABEL_TYPE_CONVERSATION[c.type]),
+    }));
 
   const titre =
     conversation.type === "privee"
@@ -79,7 +116,7 @@ export default async function PageConversation({ params }: { params: Promise<{ i
     <div className="flex min-h-screen">
       <NavBar />
       <main className="flex min-w-0 flex-1 flex-col">
-        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-8 py-6">
+        <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-8 py-6">
           <div className="mb-3 flex items-center justify-between border-b border-paper-200 pb-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5B5447] text-xs font-bold text-white">
@@ -98,16 +135,35 @@ export default async function PageConversation({ params }: { params: Promise<{ i
                 </p>
               </div>
             </div>
-            <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+            <div className="flex items-center gap-2">
+              <PanneauDetails
+                participants={participants.map((p) => ({
+                  profilId: p.profil_id,
+                  nom: p.profiles?.nom_complet ?? "Agent",
+                  role: p.profiles?.role ?? "lecteur",
+                }))}
+                dernierMessagePropre={[...messages].reverse().find((m) => m.auteur_id === user.id) ?? null}
+                statuts={statuts}
+                utilisateurId={user.id}
+              />
+              <SourdineBouton conversationId={id} sourdine={maParticipation.sourdine} />
+              <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+            </div>
           </div>
 
           <ConversationTempsReel
             conversationId={id}
-            messagesInitiaux={messages.map((m) => ({ ...m, pieces: piecesAvecUrl.filter((p) => p.message_id === m.id) }))}
+            messagesInitiaux={messages.map((m) => ({
+              ...m,
+              pieces: piecesAvecUrl.filter((p) => p.message_id === m.id),
+              statuts: statuts.filter((s) => s.message_id === m.id),
+            }))}
             utilisateurId={user.id}
             peutPublier={maParticipation.peut_publier}
             peutUrgent={profil.role === "administrateur" || profil.role === "validateur"}
-            nomAuteur={(auteurId) => (auteurId === user.id ? "Vous" : (profilsParId.get(auteurId)?.nom_complet ?? "Agent"))}
+            nomsParId={nomsParId}
+            nombreAutresParticipants={participants.length - 1}
+            conversationsCibles={conversationsCibles}
           />
         </div>
       </main>

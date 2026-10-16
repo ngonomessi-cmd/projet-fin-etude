@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { Badge } from "@/components/Badge";
 import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
 import { ParametresRetention } from "./ParametresRetention";
+import { ListeConversationsInteractive, type ConversationAffichee } from "./ListeConversationsInteractive";
 import type { Conversation, Message, ParametresMessagerie, ParticipantConversation, Profil } from "@/lib/types";
 
 type ParticipantAvecProfil = ParticipantConversation & { profiles: Pick<Profil, "id" | "nom_complet" | "role"> | null };
@@ -85,8 +85,20 @@ export default async function PageMessagerie() {
     return db.localeCompare(da);
   });
 
-  const actives = conversationsTriees.filter((c) => !mesParticipations.get(c.id)?.archivee);
-  const archivees = conversationsTriees.filter((c) => mesParticipations.get(c.id)?.archivee);
+  const conversationsAffichees: ConversationAffichee[] = conversationsTriees.map((c) => {
+    const dernier = dernierMessage(c.id);
+    const maParticipation = mesParticipations.get(c.id);
+    return {
+      id: c.id,
+      type: c.type,
+      nom: nomAffiche(c),
+      dernierApercu: dernier ? (dernier.supprime_at ? "Message supprimé par son auteur" : dernier.contenu) : null,
+      dernierEstMoi: dernier?.auteur_id === idUtilisateur,
+      nonLus: nombreNonLus(c.id),
+      archivee: maParticipation?.archivee ?? false,
+      sourdine: maParticipation?.sourdine ?? false,
+    };
+  });
 
   return (
     <div className="flex min-h-screen">
@@ -114,107 +126,10 @@ export default async function PageMessagerie() {
 
           {profil.role === "administrateur" && parametres && <ParametresRetention dureeActuelle={parametres.duree_conservation_ans} />}
 
-          <ListeConversations
-            conversations={actives}
-            nomAffiche={nomAffiche}
-            dernierMessage={dernierMessage}
-            nombreNonLus={nombreNonLus}
-            utilisateurId={user.id}
-          />
-
-          {archivees.length > 0 && (
-            <details className="mt-6">
-              <summary className="cursor-pointer text-sm font-medium text-paper-muted">
-                Archivées ({archivees.length})
-              </summary>
-              <div className="mt-2">
-                <ListeConversations
-                  conversations={archivees}
-                  nomAffiche={nomAffiche}
-                  dernierMessage={dernierMessage}
-                  nombreNonLus={nombreNonLus}
-                  utilisateurId={user.id}
-                />
-              </div>
-            </details>
-          )}
+          <ListeConversationsInteractive conversations={conversationsAffichees} />
         </div>
       </main>
     </div>
   );
 }
 
-function initiales(nom: string) {
-  return nom.split(" ").filter(Boolean).map((mot) => mot[0]).slice(0, 2).join("").toUpperCase();
-}
-
-const AVATAR_PAR_TYPE: Record<Conversation["type"], string> = {
-  privee: "bg-[#5B5447]",
-  groupe: "bg-gold-500 text-navy-950",
-  canal: "bg-navy-950",
-};
-
-function ListeConversations({
-  conversations,
-  nomAffiche,
-  dernierMessage,
-  nombreNonLus,
-  utilisateurId,
-}: {
-  conversations: Conversation[];
-  nomAffiche: (c: Conversation) => string;
-  dernierMessage: (id: string) => Message | null;
-  nombreNonLus: (id: string) => number;
-  utilisateurId: string;
-}) {
-  if (conversations.length === 0) {
-    return (
-      <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
-        Aucune conversation pour l&apos;instant.
-      </p>
-    );
-  }
-
-  return (
-    <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
-      {conversations.map((conversation) => {
-        const dernier = dernierMessage(conversation.id);
-        const nonLus = nombreNonLus(conversation.id);
-        const nom = nomAffiche(conversation);
-        return (
-          <Link
-            key={conversation.id}
-            href={`/messagerie/${conversation.id}`}
-            className="flex items-center gap-3 border-t border-paper-200 px-4 py-3 first:border-t-0 hover:bg-paper-50"
-          >
-            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${AVATAR_PAR_TYPE[conversation.type]}`}>
-              {initiales(nom)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="truncate font-medium text-[#1c2029]">{nom}</span>
-                {conversation.type !== "privee" && (
-                  <Badge
-                    texte={LABEL_TYPE_CONVERSATION[conversation.type]}
-                    classesCouleur="bg-paper-50 text-paper-muted border-paper-200"
-                  />
-                )}
-              </div>
-              {dernier && (
-                <p className="truncate text-sm text-paper-muted">
-                  {dernier.auteur_id === utilisateurId ? "Vous : " : ""}
-                  {dernier.supprime_at ? "Message supprimé par son auteur" : dernier.contenu}
-                </p>
-              )}
-            </div>
-            {nonLus > 0 && (
-              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-700 px-1.5 text-xs font-semibold text-white">
-                {nonLus}
-              </span>
-            )}
-          </Link>
-        );
-      })}
-    </div>
-  );
-}

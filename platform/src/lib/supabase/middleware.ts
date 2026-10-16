@@ -35,7 +35,10 @@ export async function mettreAJourSession(requete: NextRequest) {
 
   if (!user && !cheminPublic) {
     const urlConnexion = requete.nextUrl.clone();
+    const cheminDemande = urlConnexion.pathname + urlConnexion.search;
     urlConnexion.pathname = "/login";
+    urlConnexion.search = "";
+    if (cheminDemande !== "/") urlConnexion.searchParams.set("redirect", cheminDemande);
     return NextResponse.redirect(urlConnexion);
   }
 
