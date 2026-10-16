@@ -35,19 +35,19 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5">
-      <div className="mb-4 flex gap-2 text-sm">
+    <div className="rounded-xl border border-paper-200 bg-white p-6 shadow-sm">
+      <div className="mb-5 inline-flex rounded-full border border-paper-200 bg-paper-50 p-1 text-sm">
         <button
           type="button"
           onClick={() => setMode("privee")}
-          className={`rounded-md px-3 py-1.5 font-medium ${mode === "privee" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
+          className={`rounded-full px-4 py-2 font-semibold transition-colors ${mode === "privee" ? "bg-navy-950 text-white" : "text-paper-muted"}`}
         >
           Conversation privée
         </button>
         <button
           type="button"
           onClick={() => setMode("groupe")}
-          className={`rounded-md px-3 py-1.5 font-medium ${mode === "groupe" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
+          className={`rounded-full px-4 py-2 font-semibold transition-colors ${mode === "groupe" ? "bg-navy-950 text-white" : "text-paper-muted"}`}
         >
           Groupe de travail
         </button>
@@ -56,8 +56,8 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
       {mode === "privee" ? (
         <form action={demarrerPrivee} className="space-y-4">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">Destinataire</span>
-            <select name="destinataire" required defaultValue="" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
+            <span className="mb-2 block font-semibold text-paper-muted">Destinataire</span>
+            <select name="destinataire" required defaultValue="" className="w-full rounded-md border border-paper-200 bg-paper-50 px-3 py-2.5 text-sm">
               <option value="" disabled>
                 Choisir un agent…
               </option>
@@ -72,7 +72,7 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
           <button
             type="submit"
             disabled={enCours}
-            className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            className="w-full rounded-md bg-navy-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy-900 disabled:opacity-50"
           >
             {enCours ? "Ouverture…" : "Ouvrir la conversation"}
           </button>
@@ -80,15 +80,20 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
       ) : (
         <form action={demarrerGroupe} className="space-y-4">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">Objet du groupe</span>
-            <input name="titre" required placeholder="Ex. Préparation de l'audit annuel" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <span className="mb-2 block font-semibold text-paper-muted">Objet du groupe</span>
+            <input name="titre" required placeholder="Ex. Préparation de l'audit annuel" className="w-full rounded-md border border-paper-200 px-3 py-2.5 text-sm" />
           </label>
-          <fieldset className="max-h-64 overflow-y-auto rounded-md border border-slate-200 p-2">
-            <legend className="px-1 text-sm font-medium text-slate-700">Participants (60 au plus)</legend>
+          <fieldset className="max-h-64 overflow-y-auto rounded-md border border-paper-200">
+            <legend className="sr-only">Participants (60 au plus)</legend>
+            <div className="flex items-center justify-between border-b border-paper-200 bg-paper-50 px-3 py-1.5 text-xs font-semibold text-paper-muted">
+              <span>Participants</span>
+              <span>60 au plus</span>
+            </div>
             {profils.map((p) => (
-              <label key={p.id} className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-slate-50">
-                <input type="checkbox" name="participants" value={p.id} className="rounded border-slate-300" />
-                {p.nom_complet} — {LABEL_ROLE[p.role]} · {p.departement}
+              <label key={p.id} className="flex items-center gap-2.5 border-b border-paper-200 px-3 py-2 text-sm last:border-b-0 hover:bg-paper-50">
+                <input type="checkbox" name="participants" value={p.id} className="rounded border-paper-200 accent-navy-950" />
+                <span className="text-[#1c2029]">{p.nom_complet}</span>
+                <span className="text-paper-soft">— {LABEL_ROLE[p.role]} · {p.departement}</span>
               </label>
             ))}
           </fieldset>
@@ -96,7 +101,7 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
           <button
             type="submit"
             disabled={enCours}
-            className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            className="w-full rounded-md bg-navy-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy-900 disabled:opacity-50"
           >
             {enCours ? "Création…" : "Créer le groupe"}
           </button>

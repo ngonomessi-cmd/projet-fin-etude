@@ -19,7 +19,7 @@ export function ArchiverBouton({ conversationId, archivee }: { conversationId: s
     <button
       onClick={basculer}
       disabled={enCours}
-      className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+      className="rounded-md border border-paper-200 px-3 py-1.5 text-sm font-medium text-paper-muted hover:bg-paper-50 disabled:opacity-50"
     >
       {archivee ? "Désarchiver" : "Archiver"}
     </button>

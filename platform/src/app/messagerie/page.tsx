@@ -89,55 +89,70 @@ export default async function PageMessagerie() {
   const archivees = conversationsTriees.filter((c) => mesParticipations.get(c.id)?.archivee);
 
   return (
-    <>
+    <div className="flex min-h-screen">
       <NavBar />
-      <main className="mx-auto max-w-3xl px-4 py-6">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-slate-900">Messagerie interne</h1>
-            <p className="text-sm text-slate-500">
-              Conversations privées, groupes de travail et canaux officiels — visibles uniquement par leurs
-              participants.
-            </p>
-          </div>
-          <Link
-            href="/messagerie/nouvelle"
-            className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-          >
-            Nouvelle conversation
-          </Link>
-        </div>
-
-        {profil.role === "administrateur" && parametres && <ParametresRetention dureeActuelle={parametres.duree_conservation_ans} />}
-
-        <ListeConversations
-          conversations={actives}
-          nomAffiche={nomAffiche}
-          dernierMessage={dernierMessage}
-          nombreNonLus={nombreNonLus}
-          utilisateurId={user.id}
-        />
-
-        {archivees.length > 0 && (
-          <details className="mt-6">
-            <summary className="cursor-pointer text-sm font-medium text-slate-500">
-              Archivées ({archivees.length})
-            </summary>
-            <div className="mt-2">
-              <ListeConversations
-                conversations={archivees}
-                nomAffiche={nomAffiche}
-                dernierMessage={dernierMessage}
-                nombreNonLus={nombreNonLus}
-                utilisateurId={user.id}
-              />
+      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h1 className="font-serif text-2xl font-semibold">Messagerie</h1>
+              <p className="text-sm text-paper-muted">
+                Conversations privées, groupes de travail et canaux officiels — visibles uniquement par leurs
+                participants.
+              </p>
             </div>
-          </details>
-        )}
+            <Link
+              href="/messagerie/nouvelle"
+              className="flex shrink-0 items-center gap-2 rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Nouvelle conversation
+            </Link>
+          </div>
+
+          {profil.role === "administrateur" && parametres && <ParametresRetention dureeActuelle={parametres.duree_conservation_ans} />}
+
+          <ListeConversations
+            conversations={actives}
+            nomAffiche={nomAffiche}
+            dernierMessage={dernierMessage}
+            nombreNonLus={nombreNonLus}
+            utilisateurId={user.id}
+          />
+
+          {archivees.length > 0 && (
+            <details className="mt-6">
+              <summary className="cursor-pointer text-sm font-medium text-paper-muted">
+                Archivées ({archivees.length})
+              </summary>
+              <div className="mt-2">
+                <ListeConversations
+                  conversations={archivees}
+                  nomAffiche={nomAffiche}
+                  dernierMessage={dernierMessage}
+                  nombreNonLus={nombreNonLus}
+                  utilisateurId={user.id}
+                />
+              </div>
+            </details>
+          )}
+        </div>
       </main>
-    </>
+    </div>
   );
 }
+
+function initiales(nom: string) {
+  return nom.split(" ").filter(Boolean).map((mot) => mot[0]).slice(0, 2).join("").toUpperCase();
+}
+
+const AVATAR_PAR_TYPE: Record<Conversation["type"], string> = {
+  privee: "bg-[#5B5447]",
+  groupe: "bg-gold-500 text-navy-950",
+  canal: "bg-navy-950",
+};
 
 function ListeConversations({
   conversations,
@@ -154,39 +169,46 @@ function ListeConversations({
 }) {
   if (conversations.length === 0) {
     return (
-      <p className="rounded-md border border-slate-200 bg-white p-6 text-sm text-slate-500">
+      <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
         Aucune conversation pour l&apos;instant.
       </p>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
       {conversations.map((conversation) => {
         const dernier = dernierMessage(conversation.id);
         const nonLus = nombreNonLus(conversation.id);
+        const nom = nomAffiche(conversation);
         return (
           <Link
             key={conversation.id}
             href={`/messagerie/${conversation.id}`}
-            className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 first:border-t-0 hover:bg-slate-50"
+            className="flex items-center gap-3 border-t border-paper-200 px-4 py-3 first:border-t-0 hover:bg-paper-50"
           >
-            <div className="min-w-0">
+            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${AVATAR_PAR_TYPE[conversation.type]}`}>
+              {initiales(nom)}
+            </div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="truncate font-medium text-slate-900">{nomAffiche(conversation)}</span>
+                <span className="truncate font-medium text-[#1c2029]">{nom}</span>
                 {conversation.type !== "privee" && (
-                  <Badge texte={LABEL_TYPE_CONVERSATION[conversation.type]} classesCouleur="bg-slate-100 text-slate-600 border-slate-300" />
+                  <Badge
+                    texte={LABEL_TYPE_CONVERSATION[conversation.type]}
+                    classesCouleur="bg-paper-50 text-paper-muted border-paper-200"
+                  />
                 )}
               </div>
               {dernier && (
-                <p className="truncate text-sm text-slate-500">
+                <p className="truncate text-sm text-paper-muted">
                   {dernier.auteur_id === utilisateurId ? "Vous : " : ""}
                   {dernier.supprime_at ? "Message supprimé par son auteur" : dernier.contenu}
                 </p>
               )}
             </div>
             {nonLus > 0 && (
-              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white">
+              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-700 px-1.5 text-xs font-semibold text-white">
                 {nonLus}
               </span>
             )}

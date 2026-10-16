@@ -14,10 +14,7 @@ export function SignOutButton() {
   }
 
   return (
-    <button
-      onClick={deconnecter}
-      className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
-    >
+    <button onClick={deconnecter} className="text-xs text-white/55 hover:text-white/85">
       Déconnexion
     </button>
   );

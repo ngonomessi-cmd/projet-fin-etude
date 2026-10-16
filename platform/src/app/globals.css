@@ -1,6 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap");
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
+
+  --color-navy-950: #0b1220;
+  --color-navy-900: #111a2e;
+  --color-navy-800: #161f34;
+  --color-navy-line: rgba(255, 255, 255, 0.1);
+
+  --color-gold-50: #f8f3e7;
+  --color-gold-100: #f3eada;
+  --color-gold-500: #b8923f;
+  --color-gold-600: #9a7a32;
+  --color-gold-900: #4a3a19;
+
+  --color-paper-50: #f6f5f1;
+  --color-paper-100: #efece4;
+  --color-paper-200: #e7e3d8;
+  --color-paper-muted: #716c60;
+  --color-paper-soft: #9a968a;
+}
+
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--color-paper-50);
+  color: #1c2029;
+  font-family: var(--font-sans);
 }

@@ -34,48 +34,85 @@ export default function PageConnexion() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4">
-      <h1 className="mb-1 text-2xl font-semibold text-slate-900">GED sécurisée — KHS Bank</h1>
-      <p className="mb-6 text-sm text-slate-600">
-        Gestion Électronique de Documents sécurisée : démonstration du Lot F (classification, RBAC —
-        contrôle d&apos;accès basé sur les rôles —, workflow de validation, journal d&apos;audit).
-      </p>
+    <main className="flex min-h-screen">
+      <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
+            <span className="font-serif text-lg font-bold text-navy-950">K</span>
+          </div>
+          <div>
+            <div className="font-serif text-base leading-tight font-semibold">KHS Bank</div>
+            <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+          </div>
+        </div>
+        <div>
+          <h1 className="mb-3 font-serif text-3xl leading-tight font-semibold">
+            Gestion électronique des documents, sous contrôle.
+          </h1>
+          <p className="max-w-sm text-sm leading-relaxed text-white/60">
+            Classification, RBAC (contrôle d&apos;accès basé sur les rôles), workflow de validation et
+            journal d&apos;audit immuable — entièrement portés par les policies RLS (Row Level Security)
+            de la base de données.
+          </p>
+        </div>
+        <p className="text-xs text-white/35">Démonstration du Lot F — Audit de sécurité et GED sécurisée.</p>
+      </div>
 
-      <form action={soumettre} className="space-y-3 rounded-lg border border-slate-200 bg-white p-5">
-        {mode === "inscription" && (
-          <>
-            <Champ nom="nom_complet" libelle="Nom complet" requis />
-            <Champ nom="departement" libelle="Département" requis placeholder="ex. Conformité, Crédit, Audit" />
-          </>
-        )}
-        <Champ nom="email" libelle="E-mail" type="email" requis />
-        <Champ nom="mot_de_passe" libelle="Mot de passe" type="password" requis />
+      <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
+        <div className="mx-auto w-full max-w-sm">
+          <div className="mb-6 flex items-center gap-2.5 lg:hidden">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
+              <span className="font-serif text-sm font-bold text-navy-950">K</span>
+            </div>
+            <span className="font-serif text-base font-semibold">GED sécurisée — KHS Bank</span>
+          </div>
 
-        {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+          <h2 className="mb-1 font-serif text-xl font-semibold">
+            {mode === "connexion" ? "Connexion à l'Espace Agents" : "Créer un compte"}
+          </h2>
+          <p className="mb-6 text-sm text-paper-muted">
+            {mode === "connexion"
+              ? "Accédez à vos documents, à la messagerie interne et au journal d'audit."
+              : "Nouveau compte créé avec le rôle « Lecteur » par défaut, promu ensuite par un administrateur."}
+          </p>
 
-        <button
-          type="submit"
-          disabled={enCours}
-          className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-        >
-          {mode === "connexion" ? "Se connecter" : "Créer le compte"}
-        </button>
-      </form>
+          <form action={soumettre} className="space-y-3 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
+            {mode === "inscription" && (
+              <>
+                <Champ nom="nom_complet" libelle="Nom complet" requis />
+                <Champ nom="departement" libelle="Département" requis placeholder="ex. Conformité, Crédit, Audit" />
+              </>
+            )}
+            <Champ nom="email" libelle="E-mail" type="email" requis />
+            <Champ nom="mot_de_passe" libelle="Mot de passe" type="password" requis />
 
-      <button
-        onClick={() => {
-          setErreur(null);
-          setMode(mode === "connexion" ? "inscription" : "connexion");
-        }}
-        className="mt-4 text-sm text-slate-600 underline"
-      >
-        {mode === "connexion" ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
-      </button>
+            {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
-      <p className="mt-6 text-xs text-slate-400">
-        Nouveau compte créé avec le rôle « Lecteur » par défaut (principe du moindre privilège) ; un
-        administrateur doit ensuite vous attribuer le rôle adapté dans « Utilisateurs ».
-      </p>
+            <button
+              type="submit"
+              disabled={enCours}
+              className="w-full rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900 disabled:opacity-50"
+            >
+              {mode === "connexion" ? "Se connecter" : "Créer le compte"}
+            </button>
+          </form>
+
+          <button
+            onClick={() => {
+              setErreur(null);
+              setMode(mode === "connexion" ? "inscription" : "connexion");
+            }}
+            className="mt-4 text-sm text-gold-600 hover:underline"
+          >
+            {mode === "connexion" ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
+          </button>
+
+          <p className="mt-6 text-xs text-paper-soft">
+            Nouveau compte créé avec le rôle « Lecteur » par défaut (principe du moindre privilège) ; un
+            administrateur doit ensuite vous attribuer le rôle adapté dans « Utilisateurs ».
+          </p>
+        </div>
+      </div>
     </main>
   );
 }
@@ -95,13 +132,13 @@ function Champ({
 }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1 block font-medium text-slate-700">{libelle}</span>
+      <span className="mb-1 block font-medium text-[#1c2029]">{libelle}</span>
       <input
         name={nom}
         type={type}
         required={requis}
         placeholder={placeholder}
-        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+        className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
       />
     </label>
   );

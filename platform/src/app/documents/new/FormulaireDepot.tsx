@@ -16,20 +16,20 @@ export function FormulaireDepot() {
   }
 
   return (
-    <form action={soumettre} className="space-y-4 rounded-lg border border-slate-200 bg-white p-5">
+    <form action={soumettre} className="space-y-4 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-slate-700">Titre</span>
-        <input name="titre" required className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+        <span className="mb-1 block font-medium text-[#1c2029]">Titre</span>
+        <input name="titre" required className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm" />
       </label>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-slate-700">Description</span>
-        <textarea name="description" rows={3} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+        <span className="mb-1 block font-medium text-[#1c2029]">Description</span>
+        <textarea name="description" rows={3} className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm" />
       </label>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-slate-700">Classification</span>
-        <select name="classification" required defaultValue="" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
+        <span className="mb-1 block font-medium text-[#1c2029]">Classification</span>
+        <select name="classification" required defaultValue="" className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm">
           <option value="" disabled>
             Choisir un niveau de confidentialité…
           </option>
@@ -40,12 +40,12 @@ export function FormulaireDepot() {
       </label>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-slate-700">Fichier</span>
+        <span className="mb-1 block font-medium text-[#1c2029]">Fichier</span>
         <input
           name="fichier"
           type="file"
           required
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-200 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-300"
+          className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-paper-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#1c2029] hover:file:bg-paper-200"
         />
       </label>
 
@@ -54,7 +54,7 @@ export function FormulaireDepot() {
       <button
         type="submit"
         disabled={enCours}
-        className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+        className="w-full rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900 disabled:opacity-50"
       >
         {enCours ? "Dépôt en cours…" : "Créer le brouillon"}
       </button>

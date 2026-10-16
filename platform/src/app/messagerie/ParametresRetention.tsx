@@ -23,16 +23,16 @@ export function ParametresRetention({ dureeActuelle }: { dureeActuelle: number }
   }
 
   return (
-    <form action={changer} className="mb-4 flex flex-wrap items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-      <span className="text-slate-600">Durée de conservation des messages :</span>
-      <select name="annees" defaultValue={dureeActuelle} disabled={enCours} className="rounded-md border border-slate-300 px-2 py-1 text-sm">
+    <form action={changer} className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-paper-200 bg-paper-50 px-3 py-2 text-sm">
+      <span className="text-paper-muted">Durée de conservation des messages :</span>
+      <select name="annees" defaultValue={dureeActuelle} disabled={enCours} className="rounded-md border border-paper-200 bg-white px-2 py-1 text-sm">
         {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
           <option key={n} value={n}>
             {n} an{n > 1 ? "s" : ""}
           </option>
         ))}
       </select>
-      <button type="submit" disabled={enCours} className="rounded-md bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-50">
+      <button type="submit" disabled={enCours} className="rounded-md bg-navy-950 px-3 py-1 text-xs font-medium text-white hover:bg-navy-900 disabled:opacity-50">
         {enCours ? "…" : "Appliquer"}
       </button>
       {erreur && <span className="text-xs text-red-600">{erreur}</span>}
