@@ -426,7 +426,7 @@ create trigger declencheur_synchronisation_canaux_profil
 -- et des lignes de participation manquantes).
 do $$
 declare
-  v_profil record;
+  v_profil public.profiles;
 begin
   for v_profil in select * from public.profiles loop
     perform public.synchroniser_canaux_profil_manuel(v_profil);
