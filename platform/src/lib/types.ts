@@ -16,6 +16,7 @@ export type Profil = {
   role: RoleUtilisateur;
   created_at: string;
   derniere_activite_at?: string | null;
+  email?: string | null;
 };
 
 export type Document = {
