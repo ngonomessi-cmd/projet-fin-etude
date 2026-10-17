@@ -116,8 +116,8 @@ export default async function PageConversation({ params }: { params: Promise<{ i
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
       <main className="flex min-w-0 flex-1 flex-col">
-        <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-8 py-6">
-          <div className="mb-3 flex items-center justify-between border-b border-paper-200 pb-4">
+        <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-4 sm:px-8 sm:py-6">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 pb-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5B5447] text-xs font-bold text-white">
                 {initiales}

@@ -29,9 +29,9 @@ export default async function PageDocuments() {
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
-      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="font-serif text-2xl font-semibold">Documents</h1>
               <p className="text-sm text-paper-muted">
@@ -42,7 +42,7 @@ export default async function PageDocuments() {
             {peutDeposer && (
               <Link
                 href="/documents/new"
-                className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
+                className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-center text-sm font-medium text-white hover:bg-navy-900"
               >
                 Déposer un document
               </Link>
@@ -54,8 +54,8 @@ export default async function PageDocuments() {
               Aucun document visible pour votre compte.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-paper-50 text-left text-paper-muted">
                   <tr>
                     <th className="px-4 py-2.5 font-medium">Titre</th>

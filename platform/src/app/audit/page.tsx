@@ -19,7 +19,7 @@ export default async function PageAudit() {
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
-      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-4xl">
           <h1 className="mb-1 font-serif text-2xl font-semibold">Journal d&apos;audit</h1>
           <p className="mb-6 text-sm text-paper-muted">
@@ -32,8 +32,8 @@ export default async function PageAudit() {
               Aucune entrée visible pour votre rôle.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-paper-50 text-left text-paper-muted">
                   <tr>
                     <th className="px-4 py-2.5 font-medium">Date</th>
