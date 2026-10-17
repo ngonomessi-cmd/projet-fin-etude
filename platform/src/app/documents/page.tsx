@@ -27,7 +27,7 @@ export default async function PageDocuments() {
   const peutDeposer = profil.role === "redacteur" || profil.role === "administrateur";
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
         <div className="mx-auto max-w-5xl">
