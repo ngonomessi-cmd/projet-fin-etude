@@ -23,7 +23,7 @@ export default async function PageNouvelleConversation() {
   const autresProfils = (profilsData ?? []) as Pick<Profil, "id" | "nom_complet" | "departement" | "role">[];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-8 py-12">
         <div className="mx-auto max-w-xl">
