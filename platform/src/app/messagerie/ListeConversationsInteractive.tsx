@@ -78,7 +78,7 @@ function Ligne({ c }: { c: ConversationAffichee }) {
 export function ListeConversationsInteractive({ conversations }: { conversations: ConversationAffichee[] }) {
   const [recherche, setRecherche] = useState("");
   const [filtre, setFiltre] = useState<Filtre>("tout");
-  const [canauxOuverts, setCanauxOuverts] = useState(true);
+  const [canauxOuverts, setCanauxOuverts] = useState(false);
 
   const filtrees = useMemo(() => {
     const texte = recherche.trim().toLowerCase();
