@@ -53,6 +53,7 @@ export default async function PageUtilisateurs() {
               <thead className="bg-paper-50 text-left text-paper-muted">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">Nom</th>
+                  <th className="px-4 py-2.5 font-medium">E-mail</th>
                   <th className="px-4 py-2.5 font-medium">Département</th>
                   <th className="px-4 py-2.5 font-medium">Rôle</th>
                 </tr>
@@ -63,6 +64,7 @@ export default async function PageUtilisateurs() {
                     <td className="px-2 py-1 font-medium text-[#1c2029]">
                       <ChampTexteModifiable utilisateurId={u.id} champ="nom_complet" valeurInitiale={u.nom_complet} />
                     </td>
+                    <td className="px-4 py-2 text-paper-muted">{u.email ?? "—"}</td>
                     <td className="px-2 py-1 text-paper-muted">
                       <ChampTexteModifiable utilisateurId={u.id} champ="departement" valeurInitiale={u.departement} />
                     </td>
