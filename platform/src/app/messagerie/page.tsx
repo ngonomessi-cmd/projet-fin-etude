@@ -3,6 +3,7 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
 import { ParametresRetention } from "./ParametresRetention";
+import { CreerCanalDepartement } from "./CreerCanalDepartement";
 import { ListeConversationsInteractive, type ConversationAffichee } from "./ListeConversationsInteractive";
 import type { Conversation, Message, ParametresMessagerie, ParticipantConversation, Profil } from "@/lib/types";
 
@@ -124,7 +125,12 @@ export default async function PageMessagerie() {
             </Link>
           </div>
 
-          {profil.role === "administrateur" && parametres && <ParametresRetention dureeActuelle={parametres.duree_conservation_ans} />}
+          {profil.role === "administrateur" && (
+            <>
+              {parametres && <ParametresRetention dureeActuelle={parametres.duree_conservation_ans} />}
+              <CreerCanalDepartement />
+            </>
+          )}
 
           <ListeConversationsInteractive conversations={conversationsAffichees} />
         </div>
