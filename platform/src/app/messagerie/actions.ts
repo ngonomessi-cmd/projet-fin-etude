@@ -238,3 +238,16 @@ export async function changerDureeConservationAction(annees: number): Promise<Re
   revalidatePath("/messagerie");
   return { erreur: null };
 }
+
+export async function creerCanalDepartementAction(departement: string): Promise<ResultatMessagerie> {
+  const supabase = await creerClientServeur();
+
+  const nom = departement.trim();
+  if (!nom) return { erreur: "Le département ne peut pas être vide." };
+
+  const { error } = await supabase.rpc("creer_canal_departement", { p_departement: nom });
+  if (error) return { erreur: error.message };
+
+  revalidatePath("/messagerie");
+  return { erreur: null };
+}
