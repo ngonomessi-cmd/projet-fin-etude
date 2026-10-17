@@ -39,9 +39,11 @@ export function ConversationTempsReel({
   const [messages, setMessages] = useState<MessageAffiche[]>(messagesInitiaux);
   const [erreurEnvoi, setErreurEnvoi] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
+  const [nomFichierChoisi, setNomFichierChoisi] = useState<string | null>(null);
   const supabaseRef = useRef(creerClientNavigateur());
   const formRef = useRef<HTMLFormElement>(null);
   const finRef = useRef<HTMLDivElement>(null);
+  const fichierRef = useRef<HTMLInputElement>(null);
 
   function nomAuteur(auteurId: string) {
     return auteurId === utilisateurId ? "Vous" : (nomsParId[auteurId] ?? "Agent");
@@ -131,6 +133,7 @@ export function ConversationTempsReel({
       return;
     }
     formRef.current?.reset();
+    setNomFichierChoisi(null);
   }
 
   function surToucheTextarea(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -173,14 +176,24 @@ export function ConversationTempsReel({
             <div className="mt-1.5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5 text-paper-muted">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
-                  </svg>
                   <input
+                    ref={fichierRef}
                     name="fichier"
                     type="file"
-                    className="max-w-40 text-xs text-paper-muted file:mr-2 file:rounded file:border-0 file:bg-paper-100 file:px-2 file:py-1 file:text-xs file:font-medium file:text-[#1c2029] hover:file:bg-paper-200"
+                    className="hidden"
+                    onChange={(e) => setNomFichierChoisi(e.target.files?.[0]?.name ?? null)}
                   />
+                  <button
+                    type="button"
+                    onClick={() => fichierRef.current?.click()}
+                    className="flex items-center gap-1.5 rounded border-0 bg-paper-100 px-2 py-1 text-xs font-medium text-[#1c2029] hover:bg-paper-200"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />
+                    </svg>
+                    Joindre un fichier
+                  </button>
+                  {nomFichierChoisi && <span className="max-w-32 truncate text-xs">{nomFichierChoisi}</span>}
                 </div>
                 {peutUrgent && (
                   <label className="flex items-center gap-1.5 text-xs font-semibold text-red-700">
