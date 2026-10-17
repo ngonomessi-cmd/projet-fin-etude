@@ -18,7 +18,7 @@ export default async function PageUtilisateurs() {
     return (
       <div className="flex min-h-screen flex-col lg:flex-row">
         <NavBar />
-        <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
           <div className="mx-auto max-w-3xl">
             <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               Accès réservé au rôle Administrateur. Cette page serait de toute façon vide pour vous : la
@@ -38,7 +38,7 @@ export default async function PageUtilisateurs() {
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
-      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-1 font-serif text-2xl font-semibold">Utilisateurs</h1>
           <p className="mb-6 text-sm text-paper-muted">
@@ -48,8 +48,8 @@ export default async function PageUtilisateurs() {
             fonctions PostgreSQL changer_role_utilisateur et modifier_profil_utilisateur.
           </p>
 
-          <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead className="bg-paper-50 text-left text-paper-muted">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">Nom</th>

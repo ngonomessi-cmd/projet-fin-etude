@@ -46,7 +46,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
-      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-3xl">
           <Link href="/documents" className="mb-4 inline-block text-sm text-paper-muted hover:text-gold-600 hover:underline">
             ← Retour à la liste

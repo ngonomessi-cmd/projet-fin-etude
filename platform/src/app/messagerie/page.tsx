@@ -104,9 +104,9 @@ export default async function PageMessagerie() {
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       <NavBar />
-      <main className="min-w-0 flex-1 overflow-y-auto px-8 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-2xl">
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="font-serif text-2xl font-semibold">Messagerie</h1>
               <p className="text-sm text-paper-muted">
@@ -116,7 +116,7 @@ export default async function PageMessagerie() {
             </div>
             <Link
               href="/messagerie/nouvelle"
-              className="flex shrink-0 items-center gap-2 rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
+              className="flex shrink-0 items-center justify-center gap-2 rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M12 5v14M5 12h14" />
