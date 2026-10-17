@@ -146,19 +146,21 @@ export default async function PageConversation({ params }: { params: Promise<{ i
                 </p>
               </div>
             </div>
-            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-              <PanneauDetails
-                participants={participants.map((p) => ({
-                  profilId: p.profil_id,
-                  nom: p.profiles?.nom_complet ?? "Agent",
-                  role: p.profiles?.role ?? "lecteur",
-                }))}
-                dernierMessagePropre={[...messages].reverse().find((m) => m.auteur_id === user.id) ?? null}
-                statuts={statuts}
-                utilisateurId={user.id}
-              />
-              <SourdineBouton conversationId={id} sourdine={maParticipation.sourdine} />
-              <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+            <div className="flex w-full items-center gap-2 sm:w-auto">
+              <div className="flex flex-1 flex-wrap items-center justify-center gap-2 sm:flex-none sm:justify-start">
+                <PanneauDetails
+                  participants={participants.map((p) => ({
+                    profilId: p.profil_id,
+                    nom: p.profiles?.nom_complet ?? "Agent",
+                    role: p.profiles?.role ?? "lecteur",
+                  }))}
+                  dernierMessagePropre={[...messages].reverse().find((m) => m.auteur_id === user.id) ?? null}
+                  statuts={statuts}
+                  utilisateurId={user.id}
+                />
+                <SourdineBouton conversationId={id} sourdine={maParticipation.sourdine} />
+                <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+              </div>
               {conversation.type === "canal" && profil.role === "administrateur" && (
                 <GererCanalBouton conversationId={id} titreActuel={conversation.titre ?? titre} />
               )}
