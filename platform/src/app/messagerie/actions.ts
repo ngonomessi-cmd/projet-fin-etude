@@ -251,3 +251,27 @@ export async function creerCanalDepartementAction(departement: string): Promise<
   revalidatePath("/messagerie");
   return { erreur: null };
 }
+
+export async function renommerCanalAction(conversationId: string, nouveauTitre: string): Promise<ResultatMessagerie> {
+  const supabase = await creerClientServeur();
+
+  const titre = nouveauTitre.trim();
+  if (!titre) return { erreur: "Le titre ne peut pas être vide." };
+
+  const { error } = await supabase.rpc("renommer_canal", { p_conversation_id: conversationId, p_nouveau_titre: titre });
+  if (error) return { erreur: error.message };
+
+  revalidatePath("/messagerie");
+  revalidatePath(`/messagerie/${conversationId}`);
+  return { erreur: null };
+}
+
+export async function supprimerCanalAction(conversationId: string): Promise<ResultatMessagerie> {
+  const supabase = await creerClientServeur();
+
+  const { error } = await supabase.rpc("supprimer_canal", { p_conversation_id: conversationId });
+  if (error) return { erreur: error.message };
+
+  revalidatePath("/messagerie");
+  return { erreur: null };
+}

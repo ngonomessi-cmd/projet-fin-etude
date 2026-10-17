@@ -6,6 +6,7 @@ import { marquerConversationLueAction } from "../actions";
 import { ConversationTempsReel } from "./ConversationTempsReel";
 import { ArchiverBouton } from "./ArchiverBouton";
 import { SourdineBouton } from "./SourdineBouton";
+import { GererCanalBouton } from "./GererCanalBouton";
 import { PanneauDetails } from "./PanneauDetails";
 import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
 import type { Conversation, Message, ParticipantConversation, PieceJointeMessage, Profil, StatutMessage } from "@/lib/types";
@@ -158,6 +159,9 @@ export default async function PageConversation({ params }: { params: Promise<{ i
               />
               <SourdineBouton conversationId={id} sourdine={maParticipation.sourdine} />
               <ArchiverBouton conversationId={id} archivee={maParticipation.archivee} />
+              {conversation.type === "canal" && profil.role === "administrateur" && (
+                <GererCanalBouton conversationId={id} titreActuel={conversation.titre ?? titre} />
+              )}
             </div>
           </div>
 
