@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
@@ -118,11 +119,20 @@ export default async function PageConversation({ params }: { params: Promise<{ i
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-4 sm:px-8 sm:py-6">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 pb-4">
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <Link
+                href="/messagerie"
+                aria-label="Retour à la messagerie"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-paper-muted hover:bg-paper-50 hover:text-[#1c2029]"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </Link>
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5B5447] text-xs font-bold text-white">
                 {initiales}
               </div>
-              <div>
+              <div className="min-w-0">
                 <h1 className="font-serif text-lg font-semibold">{titre}</h1>
                 <p className="text-xs text-paper-muted">
                   {LABEL_TYPE_CONVERSATION[conversation.type]}
