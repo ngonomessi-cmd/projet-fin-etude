@@ -36,9 +36,49 @@ const FILTRES: { cle: Filtre; label: string }[] = [
   { cle: "archivees", label: "Archivées" },
 ];
 
+function Ligne({ c }: { c: ConversationAffichee }) {
+  return (
+    <Link
+      href={`/messagerie/${c.id}`}
+      className="flex items-center gap-3 border-t border-paper-200 px-4 py-3 first:border-t-0 hover:bg-paper-50"
+    >
+      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${AVATAR_PAR_TYPE[c.type]}`}>
+        {initiales(c.nom)}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="truncate font-medium text-[#1c2029]">{c.nom}</span>
+          {c.type !== "privee" && (
+            <Badge texte={LABEL_TYPE_CONVERSATION[c.type]} classesCouleur="bg-paper-50 text-paper-muted border-paper-200" />
+          )}
+          {c.sourdine && (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-paper-soft)" strokeWidth="2" aria-hidden="true">
+              <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          )}
+        </div>
+        {c.dernierApercu && (
+          <p className="truncate text-sm text-paper-muted">
+            {c.dernierEstMoi ? "Vous : " : ""}
+            {c.dernierApercu}
+          </p>
+        )}
+      </div>
+      {c.nonLus > 0 && !c.sourdine && (
+        <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-700 px-1.5 text-xs font-semibold text-white">
+          {c.nonLus}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 export function ListeConversationsInteractive({ conversations }: { conversations: ConversationAffichee[] }) {
   const [recherche, setRecherche] = useState("");
   const [filtre, setFiltre] = useState<Filtre>("tout");
+  const [canauxOuverts, setCanauxOuverts] = useState(true);
 
   const filtrees = useMemo(() => {
     const texte = recherche.trim().toLowerCase();
@@ -51,6 +91,13 @@ export function ListeConversationsInteractive({ conversations }: { conversations
       return true;
     });
   }, [conversations, recherche, filtre]);
+
+  // Les canaux officiels (department + canal général) sont regroupés dans
+  // une section repliable, séparée des conversations privées/groupes — cf.
+  // maquette validée. Inutile de les distinguer sur l'onglet "Canaux" (déjà
+  // filtré à 100% de canaux).
+  const canaux = filtre === "canaux" ? [] : filtrees.filter((c) => c.type === "canal");
+  const autres = filtre === "canaux" ? filtrees : filtrees.filter((c) => c.type !== "canal");
 
   return (
     <div>
@@ -87,44 +134,53 @@ export function ListeConversationsInteractive({ conversations }: { conversations
           {recherche ? "Aucune conversation ne correspond à votre recherche." : "Aucune conversation pour l'instant."}
         </p>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
-          {filtrees.map((c) => (
-            <Link
-              key={c.id}
-              href={`/messagerie/${c.id}`}
-              className="flex items-center gap-3 border-t border-paper-200 px-4 py-3 first:border-t-0 hover:bg-paper-50"
-            >
-              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${AVATAR_PAR_TYPE[c.type]}`}>
-                {initiales(c.nom)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="truncate font-medium text-[#1c2029]">{c.nom}</span>
-                  {c.type !== "privee" && (
-                    <Badge texte={LABEL_TYPE_CONVERSATION[c.type]} classesCouleur="bg-paper-50 text-paper-muted border-paper-200" />
-                  )}
-                  {c.sourdine && (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-paper-soft)" strokeWidth="2" aria-hidden="true">
-                      <path d="M11 5 6 9H2v6h4l5 4V5Z" />
-                      <line x1="23" y1="9" x2="17" y2="15" />
-                      <line x1="17" y1="9" x2="23" y2="15" />
-                    </svg>
-                  )}
+        <div className="flex flex-col gap-4">
+          {canaux.length > 0 && (
+            <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
+              <button
+                onClick={() => setCanauxOuverts((v) => !v)}
+                className="flex w-full items-center gap-2.5 bg-paper-50 px-4 py-3 text-left"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0b1220" strokeWidth="2" aria-hidden="true">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+                </svg>
+                <span className="flex-1 text-sm font-bold text-[#1c2029]">Canaux officiels</span>
+                <span className="rounded-full bg-paper-200 px-2 py-0.5 text-[11px] font-bold text-paper-muted">{canaux.length}</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--color-paper-muted)"
+                  strokeWidth="2.3"
+                  aria-hidden="true"
+                  style={{ transform: canauxOuverts ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 160ms ease" }}
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              {canauxOuverts && (
+                <div>
+                  {canaux.map((c) => (
+                    <Ligne key={c.id} c={c} />
+                  ))}
                 </div>
-                {c.dernierApercu && (
-                  <p className="truncate text-sm text-paper-muted">
-                    {c.dernierEstMoi ? "Vous : " : ""}
-                    {c.dernierApercu}
-                  </p>
-                )}
-              </div>
-              {c.nonLus > 0 && !c.sourdine && (
-                <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-700 px-1.5 text-xs font-semibold text-white">
-                  {c.nonLus}
-                </span>
               )}
-            </Link>
-          ))}
+            </div>
+          )}
+
+          {autres.length > 0 && (
+            <div>
+              {canaux.length > 0 && (
+                <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wide text-paper-soft">Messages privés</p>
+              )}
+              <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
+                {autres.map((c) => (
+                  <Ligne key={c.id} c={c} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
