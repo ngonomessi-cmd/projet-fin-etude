@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { Badge } from "@/components/Badge";
-import { COULEUR_CLASSIFICATION, COULEUR_STATUT, LABEL_CLASSIFICATION, LABEL_STATUT } from "@/lib/labels";
+import { DocumentsParDepartement, type GroupeDepartement } from "./DocumentsParDepartement";
 import type { Document, Profil } from "@/lib/types";
 
 export default async function PageDocuments() {
@@ -18,13 +17,31 @@ export default async function PageDocuments() {
   // Aucun filtre ici : la liste visible est entièrement déterminée par la
   // policy RLS "lecture_documents_selon_classification_et_role" côté base —
   // la même requête renvoie un résultat différent selon le rôle connecté.
-  const { data: documentsData } = await supabase
-    .from("documents")
-    .select("*")
-    .order("updated_at", { ascending: false });
+  const [{ data: documentsData }, { data: profilsData }] = await Promise.all([
+    supabase.from("documents").select("*").order("updated_at", { ascending: false }),
+    supabase.from("profiles").select("departement"),
+  ]);
   const documents = (documentsData ?? []) as Document[];
 
   const peutDeposer = profil.role === "redacteur" || profil.role === "administrateur";
+
+  // Un dossier par département, créé automatiquement — même principe que les
+  // canaux de diffusion : tout département connu (via les profils) obtient
+  // son dossier, même sans document dedans pour l'instant.
+  const departements = new Set<string>();
+  for (const p of (profilsData ?? []) as { departement: string }[]) {
+    if (p.departement?.trim()) departements.add(p.departement.trim());
+  }
+  for (const d of documents) {
+    if (d.departement?.trim()) departements.add(d.departement.trim());
+  }
+
+  const groupes: GroupeDepartement[] = [...departements]
+    .sort((a, b) => a.localeCompare(b, "fr"))
+    .map((departement) => ({
+      departement,
+      documents: documents.filter((d) => d.departement === departement),
+    }));
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -49,45 +66,12 @@ export default async function PageDocuments() {
             )}
           </div>
 
-          {documents.length === 0 ? (
+          {groupes.length === 0 ? (
             <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
               Aucun document visible pour votre compte.
             </p>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
-              <table className="w-full min-w-[640px] text-sm">
-                <thead className="bg-paper-50 text-left text-paper-muted">
-                  <tr>
-                    <th className="px-4 py-2.5 font-medium">Titre</th>
-                    <th className="px-4 py-2.5 font-medium">Classification</th>
-                    <th className="px-4 py-2.5 font-medium">Statut</th>
-                    <th className="px-4 py-2.5 font-medium">Département</th>
-                    <th className="px-4 py-2.5 font-medium">Mis à jour</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {documents.map((doc) => (
-                    <tr key={doc.id} className="border-t border-paper-200 hover:bg-paper-50">
-                      <td className="px-4 py-2.5">
-                        <Link href={`/documents/${doc.id}`} className="font-medium text-[#1c2029] hover:text-gold-600 hover:underline">
-                          {doc.titre}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <Badge texte={LABEL_CLASSIFICATION[doc.classification]} classesCouleur={COULEUR_CLASSIFICATION[doc.classification]} />
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <Badge texte={LABEL_STATUT[doc.statut]} classesCouleur={COULEUR_STATUT[doc.statut]} />
-                      </td>
-                      <td className="px-4 py-2.5 text-paper-muted">{doc.departement}</td>
-                      <td className="px-4 py-2.5 text-paper-soft">
-                        {new Date(doc.updated_at).toLocaleString("fr-FR")}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DocumentsParDepartement groupes={groupes} />
           )}
         </div>
       </main>
