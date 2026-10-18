@@ -2,6 +2,7 @@ import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { DocumentsParDepartement, type GroupeDepartement } from "./DocumentsParDepartement";
+import { GenererFichiersFictifsBouton } from "./GenererFichiersFictifsBouton";
 import type { Document, Profil } from "@/lib/types";
 
 export default async function PageDocuments() {
@@ -56,14 +57,19 @@ export default async function PageDocuments() {
                 que vous voyez dépend uniquement de votre rôle et de votre département.
               </p>
             </div>
-            {peutDeposer && (
-              <Link
-                href="/documents/new"
-                className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-center text-sm font-medium text-white hover:bg-navy-900"
-              >
-                Déposer un document
-              </Link>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {profil.role === "administrateur" && (
+                <GenererFichiersFictifsBouton nombreSansFichier={documents.filter((d) => !d.storage_path).length} />
+              )}
+              {peutDeposer && (
+                <Link
+                  href="/documents/new"
+                  className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-center text-sm font-medium text-white hover:bg-navy-900"
+                >
+                  Déposer un document
+                </Link>
+              )}
+            </div>
           </div>
 
           {groupes.length === 0 ? (
