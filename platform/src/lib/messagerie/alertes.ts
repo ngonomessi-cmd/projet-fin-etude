@@ -1,5 +1,6 @@
 import { creerClientAdmin } from "@/lib/supabase/admin";
 import { LABEL_ROLE } from "@/lib/labels";
+import { NOM_ORGANISATION } from "@/lib/organisation";
 import type { RoleUtilisateur } from "@/lib/types";
 
 // Déclenchée depuis envoyerMessageAction juste après l'insertion réussie
@@ -41,7 +42,7 @@ export async function envoyerAlertesPourMessage(messageId: string): Promise<void
         body: JSON.stringify({
           from: expediteur,
           to: email,
-          subject: "GED KHS Bank — Nouveau message dans votre messagerie interne / New message in your internal messaging",
+          subject: `GED ${NOM_ORGANISATION} — Nouveau message dans votre messagerie interne / New message in your internal messaging`,
           html: `
             <p><strong>Nouveau message</strong> de ${alerte.auteur_nom} (${fonction}) dans « ${alerte.conversation_titre} ».</p>
             <p><a href="${lienConversation}">Ouvrir le message</a></p>

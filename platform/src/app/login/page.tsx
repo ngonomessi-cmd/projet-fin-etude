@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
+import { INITIALE_LOGO, MENTION_CONNEXION, NOM_ORGANISATION } from "@/lib/organisation";
 
 export default function PageConnexion() {
   return (
@@ -51,10 +52,10 @@ function FormulaireConnexion() {
       <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
-            <span className="font-serif text-lg font-bold text-navy-950">K</span>
+            <span className="font-serif text-lg font-bold text-navy-950">{INITIALE_LOGO}</span>
           </div>
           <div>
-            <div className="font-serif text-base leading-tight font-semibold">KHS Bank</div>
+            <div className="font-serif text-base leading-tight font-semibold">{NOM_ORGANISATION}</div>
             <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
           </div>
         </div>
@@ -68,16 +69,16 @@ function FormulaireConnexion() {
             de la base de données.
           </p>
         </div>
-        <p className="text-xs text-white/35">Démonstration du Lot F — Audit de sécurité et GED sécurisée.</p>
+        <p className="text-xs text-white/35">{MENTION_CONNEXION}</p>
       </div>
 
       <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-6 flex items-center gap-2.5 lg:hidden">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
-              <span className="font-serif text-sm font-bold text-navy-950">K</span>
+              <span className="font-serif text-sm font-bold text-navy-950">{INITIALE_LOGO}</span>
             </div>
-            <span className="font-serif text-base font-semibold">GED sécurisée — KHS Bank</span>
+            <span className="font-serif text-base font-semibold">GED sécurisée — {NOM_ORGANISATION}</span>
           </div>
 
           <h2 className="mb-1 font-serif text-xl font-semibold">
