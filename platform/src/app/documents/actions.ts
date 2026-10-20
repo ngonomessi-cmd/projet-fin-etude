@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { genererPdfDocument } from "@/lib/pdf";
 import { LABEL_CLASSIFICATION } from "@/lib/labels";
+import { NOM_ORGANISATION } from "@/lib/organisation";
 import type { Document, Profil } from "@/lib/types";
 
 export type ResultatGenerationFichiers = { erreur: string | null; genere: number };
@@ -41,7 +42,7 @@ export async function genererFichiersDocumentsFictifsAction(): Promise<ResultatG
   for (const document of documents) {
     const pdf = genererPdfDocument({
       titre: document.titre,
-      soustitre: `${LABEL_CLASSIFICATION[document.classification]} - ${document.departement} - KHS Bank`,
+      soustitre: `${LABEL_CLASSIFICATION[document.classification]} - ${document.departement} - ${NOM_ORGANISATION}`,
       paragraphes: [document.description ?? "Document sans description."],
     });
 

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { NOM_ORGANISATION } from "@/lib/organisation";
 
 export const metadata: Metadata = {
-  title: "GED sécurisée — KHS Bank",
+  title: `GED sécurisée — ${NOM_ORGANISATION}`,
   description:
     "Gestion Électronique de Documents sécurisée (démonstration du Lot F) — classification, RBAC, workflow de validation et journal d'audit immuable, via Supabase RLS.",
 };
