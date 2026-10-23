@@ -2,13 +2,8 @@ import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { SIGLE_ORGANISATION } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
+import { BlocPhotoProvisoire } from "@/components/site-public/BlocPhotoProvisoire";
 import type { ActualitePublique } from "@/lib/types";
-
-// Les photos réelles (skyline + drapeau, route de montagne) n'ont pas encore
-// été reçues sous forme de fichier exploitable : bascule à true dès qu'elles
-// sont déposées dans public/images/accueil/ et que le JSX ci-dessous est
-// adapté pour les afficher (cf. échange avec l'utilisateur).
-const PHOTOS_DISPONIBLES = false;
 
 const ICONES_POINTS = [
   <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
@@ -164,9 +159,7 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
             </Link>
           </div>
 
-          {!PHOTOS_DISPONIBLES && (
-            <div className="hidden aspect-[4/3] rounded-xl bg-gradient-to-br from-navy-800 to-navy-950 lg:block" aria-hidden="true" />
-          )}
+          <BlocPhotoProvisoire className="hidden aspect-[4/3] rounded-xl lg:block" />
         </div>
       </section>
 

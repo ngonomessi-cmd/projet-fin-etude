@@ -136,6 +136,13 @@ export const DICTIONNAIRE = {
       cta: "En savoir plus",
     },
     missions: { titre: "Nos missions", intro: "Un mandat centré sur l'investisseur, de la première information jusqu'au suivi des engagements.", items: MISSIONS_FR },
+    missionsBande: {
+      surtitre: "Votre partenaire pour investir au Cameroun",
+      titre: "Construisons ensemble un avenir d'opportunités",
+      description: "L'agence vous accompagne à chaque étape de votre projet d'investissement au Cameroun.",
+      cta: "Découvrir nos services",
+      tagline: "Investir au Cameroun, c'est construire durablement.",
+    },
     services: { titre: "Services aux investisseurs", intro: "Un accompagnement concret, à chaque étape du parcours de l'investisseur.", items: SERVICES_FR },
     pourquoiInvestir: {
       surtitre: "Pourquoi investir au Cameroun ?",
@@ -187,6 +194,13 @@ export const DICTIONNAIRE = {
       cta: "Learn more",
     },
     missions: { titre: "Our missions", intro: "An investor-centred mandate, from first contact through to monitoring commitments.", items: MISSIONS_EN },
+    missionsBande: {
+      surtitre: "Your partner for investing in Cameroon",
+      titre: "Let's build a future of opportunities together",
+      description: "The agency supports you at every stage of your investment project in Cameroon.",
+      cta: "Discover our services",
+      tagline: "Investing in Cameroon means building sustainably.",
+    },
     services: { titre: "Services for investors", intro: "Concrete support at every stage of the investor's journey.", items: SERVICES_EN },
     pourquoiInvestir: {
       surtitre: "Why invest in Cameroon?",
