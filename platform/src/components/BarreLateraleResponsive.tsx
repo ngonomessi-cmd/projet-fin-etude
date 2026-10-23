@@ -7,6 +7,7 @@ import type { Profil } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
 import { NavLinks, type Lien } from "@/components/NavLinks";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
+import { RubanOrganisation } from "@/components/RubanOrganisation";
 import { NOM_ORGANISATION } from "@/lib/organisation";
 
 function initiales(nomComplet: string) {
@@ -34,21 +35,24 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
 
   const contenu = (
     <>
-      <div className="mb-5 flex items-center gap-2.5 border-b border-navy-line px-1.5 pb-8">
-        <LogoOrganisation taille="lg" />
-        <div className="min-w-0">
-          <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
-          <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+      <div className="mb-5 border-b border-navy-line px-1.5 pb-8">
+        <div className="flex items-center gap-2.5">
+          <LogoOrganisation taille="lg" />
+          <div className="min-w-0">
+            <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
+            <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+          </div>
+          <button
+            onClick={() => setOuvert(false)}
+            aria-label="Fermer le menu"
+            className="ml-auto text-white/60 hover:text-white lg:hidden"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <button
-          onClick={() => setOuvert(false)}
-          aria-label="Fermer le menu"
-          className="ml-auto text-white/60 hover:text-white lg:hidden"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
+        <RubanOrganisation className="mt-3" />
       </div>
 
       <NavLinks liens={liens} role={profil?.role ?? null} />

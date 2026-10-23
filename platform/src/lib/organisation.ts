@@ -20,6 +20,22 @@ export const INITIALE_LOGO = (process.env.NEXT_PUBLIC_ORG_LOGO_LETTRE?.trim() ||
 // organisations qui partagent ce même code).
 export const URL_LOGO_ORGANISATION = process.env.NEXT_PUBLIC_ORG_LOGO_URL?.trim() || null;
 
+// Deux couleurs d'ancrage (format hexadécimal), à partir desquelles toute la
+// gamme "navy" (fonds sombres) et "gold" (accents) est générée (cf.
+// src/lib/couleurs.ts) — jamais une dizaine de nuances à choisir à la main.
+// Laissées vides, les couleurs KHS Bank actuelles restent inchangées (aucun
+// calcul n'est fait, au lieu de risquer de les reproduire à l'identique par
+// calcul).
+export const COULEUR_PRIMAIRE = process.env.NEXT_PUBLIC_ORG_COULEUR_PRIMAIRE?.trim() || null;
+export const COULEUR_ACCENT = process.env.NEXT_PUBLIC_ORG_COULEUR_ACCENT?.trim() || null;
+
+// Liseré tricolore optionnel sous le logo (ex. couleurs du drapeau national),
+// une liste de 2 à 4 couleurs séparées par des virgules. Vide par défaut.
+export const RUBAN_COULEURS = (process.env.NEXT_PUBLIC_ORG_COULEUR_RUBAN?.trim() || "")
+  .split(",")
+  .map((c) => c.trim())
+  .filter(Boolean);
+
 // Mention en bas du panneau de la page de connexion — par défaut celle de la
 // démonstration académique KHS Bank ; à remplacer pour un déploiement réel.
 export const MENTION_CONNEXION =
