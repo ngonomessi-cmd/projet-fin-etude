@@ -1,6 +1,7 @@
 "use server";
 
 import { creerClientServeur } from "@/lib/supabase/server";
+import { SIGLE_ORGANISATION } from "@/lib/organisation";
 
 export type ResultatConnexion = { erreur: string | null };
 
@@ -24,7 +25,12 @@ export async function inscrireAction(formData: FormData): Promise<ResultatConnex
   const { error } = await supabase.auth.signUp({
     email,
     password: motDePasse,
-    options: { data: { nom_complet: nomComplet, departement } },
+    // L'organisation n'est jamais choisie par la personne qui s'inscrit :
+    // elle vient du déploiement utilisé (cf. src/lib/organisation.ts), reprise
+    // par le déclencheur gerer_nouvel_utilisateur (migration 0018) pour
+    // peupler profiles.organisation — c'est ce qui isole les données entre
+    // deux organisations hébergées sur la même base Supabase.
+    options: { data: { nom_complet: nomComplet, departement, organisation: SIGLE_ORGANISATION } },
   });
 
   return { erreur: error ? traduireErreurSupabase(error.message) : null };
