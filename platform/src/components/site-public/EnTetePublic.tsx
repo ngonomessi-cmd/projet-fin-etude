@@ -43,8 +43,8 @@ export function EnTetePublic() {
 
   const liens = [
     { href: p || "/", cible: "/", cle: "accueil", label: t.nav.accueil },
-    { href: `${p}/#missions`, cible: "/#missions", cle: "missions", label: t.nav.missions },
-    { href: `${p}/#services`, cible: "/#services", cle: "services", label: t.nav.services },
+    { href: `${p}/missions`, cible: "/missions", cle: "missions", label: t.nav.missions },
+    { href: `${p}/services`, cible: "/services", cle: "services", label: t.nav.services },
     { href: `${p}/actualites`, cible: "/actualites", cle: "actualites", label: t.nav.actualites },
   ] as const;
 

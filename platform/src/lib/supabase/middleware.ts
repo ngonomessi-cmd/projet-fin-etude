@@ -34,6 +34,8 @@ export async function mettreAJourSession(requete: NextRequest) {
     requete.nextUrl.pathname.startsWith("/login") ||
     requete.nextUrl.pathname.startsWith("/auth") ||
     requete.nextUrl.pathname.startsWith("/actualites") ||
+    requete.nextUrl.pathname.startsWith("/missions") ||
+    requete.nextUrl.pathname.startsWith("/services") ||
     requete.nextUrl.pathname.startsWith("/en");
 
   if (!user && !cheminPublic) {
