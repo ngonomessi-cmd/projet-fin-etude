@@ -36,7 +36,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
   const contenu = (
     <>
       <div className="mb-5 border-b border-navy-line px-1.5 pb-8">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-start gap-2.5">
           <LogoOrganisation taille="lg" />
           <div className="min-w-0">
             <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>

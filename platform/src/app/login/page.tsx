@@ -53,7 +53,7 @@ function FormulaireConnexion() {
     <main className="flex min-h-screen">
       <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-start gap-2.5">
             <LogoOrganisation taille="lg" />
             <div className="min-w-0">
               <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
@@ -77,7 +77,7 @@ function FormulaireConnexion() {
 
       <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
         <div className="mx-auto w-full max-w-sm">
-          <div className="mb-6 flex items-center gap-2.5 lg:hidden">
+          <div className="mb-6 flex items-start gap-2.5 lg:hidden">
             <LogoOrganisation taille="sm" />
             <div className="min-w-0">
               <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
