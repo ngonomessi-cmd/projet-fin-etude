@@ -52,7 +52,9 @@ function FormulaireConnexion() {
       <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
-            <span className="font-serif text-lg font-bold text-navy-950">{INITIALE_LOGO}</span>
+            <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-xs" : "text-lg"}`}>
+              {INITIALE_LOGO}
+            </span>
           </div>
           <div className="min-w-0">
             <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
@@ -76,7 +78,9 @@ function FormulaireConnexion() {
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-6 flex items-center gap-2.5 lg:hidden">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
-              <span className="font-serif text-sm font-bold text-navy-950">{INITIALE_LOGO}</span>
+              <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-[9px]" : "text-sm"}`}>
+                {INITIALE_LOGO}
+              </span>
             </div>
             <div className="min-w-0">
               <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
