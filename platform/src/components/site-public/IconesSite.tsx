@@ -169,3 +169,60 @@ export const IconeCroissance = (p: Props) => (
     <path d="m7 10 4-4 3 3 6-6M16 3h4v4" />
   </Svg>
 );
+
+export const IconeLivre = (p: Props) => (
+  <Svg {...p}>
+    <path d="M12 7v14" />
+    <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3Z" />
+  </Svg>
+);
+
+export const IconeBoussole = (p: Props) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="m16.24 7.76-1.8 5.4a2 2 0 0 1-1.28 1.28l-5.4 1.8 1.8-5.4a2 2 0 0 1 1.28-1.28z" />
+  </Svg>
+);
+
+export const IconeInstitution = (p: Props) => (
+  <Svg {...p}>
+    <path d="M10 18v-7M14 18v-7M18 18v-7M6 18v-7" />
+    <path d="M11.12 2.2a2 2 0 0 1 1.76 0l7.87 3.82A.5.5 0 0 1 20.53 7H3.47a.5.5 0 0 1-.22-.95z" />
+    <path d="M3 22h18M3 18h18" />
+  </Svg>
+);
+
+export const IconeColonnes = (p: Props) => (
+  <Svg {...p}>
+    <path d="M13 17V9M18 17V5M8 17v-3" />
+    <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  </Svg>
+);
+
+export const IconePersonne = (p: Props) => (
+  <Svg {...p}>
+    <circle cx="12" cy="8" r="5" />
+    <path d="M20 21a8 8 0 0 0-16 0" />
+  </Svg>
+);
+
+export const IconeEngrenage = (p: Props) => (
+  <Svg {...p}>
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+    <circle cx="12" cy="12" r="3" />
+  </Svg>
+);
+
+export const IconeEnveloppe = (p: Props) => (
+  <Svg {...p}>
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </Svg>
+);
+
+export const IconeValide = (p: Props) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="m9 12 2 2 4-4" />
+  </Svg>
+);

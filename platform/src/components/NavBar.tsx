@@ -3,13 +3,21 @@ import type { Profil } from "@/lib/types";
 import { type Lien } from "@/components/NavLinks";
 import { PresenceMessagerie } from "@/components/PresenceMessagerie";
 import { BarreLateraleResponsive } from "@/components/BarreLateraleResponsive";
+import { SITE_PUBLIC_ACTIF } from "@/lib/organisation";
 
 const LIENS: Lien[] = [
   { href: "/documents", label: "Documents", icone: "documents" },
   { href: "/messagerie", label: "Messagerie", icone: "messagerie" },
   { href: "/audit", label: "Journal d'audit", icone: "audit" },
   { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"], icone: "utilisateurs" },
-  { href: "/admin/actualites", label: "Actualités", roles: ["administrateur"], icone: "actualites" },
+  // Gestion du site public : seulement sur un déploiement qui l'active
+  // (la barre latérale de la démonstration KHS Bank reste inchangée).
+  ...(SITE_PUBLIC_ACTIF
+    ? ([
+        { href: "/admin/actualites", label: "Actualités", roles: ["administrateur"], icone: "actualites" },
+        { href: "/admin/messages-contact", label: "Messages reçus", roles: ["administrateur"], icone: "contact" },
+      ] satisfies Lien[])
+    : []),
 ];
 
 export async function NavBar() {

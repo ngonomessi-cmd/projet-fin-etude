@@ -73,60 +73,76 @@ const MISSIONS_EN = [
 
 const SERVICES_FR = [
   {
-    titre: "Information économique et réglementaire",
-    description: "Un point d'information fiable sur l'environnement des affaires et le cadre réglementaire de l'investissement.",
+    titre: "Information économique et réglementaire sur l'investissement",
+    description:
+      "Accédez à une information fiable, actualisée et complète sur le cadre économique, juridique et fiscal du Cameroun.",
   },
   {
-    titre: "Pré-diagnostic et orientation",
-    description: "Un premier cadrage du projet d'investissement pour identifier les démarches et interlocuteurs pertinents.",
+    titre: "Pré-diagnostic et orientation des projets d'investissement",
+    description:
+      "Bénéficiez d'un premier diagnostic personnalisé et d'une orientation adaptée à la nature de votre projet et aux opportunités du territoire.",
   },
   {
-    titre: "Constitution des dossiers d'agrément",
-    description: "L'instruction des demandes d'agrément aux régimes incitatifs prévus par la législation en vigueur.",
+    titre: "Constitution et instruction des dossiers d'agrément aux régimes incitatifs",
+    description:
+      "Nous vous assistons dans la préparation et le suivi de vos dossiers d'agrément auprès des administrations compétentes.",
   },
   {
-    titre: "Mise en relation institutionnelle",
-    description: "Le lien avec les administrations et partenaires institutionnels concernés par le projet.",
+    titre: "Mise en relation avec les administrations et partenaires institutionnels",
+    description:
+      "Facilitez le dialogue avec les administrations et les partenaires nationaux et internationaux pour faire avancer vos projets.",
   },
   {
-    titre: "Suivi-accompagnement",
-    description: "Un accompagnement continu des projets agréés jusqu'à leur réalisation effective.",
+    titre: "Suivi-accompagnement des projets agréés jusqu'à leur réalisation",
+    description:
+      "Nous restons à vos côtés tout au long de la mise en œuvre de vos projets, pour assurer le respect des engagements et la réussite de vos investissements.",
   },
 ] as const;
 
 const SERVICES_EN = [
   {
-    titre: "Economic and regulatory information",
-    description: "A reliable source of information on the business environment and the investment regulatory framework.",
+    titre: "Economic and regulatory information on investment",
+    description:
+      "Access reliable, up-to-date and comprehensive information on Cameroon's economic, legal and tax framework.",
   },
   {
-    titre: "Pre-assessment and guidance",
-    description: "An initial scoping of the investment project to identify the relevant procedures and contacts.",
+    titre: "Pre-assessment and guidance for investment projects",
+    description:
+      "Benefit from an initial personalised assessment and guidance suited to the nature of your project and the country's opportunities.",
   },
   {
-    titre: "Preparation of approval applications",
-    description: "Processing applications for approval under the incentive schemes provided for by current legislation.",
+    titre: "Preparation and processing of applications for incentive schemes",
+    description: "We assist you in preparing and following up your approval applications with the relevant authorities.",
   },
   {
-    titre: "Institutional liaison",
-    description: "Connecting the project with the relevant government bodies and institutional partners.",
+    titre: "Liaison with government bodies and institutional partners",
+    description:
+      "Facilitate dialogue with government bodies and national and international partners to move your projects forward.",
   },
   {
-    titre: "Follow-up support",
-    description: "Ongoing support for approved projects through to their effective completion.",
+    titre: "Follow-up support for approved projects through to completion",
+    description:
+      "We stay by your side throughout the implementation of your projects, to ensure commitments are met and your investments succeed.",
   },
 ] as const;
 
 export const DICTIONNAIRE = {
   fr: {
-    nav: { accueil: "Accueil", missions: "Missions", services: "Services", actualites: "Actualités" },
+    nav: {
+      accueil: "Accueil",
+      missions: "Missions",
+      services: "Services",
+      actualites: "Actualités",
+      contact: "Contact",
+      nousContacter: "Nous contacter",
+    },
     hero: {
       surtitre: "Investir au Cameroun, c'est bâtir l'avenir",
       titre: "L'Agence de Promotion des Investissements du Cameroun",
       description:
         "Nous accompagnons les investisseurs, nationaux et étrangers, dans la réalisation de leurs projets au Cameroun, en leur offrant un guichet unique, des services adaptés et un cadre sécurisé.",
       cta1: "Découvrir nos services",
-      cta2: "Pourquoi investir au Cameroun ?",
+      cta2: "Pourquoi investir au Cameroun ?",
       legende: "Un environnement attractif pour des investissements durables",
     },
     chiffres: [
@@ -164,8 +180,64 @@ export const DICTIONNAIRE = {
       tagline: "Investir au Cameroun, c'est construire durablement",
     },
     services: { titre: "Services aux investisseurs", intro: "Un accompagnement concret, à chaque étape du parcours de l'investisseur.", items: SERVICES_FR },
+    servicesHero: {
+      surtitre: "Nos services",
+      titre: "Des services sur mesure pour vos investissements au Cameroun",
+      description:
+        "L'agence vous accompagne à chaque étape de votre projet d'investissement, avec des services personnalisés, efficaces et orientés résultats.",
+    },
+    servicesIntro: {
+      surtitre: "Nos services",
+      titre: "Un accompagnement complet pour la réussite de vos projets",
+      description:
+        "De l'information au suivi, l'agence met à votre disposition une gamme de services pour faciliter et sécuriser vos investissements au Cameroun.",
+      decouvrir: "Découvrir",
+    },
+    confiance: {
+      surtitre: "Pourquoi choisir l'agence ?",
+      titre: "Votre partenaire de confiance pour investir au Cameroun",
+      points: [
+        "Un guichet unique de l'investissement",
+        "Une équipe d'experts à votre écoute",
+        "Des procédures simplifiées et digitalisées",
+        "Un engagement pour un développement durable",
+      ],
+      cta: "Découvrir nos missions",
+    },
+    projet: {
+      titre: "Vous avez un projet d'investissement ?",
+      description: "Contactez notre équipe pour un accompagnement personnalisé.",
+      cta: "Nous contacter",
+    },
+    contact: {
+      surtitre: "Contact",
+      titre: "Parlons de votre projet d'investissement",
+      description:
+        "Une question, un projet, une demande d'accompagnement ? Écrivez-nous : notre équipe vous répond dans les meilleurs délais.",
+      formTitre: "Envoyer un message",
+      nom: "Nom complet",
+      email: "Adresse e-mail",
+      telephone: "Téléphone",
+      entreprise: "Entreprise / organisation",
+      sujet: "Objet de votre demande",
+      sujetAutre: "Autre demande",
+      message: "Votre message",
+      optionnel: "facultatif",
+      envoyer: "Envoyer le message",
+      envoi: "Envoi…",
+      succesTitre: "Message bien reçu",
+      succes: "Merci pour votre message. Notre équipe vous recontactera à l'adresse indiquée.",
+      nouveau: "Envoyer un autre message",
+      confidentialite:
+        "Vos informations servent uniquement à traiter votre demande et ne sont jamais transmises à des tiers.",
+      atoutsTitre: "Ce que nous vous apportons",
+    },
+    erreursContact: {
+      champs: "Merci de renseigner votre nom, une adresse e-mail valide, l'objet et un message d'au moins 10 caractères.",
+      envoi: "L'envoi a échoué. Merci de réessayer dans quelques instants.",
+    },
     pourquoiInvestir: {
-      surtitre: "Pourquoi investir au Cameroun ?",
+      surtitre: "Pourquoi investir au Cameroun ?",
       titre: "Une destination de choix en Afrique",
       description:
         "Le Cameroun offre un environnement économique stable, une main-d'œuvre qualifiée, des infrastructures en développement et un accès privilégié aux marchés régionaux et internationaux.",
@@ -194,11 +266,11 @@ export const DICTIONNAIRE = {
     actualiteDetail: { retour: "← Toutes les actualités" },
     footer: {
       description:
-        "Guichet unique de la promotion des investissements : information, accompagnement des dossiers d'agrément et mise en relation avec les administrations compétentes.",
+        "Guichet unique de la promotion des investissements : information, accompagnement des dossiers d'agrément et mise en relation avec les administrations compétentes.",
       navTitre: "Navigation",
       accesTitre: "Accès",
       accesDescription:
-        "Agents et partenaires habilités : accédez à la gestion électronique de documents sécurisée de l'agence.",
+        "Agents et partenaires habilités : accédez à la gestion électronique de documents sécurisée de l'agence.",
       accesCta: "Accéder à la plateforme GED →",
       copyright: "Tous droits réservés.",
       tagline: "Investir au Cameroun, c'est construire ensemble",
@@ -208,7 +280,14 @@ export const DICTIONNAIRE = {
     dateLocale: "fr-FR",
   },
   en: {
-    nav: { accueil: "Home", missions: "Missions", services: "Services", actualites: "News" },
+    nav: {
+      accueil: "Home",
+      missions: "Missions",
+      services: "Services",
+      actualites: "News",
+      contact: "Contact",
+      nousContacter: "Contact us",
+    },
     hero: {
       surtitre: "Investing in Cameroon means building the future",
       titre: "The Cameroon Investment Promotion Agency",
@@ -252,6 +331,61 @@ export const DICTIONNAIRE = {
       tagline: "Investing in Cameroon means building sustainably",
     },
     services: { titre: "Services for investors", intro: "Concrete support at every stage of the investor's journey.", items: SERVICES_EN },
+    servicesHero: {
+      surtitre: "Our services",
+      titre: "Tailored services for your investments in Cameroon",
+      description:
+        "The agency supports you at every stage of your investment project, with personalised, efficient and results-oriented services.",
+    },
+    servicesIntro: {
+      surtitre: "Our services",
+      titre: "Comprehensive support for the success of your projects",
+      description:
+        "From information to follow-up, the agency offers a range of services to facilitate and secure your investments in Cameroon.",
+      decouvrir: "Discover",
+    },
+    confiance: {
+      surtitre: "Why choose the agency?",
+      titre: "Your trusted partner for investing in Cameroon",
+      points: [
+        "A one-stop investment shop",
+        "A team of experts ready to listen",
+        "Simplified, digitalised procedures",
+        "A commitment to sustainable development",
+      ],
+      cta: "Discover our missions",
+    },
+    projet: {
+      titre: "Do you have an investment project?",
+      description: "Contact our team for personalised support.",
+      cta: "Contact us",
+    },
+    contact: {
+      surtitre: "Contact",
+      titre: "Let's talk about your investment project",
+      description:
+        "A question, a project, a request for support? Write to us: our team will get back to you as soon as possible.",
+      formTitre: "Send a message",
+      nom: "Full name",
+      email: "Email address",
+      telephone: "Phone",
+      entreprise: "Company / organisation",
+      sujet: "Subject of your request",
+      sujetAutre: "Other request",
+      message: "Your message",
+      optionnel: "optional",
+      envoyer: "Send message",
+      envoi: "Sending…",
+      succesTitre: "Message received",
+      succes: "Thank you for your message. Our team will get back to you at the address provided.",
+      nouveau: "Send another message",
+      confidentialite: "Your information is used solely to handle your request and is never shared with third parties.",
+      atoutsTitre: "What we offer you",
+    },
+    erreursContact: {
+      champs: "Please enter your name, a valid email address, a subject and a message of at least 10 characters.",
+      envoi: "Sending failed. Please try again in a few moments.",
+    },
     pourquoiInvestir: {
       surtitre: "Why invest in Cameroon?",
       titre: "A destination of choice in Africa",
