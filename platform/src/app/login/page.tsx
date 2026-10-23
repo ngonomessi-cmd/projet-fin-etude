@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
+import { RubanOrganisation } from "@/components/RubanOrganisation";
 import { MENTION_CONNEXION, NOM_ORGANISATION } from "@/lib/organisation";
 
 export default function PageConnexion() {
@@ -51,12 +52,15 @@ function FormulaireConnexion() {
   return (
     <main className="flex min-h-screen">
       <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
-        <div className="flex items-center gap-2.5">
-          <LogoOrganisation taille="lg" />
-          <div className="min-w-0">
-            <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
-            <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+        <div>
+          <div className="flex items-center gap-2.5">
+            <LogoOrganisation taille="lg" />
+            <div className="min-w-0">
+              <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
+              <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+            </div>
           </div>
+          <RubanOrganisation className="mt-4" />
         </div>
         <div>
           <h1 className="mb-3 font-serif text-3xl leading-tight font-semibold">
