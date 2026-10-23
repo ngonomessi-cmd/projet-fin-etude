@@ -39,7 +39,7 @@ export async function inscrireAction(formData: FormData): Promise<ResultatConnex
   const departement = String(formData.get("departement") ?? "Direction");
 
   const supabase = await creerClientServeur();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password: motDePasse,
     // L'organisation n'est jamais choisie par la personne qui s'inscrit :
@@ -53,7 +53,14 @@ export async function inscrireAction(formData: FormData): Promise<ResultatConnex
     },
   });
 
-  return { erreur: error ? traduireErreurSupabase(error.message) : null };
+  if (error) return { erreur: traduireErreurSupabase(error.message) };
+  // Adresse déjà inscrite et confirmée : Supabase répond « succès » sans rien
+  // envoyer (pour ne pas révéler qui est inscrit) et renvoie un utilisateur
+  // sans identité. Sans ce contrôle, on annoncerait un e-mail qui n'arrivera jamais.
+  if (data.user && data.user.identities?.length === 0) {
+    return { erreur: "Un compte existe déjà avec cette adresse e-mail : connectez-vous directement." };
+  }
+  return { erreur: null };
 }
 
 function traduireErreurSupabase(message: string): string {
