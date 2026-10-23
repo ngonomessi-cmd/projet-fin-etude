@@ -21,8 +21,11 @@ export async function creerActualiteAction(formData: FormData): Promise<Resultat
   const supabase = await creerClientServeur();
 
   const titre = String(formData.get("titre") ?? "").trim();
+  const titreEn = String(formData.get("titre_en") ?? "").trim();
   const extrait = String(formData.get("extrait") ?? "").trim();
+  const extraitEn = String(formData.get("extrait_en") ?? "").trim();
   const contenu = String(formData.get("contenu") ?? "").trim();
+  const contenuEn = String(formData.get("contenu_en") ?? "").trim();
   const statut = String(formData.get("statut") ?? "brouillon") as StatutActualite;
 
   if (!titre) return { erreur: "Le titre est obligatoire." };
@@ -39,7 +42,16 @@ export async function creerActualiteAction(formData: FormData): Promise<Resultat
   while (tentative <= 20) {
     const { data, error } = await supabase
       .from("actualites_publiques")
-      .insert({ titre, slug, extrait: extrait || null, contenu, statut })
+      .insert({
+        titre,
+        titre_en: titreEn || null,
+        slug,
+        extrait: extrait || null,
+        extrait_en: extraitEn || null,
+        contenu,
+        contenu_en: contenuEn || null,
+        statut,
+      })
       .select("id")
       .single();
 
@@ -66,8 +78,11 @@ export async function modifierActualiteAction(id: string, formData: FormData): P
   const supabase = await creerClientServeur();
 
   const titre = String(formData.get("titre") ?? "").trim();
+  const titreEn = String(formData.get("titre_en") ?? "").trim();
   const extrait = String(formData.get("extrait") ?? "").trim();
+  const extraitEn = String(formData.get("extrait_en") ?? "").trim();
   const contenu = String(formData.get("contenu") ?? "").trim();
+  const contenuEn = String(formData.get("contenu_en") ?? "").trim();
   const statut = String(formData.get("statut") ?? "brouillon") as StatutActualite;
 
   if (!titre) return { erreur: "Le titre est obligatoire." };
@@ -75,7 +90,15 @@ export async function modifierActualiteAction(id: string, formData: FormData): P
 
   const { error } = await supabase
     .from("actualites_publiques")
-    .update({ titre, extrait: extrait || null, contenu, statut })
+    .update({
+      titre,
+      titre_en: titreEn || null,
+      extrait: extrait || null,
+      extrait_en: extraitEn || null,
+      contenu,
+      contenu_en: contenuEn || null,
+      statut,
+    })
     .eq("id", id);
 
   if (error) return { erreur: error.message };

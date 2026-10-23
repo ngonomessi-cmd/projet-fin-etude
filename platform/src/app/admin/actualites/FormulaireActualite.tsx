@@ -36,40 +36,79 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
   }
 
   return (
-    <form action={soumettre} className="space-y-4 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-[#1c2029]">Titre</span>
-        <input
-          name="titre"
-          required
-          defaultValue={actualite?.titre}
-          className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
-        />
-      </label>
+    <form action={soumettre} className="space-y-6 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-paper-soft">Français</p>
 
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-[#1c2029]">Extrait (résumé affiché dans la liste)</span>
-        <textarea
-          name="extrait"
-          rows={2}
-          defaultValue={actualite?.extrait ?? ""}
-          className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
-        />
-      </label>
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Titre</span>
+          <input
+            name="titre"
+            required
+            defaultValue={actualite?.titre}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
+          />
+        </label>
 
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-[#1c2029]">Contenu</span>
-        <textarea
-          name="contenu"
-          required
-          rows={12}
-          defaultValue={actualite?.contenu}
-          className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm leading-relaxed"
-        />
-        <span className="mt-1 block text-xs text-paper-soft">
-          Texte simple : les lignes vides séparent les paragraphes à l&apos;affichage.
-        </span>
-      </label>
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Extrait (résumé affiché dans la liste)</span>
+          <textarea
+            name="extrait"
+            rows={2}
+            defaultValue={actualite?.extrait ?? ""}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Contenu</span>
+          <textarea
+            name="contenu"
+            required
+            rows={10}
+            defaultValue={actualite?.contenu}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm leading-relaxed"
+          />
+          <span className="mt-1 block text-xs text-paper-soft">
+            Texte simple : les lignes vides séparent les paragraphes à l&apos;affichage.
+          </span>
+        </label>
+      </div>
+
+      <div className="space-y-4 border-t border-paper-200 pt-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-paper-soft">
+          English <span className="font-normal normal-case text-paper-soft">(optionnel — à défaut, la version française s&apos;affiche)</span>
+        </p>
+
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Title</span>
+          <input
+            name="titre_en"
+            defaultValue={actualite?.titre_en ?? ""}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Excerpt</span>
+          <textarea
+            name="extrait_en"
+            rows={2}
+            defaultValue={actualite?.extrait_en ?? ""}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-[#1c2029]">Content</span>
+          <textarea
+            name="contenu_en"
+            rows={10}
+            defaultValue={actualite?.contenu_en ?? ""}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm leading-relaxed"
+          />
+        </label>
+      </div>
 
       <label className="block text-sm">
         <span className="mb-1 block font-medium text-[#1c2029]">Statut</span>
