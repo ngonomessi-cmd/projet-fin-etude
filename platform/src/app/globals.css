@@ -21,6 +21,12 @@
   --color-paper-200: #e7e3d8;
   --color-paper-muted: #716c60;
   --color-paper-soft: #9a968a;
+
+  /* Site public uniquement (maquettes validées) : bleu nuit des bandeaux et
+     titres, fond gris très clair des sections alternées. */
+  --color-encre-950: #00183d;
+  --color-encre-900: #0a2a5e;
+  --color-brume: #f8f9fa;
 }
 
 body {
