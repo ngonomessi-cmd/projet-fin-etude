@@ -3,7 +3,8 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
-import { INITIALE_LOGO, MENTION_CONNEXION, NOM_ORGANISATION } from "@/lib/organisation";
+import { LogoOrganisation } from "@/components/LogoOrganisation";
+import { MENTION_CONNEXION, NOM_ORGANISATION } from "@/lib/organisation";
 
 export default function PageConnexion() {
   return (
@@ -51,11 +52,7 @@ function FormulaireConnexion() {
     <main className="flex min-h-screen">
       <div className="hidden w-[42%] shrink-0 flex-col justify-between bg-navy-950 p-12 text-white lg:flex">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
-            <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-xs" : "text-lg"}`}>
-              {INITIALE_LOGO}
-            </span>
-          </div>
+          <LogoOrganisation taille="lg" />
           <div className="min-w-0">
             <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
             <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
@@ -77,11 +74,7 @@ function FormulaireConnexion() {
       <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-6 flex items-center gap-2.5 lg:hidden">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
-              <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-[9px]" : "text-sm"}`}>
-                {INITIALE_LOGO}
-              </span>
-            </div>
+            <LogoOrganisation taille="sm" />
             <div className="min-w-0">
               <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
               <div className="text-[10px] tracking-wide text-paper-muted uppercase">GED sécurisée</div>
