@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RubanOrganisation } from "@/components/RubanOrganisation";
-import { NOM_ORGANISATION } from "@/lib/organisation";
+import { LogoOrganisation } from "@/components/LogoOrganisation";
+import { NOM_ORGANISATION, URL_LOGO_ORGANISATION } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
+import { IconeFleche } from "@/components/site-public/IconesSite";
 
 export function PiedDePagePublic() {
   const pathname = usePathname();
@@ -12,50 +15,50 @@ export function PiedDePagePublic() {
   const t = DICTIONNAIRE[locale];
   const p = prefixeLocale(locale);
 
+  const liens = [
+    { href: p || "/", label: t.nav.accueil },
+    { href: `${p}/missions`, label: t.nav.missions },
+    { href: `${p}/services`, label: t.nav.services },
+    { href: `${p}/actualites`, label: t.nav.actualites },
+  ];
+
   return (
-    <footer className="border-t border-navy-line bg-navy-950 text-white/70">
-      <RubanOrganisation />
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3 sm:px-8">
-        <div>
-          <p className="font-serif text-lg font-semibold text-white">{NOM_ORGANISATION}</p>
-          <p className="mt-2 text-sm leading-relaxed">{t.footer.description}</p>
-        </div>
+    <footer className="bg-encre-950 text-white">
+      <RubanOrganisation className="h-1! rounded-none!" />
 
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-white/50">{t.footer.navTitre}</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li>
-              <Link href={`${p}/missions`} className="hover:text-gold-500 hover:underline">
-                {t.nav.missions}
-              </Link>
-            </li>
-            <li>
-              <Link href={`${p}/services`} className="hover:text-gold-500 hover:underline">
-                {t.nav.services}
-              </Link>
-            </li>
-            <li>
-              <Link href={`${p}/actualites`} className="hover:text-gold-500 hover:underline">
-                {t.nav.actualites}
-              </Link>
-            </li>
-          </ul>
-        </div>
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+        <Link href={p || "/"} className="flex items-center gap-3">
+          {URL_LOGO_ORGANISATION ? (
+            <span className="flex h-12 shrink-0 items-center rounded-md bg-white px-2">
+              <Image src={URL_LOGO_ORGANISATION} alt="" width={110} height={85} className="h-9 w-auto object-contain" />
+            </span>
+          ) : (
+            <LogoOrganisation taille="lg" />
+          )}
+          <span className="max-w-[15rem] font-serif text-sm font-semibold leading-snug">{NOM_ORGANISATION}</span>
+        </Link>
 
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-white/50">{t.footer.accesTitre}</p>
-          <p className="mt-3 text-sm leading-relaxed">{t.footer.accesDescription}</p>
-          <Link
-            href="/login"
-            className="mt-3 inline-block rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-navy-950 hover:bg-gold-600"
-          >
-            {t.footer.accesCta}
-          </Link>
-        </div>
+        <nav className="flex flex-wrap gap-x-7 gap-y-2 text-sm text-white/85">
+          {liens.map((lien) => (
+            <Link key={lien.href} href={lien.href} className="hover:text-gold-500">
+              {lien.label}
+            </Link>
+          ))}
+        </nav>
+
+        <p className="max-w-[16rem] font-serif text-sm italic leading-snug text-white/90 lg:text-right">{t.footer.tagline}</p>
       </div>
 
-      <div className="border-t border-navy-line px-4 py-4 text-center text-xs text-white/40 sm:px-8">
-        © {new Date().getFullYear()} {NOM_ORGANISATION}. {t.footer.copyright}
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <p>
+          © {new Date().getFullYear()} {NOM_ORGANISATION}. {t.footer.copyright}
+          <span className="mx-2 text-white/25">|</span>
+          {t.footer.republique}
+        </p>
+        <Link href="/login" className="inline-flex items-center gap-1.5 text-white/75 hover:text-gold-500">
+          {t.footer.espaceGed}
+          <IconeFleche className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </footer>
   );

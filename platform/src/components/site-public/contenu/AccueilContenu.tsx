@@ -1,54 +1,31 @@
+import Image from "next/image";
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { SIGLE_ORGANISATION } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
-import { BlocPhotoProvisoire } from "@/components/site-public/BlocPhotoProvisoire";
 import type { ActualitePublique } from "@/lib/types";
+import {
+  IconeCarteCameroun,
+  IconeChrono,
+  IconeCroissance,
+  IconeDocument,
+  IconeFeuille,
+  IconeFleche,
+  IconeGraphique,
+  IconeImage,
+  IconeMainPieces,
+  IconePersonnes,
+  IconePieces,
+  IconePoigneeMain,
+  IconeRepere,
+} from "@/components/site-public/IconesSite";
 
-const ICONES_POINTS = [
-  <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-    <path d="M12 3c2 2.5 3 5 3 7.5A3 3 0 0 1 9 10.5C9 8 10 5.5 12 3Z" strokeLinejoin="round" />
-    <path d="M12 21v-9" strokeLinecap="round" />
-  </svg>,
-  <svg key="1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-    <circle cx="9" cy="8" r="3" />
-    <path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1" strokeLinecap="round" />
-    <path d="M17 7.5a2.5 2.5 0 1 1 0 5" strokeLinecap="round" />
-  </svg>,
-  <svg key="2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-    <path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z" strokeLinejoin="round" />
-    <circle cx="12" cy="9.5" r="2.3" />
-  </svg>,
-  <svg key="3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-    <path d="M4 18 10 9l4 5 6-9" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M16 5h4v4" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>,
-] as const;
-
-const ICONES_MISSIONS = [
-  <svg key="0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <path d="M4 19h16M7 19v-5m5 5V9m5 10V5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>,
-  <svg key="1" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <path d="M4 21V9l8-5 8 5v12" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M9 21v-7h6v7" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>,
-  <svg key="2" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" strokeLinejoin="round" />
-    <path d="M14 3v5h5M9 13h6M9 16h4" strokeLinecap="round" />
-  </svg>,
-  <svg key="3" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <circle cx="8" cy="8" r="3" />
-    <circle cx="17" cy="9" r="2.5" />
-    <path d="M3 20v-1a5 5 0 0 1 5-5h0a5 5 0 0 1 5 5v1" strokeLinecap="round" />
-    <path d="M15 14.5a4 4 0 0 1 4 4V20" strokeLinecap="round" />
-  </svg>,
-  <svg key="4" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <path d="M9 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-    <path d="M3 19c.6-2.3 2.6-4 6-4s5.4 1.7 6 4" strokeLinecap="round" />
-    <path d="M15 8h6M15 12h6M19 16h2" strokeLinecap="round" />
-  </svg>,
-] as const;
+const ICONES_CHIFFRES = [IconePoigneeMain, IconePieces, IconeCarteCameroun, IconeChrono];
+const ICONES_MISSIONS = [IconeGraphique, IconeImage, IconeDocument, IconePersonnes, IconeMainPieces];
+const ICONES_POURQUOI = [IconeFeuille, IconePersonnes, IconeRepere, IconeCroissance];
+// Illustrations par défaut des actualités (aucune image n'est encore jointe
+// aux articles eux-mêmes) — attribuées à tour de rôle.
+const VIGNETTES_ACTUALITES = ["/images/site/actualite-1.jpg", "/images/site/actualite-2.jpg", "/images/site/actualite-3.jpg"];
 
 export async function AccueilContenu({ locale }: { locale: Locale }) {
   const t = DICTIONNAIRE[locale];
@@ -66,142 +43,210 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
 
   return (
     <>
-      {/* Hero — fond dégradé en attendant la photo réelle (skyline + drapeau) */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 text-white">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.07]" aria-hidden="true">
-          <svg width="100%" height="100%">
-            <pattern id="grille-hero" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M40 0H0V40" fill="none" stroke="currentColor" strokeWidth="1" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#grille-hero)" />
-          </svg>
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-encre-950 text-white">
+        <div className="absolute inset-y-0 right-0 -z-10 w-full lg:w-[64%]">
+          <Image
+            src="/images/site/hero-accueil.jpg"
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 1024px) 64vw, 100vw"
+            className="object-cover object-right"
+          />
+          <div className="absolute inset-0 bg-encre-950/70 lg:bg-transparent lg:bg-gradient-to-r lg:from-encre-950 lg:via-encre-950/25 lg:to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-encre-950/80 to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
-          {t.hero.surtitre && (
-            <p className="text-sm font-semibold uppercase tracking-wider text-gold-500">{t.hero.surtitre}</p>
-          )}
-          <h1 className="mt-3 max-w-3xl font-serif text-3xl font-semibold leading-tight sm:text-5xl">{t.hero.titre}</h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{t.hero.description}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
+        <div className="relative mx-auto flex max-w-7xl flex-col justify-center px-4 py-16 sm:px-8 lg:min-h-[500px] lg:py-20">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-500 sm:text-sm">{t.hero.surtitre}</p>
+          <h1 className="mt-4 max-w-xl font-serif text-4xl font-semibold leading-[1.1] sm:text-5xl lg:text-[3.4rem]">
+            {t.hero.titre}
+          </h1>
+          <p className="mt-5 max-w-lg text-base leading-relaxed text-white/90">{t.hero.description}</p>
+          <div className="mt-9 flex flex-wrap gap-4">
             <Link
               href={`${p}/services`}
-              className="rounded-md bg-gold-500 px-5 py-2.5 text-sm font-semibold text-navy-950 hover:bg-gold-600"
+              className="inline-flex items-center gap-2.5 rounded-md bg-gold-500 px-6 py-3.5 text-sm font-semibold text-encre-950 shadow-sm transition-colors hover:bg-gold-600"
             >
               {t.hero.cta1}
+              <IconeFleche className="h-4 w-4" />
             </Link>
             <Link
-              href={`${p}/#pourquoi-investir`}
-              className="rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+              href="#pourquoi-investir"
+              className="inline-flex items-center rounded-md border border-white/80 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               {t.hero.cta2}
             </Link>
           </div>
+
+          <div className="pointer-events-none absolute bottom-9 right-8 hidden max-w-[17rem] lg:block">
+            <span className="block h-0.5 w-12 bg-gold-500" />
+            <p className="mt-3 font-serif text-lg font-semibold italic leading-snug text-white">{t.hero.legende}</p>
+          </div>
         </div>
       </section>
 
-      {/* Missions — aperçu + renvoi vers la page dédiée */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">{t.missionsTeaser.surtitre}</p>
-        <div className="mt-2 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="max-w-xl font-serif text-2xl font-semibold text-navy-950 sm:text-3xl">{t.missionsTeaser.titre}</h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-paper-muted">{t.missionsTeaser.description}</p>
-          </div>
-          <Link
-            href={`${p}/missions`}
-            className="shrink-0 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-semibold text-navy-950 hover:bg-gold-600"
-          >
-            {t.missionsTeaser.cta} →
-          </Link>
-        </div>
-
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {t.missions.items.map((mission, index) => (
-            <Link
-              key={mission.titre}
-              href={`${p}/missions`}
-              className="group rounded-lg border border-paper-200 p-5 transition-colors hover:border-gold-500"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-gold-50 text-gold-600">
-                {ICONES_MISSIONS[index]}
+      {/* Chiffres clés */}
+      <section className="border-b border-slate-100 bg-brume">
+        <div className="mx-auto grid max-w-7xl gap-y-8 px-4 py-10 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+          {t.chiffres.map((chiffre, index) => {
+            const Icone = ICONES_CHIFFRES[index];
+            return (
+              <div key={chiffre.valeur} className={`px-1 lg:px-8 ${index > 0 ? "lg:border-l lg:border-slate-200" : "lg:pl-0"}`}>
+                <Icone className="h-9 w-9 text-gold-500" />
+                <p className="mt-4 font-serif text-2xl font-semibold text-encre-900">{chiffre.valeur}</p>
+                {chiffre.libelle && <p className="mt-1 text-sm font-semibold text-encre-900">{chiffre.libelle}</p>}
+                <p className="mt-1 text-sm text-slate-500">{chiffre.detail}</p>
               </div>
-              <h3 className="mt-4 font-serif text-base font-semibold text-navy-950">{mission.titre}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-paper-muted line-clamp-2">{mission.description}</p>
-              <span className="mt-3 inline-block text-sm font-medium text-gold-600 group-hover:underline">→</span>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* Pourquoi investir — fond dégradé en attendant la photo réelle (route/volcan) */}
-      <section id="pourquoi-investir" className="relative overflow-hidden bg-navy-950 text-white">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-8 sm:py-20 lg:grid-cols-2 lg:items-center">
+      {/* Missions */}
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)] lg:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-gold-500">{t.pourquoiInvestir.surtitre}</p>
-            <h2 className="mt-2 font-serif text-2xl font-semibold sm:text-3xl">{t.pourquoiInvestir.titre}</h2>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 sm:text-base">{t.pourquoiInvestir.description}</p>
-
-            <div className="mt-8 grid grid-cols-2 gap-5">
-              {t.pourquoiInvestir.points.map((point, index) => (
-                <div key={point} className="flex items-start gap-2.5">
-                  <span className="mt-0.5 text-gold-500">{ICONES_POINTS[index]}</span>
-                  <span className="text-sm leading-snug text-white/85">{point}</span>
-                </div>
-              ))}
-            </div>
-
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-600">{t.missionsTeaser.surtitre}</p>
+            <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight text-encre-900 sm:text-[2.1rem]">
+              {t.missionsTeaser.titre}
+            </h2>
+            <p className="mt-5 text-[15px] leading-relaxed text-slate-600">{t.missionsTeaser.description}</p>
             <Link
               href={`${p}/missions`}
-              className="mt-8 inline-block rounded-md bg-gold-500 px-5 py-2.5 text-sm font-semibold text-navy-950 hover:bg-gold-600"
+              className="mt-8 inline-flex items-center gap-2.5 rounded-md bg-gold-500 px-6 py-3 text-sm font-semibold text-encre-950 transition-colors hover:bg-gold-600"
             >
-              {t.pourquoiInvestir.cta} →
+              {t.missionsTeaser.cta}
+              <IconeFleche className="h-4 w-4" />
             </Link>
           </div>
 
-          <BlocPhotoProvisoire className="hidden aspect-[4/3] rounded-xl lg:block" />
-        </div>
-      </section>
-
-      {actualites.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">{t.nav.actualites}</p>
-          <div className="mt-2 flex items-center justify-between gap-4">
-            <h2 className="font-serif text-2xl font-semibold text-navy-950 sm:text-3xl">{t.actualitesRecentes.titre}</h2>
-            <Link href={`${p}/actualites`} className="text-sm font-medium text-gold-600 hover:underline">
-              {t.actualitesRecentes.lienTout}
-            </Link>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-3">
-            {actualites.map((actualite) => {
-              const titre = (locale === "en" && actualite.titre_en) || actualite.titre;
-              const extrait = (locale === "en" && actualite.extrait_en) || actualite.extrait;
+          <div className="grid gap-4 sm:grid-cols-6">
+            {t.missionsTeaser.cartes.map((carte, index) => {
+              const Icone = ICONES_MISSIONS[index];
               return (
                 <Link
-                  key={actualite.id}
-                  href={`${p}/actualites/${actualite.slug}`}
-                  className="group rounded-lg border border-paper-200 p-5 transition-colors hover:border-gold-500"
+                  key={carte.titre}
+                  href={`${p}/missions`}
+                  className={`group flex flex-col rounded-lg border border-slate-200 bg-white p-6 shadow-[0_2px_12px_rgba(0,24,61,0.05)] transition-all hover:-translate-y-0.5 hover:border-gold-500 hover:shadow-[0_8px_24px_rgba(0,24,61,0.10)] ${
+                    index < 3 ? "sm:col-span-2" : "sm:col-span-3"
+                  }`}
                 >
-                  {actualite.publie_at && (
-                    <p className="text-xs font-medium uppercase tracking-wide text-paper-soft">
-                      {new Date(actualite.publie_at).toLocaleDateString(t.dateLocale, {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                  )}
-                  <h3 className="mt-2 font-serif text-base font-semibold text-navy-950">{titre}</h3>
-                  {extrait && <p className="mt-2 text-sm leading-relaxed text-paper-muted line-clamp-3">{extrait}</p>}
-                  <span className="mt-3 inline-block text-sm font-medium text-gold-600 group-hover:underline">
-                    {t.actualitesRecentes.lireLaSuite}
-                  </span>
+                  <Icone className="h-8 w-8 text-gold-500" />
+                  <h3 className="mt-4 font-serif text-base font-semibold leading-snug text-encre-900">{carte.titre}</h3>
+                  <p className="mt-2 flex-1 text-[13px] leading-relaxed text-slate-500">{carte.description}</p>
+                  <IconeFleche className="mt-5 h-4 w-4 text-gold-500 transition-transform group-hover:translate-x-1" />
                 </Link>
               );
             })}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      {/* Pourquoi investir */}
+      <section id="pourquoi-investir" className="relative isolate overflow-hidden bg-encre-950 text-white">
+        <div className="relative h-64 w-full sm:h-80 lg:absolute lg:inset-y-0 lg:left-0 lg:h-auto lg:w-[42%] lg:[clip-path:polygon(0_0,100%_0,67%_100%,0_100%)]">
+          <Image
+            src="/images/site/pourquoi-investir.jpg"
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 42vw, 100vw"
+            className="object-cover object-left"
+          />
+        </div>
+
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-8 lg:py-20">
+          <div className="lg:ml-[44%]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-500">{t.pourquoiInvestir.surtitre}</p>
+            <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-[2.1rem]">{t.pourquoiInvestir.titre}</h2>
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/85">{t.pourquoiInvestir.description}</p>
+
+            <div className="mt-9 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-4">
+              {t.pourquoiInvestir.points.map((point, index) => {
+                const Icone = ICONES_POURQUOI[index];
+                return (
+                  <div key={point}>
+                    <Icone className="h-8 w-8 text-gold-500" />
+                    <p className="mt-3 text-[13px] font-medium leading-snug text-white">{point}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Link
+              href={`${p}/services`}
+              className="mt-10 inline-flex items-center gap-2.5 rounded-md bg-gold-500 px-6 py-3 text-sm font-semibold text-encre-950 transition-colors hover:bg-gold-600"
+            >
+              {t.pourquoiInvestir.cta}
+              <IconeFleche className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Actualités */}
+      <section className="bg-brume">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:items-start">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-600">{t.actualitesAccueil.surtitre}</p>
+            <h2 className="mt-3 font-serif text-3xl font-semibold text-encre-900">{t.actualitesAccueil.titre}</h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-slate-600">{t.actualitesAccueil.description}</p>
+            <Link
+              href={`${p}/actualites`}
+              className="mt-8 inline-flex items-center gap-2.5 rounded-md border border-encre-900 px-5 py-3 text-sm font-semibold text-encre-900 transition-colors hover:bg-encre-900 hover:text-white"
+            >
+              {t.actualitesAccueil.cta}
+              <IconeFleche className="h-4 w-4" />
+            </Link>
+          </div>
+
+          {actualites.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">
+              {t.actualitesAccueil.vide}
+            </p>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-3">
+              {actualites.map((actualite, index) => {
+                const titre = (locale === "en" && actualite.titre_en) || actualite.titre;
+                return (
+                  <Link
+                    key={actualite.id}
+                    href={`${p}/actualites/${actualite.slug}`}
+                    className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_2px_12px_rgba(0,24,61,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,24,61,0.10)]"
+                  >
+                    <div className="relative aspect-[16/7] overflow-hidden">
+                      <Image
+                        src={VIGNETTES_ACTUALITES[index % VIGNETTES_ACTUALITES.length]}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 22vw, 100vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      {actualite.publie_at && (
+                        <p className="text-xs text-slate-400">
+                          {new Date(actualite.publie_at).toLocaleDateString(t.dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                      )}
+                      <h3 className="mt-2 flex-1 text-sm font-medium leading-snug text-encre-900">{titre}</h3>
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-encre-900 group-hover:text-gold-600">
+                        {t.actualitesAccueil.lireLaSuite}
+                        <IconeFleche className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
     </>
   );
 }
