@@ -6,7 +6,14 @@ import { usePathname } from "next/navigation";
 import { NOM_ORGANISATION, URL_LOGO_ORGANISATION } from "@/lib/organisation";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { DICTIONNAIRE, cheminAutreLocale, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
-import { IconeBatiment, IconeJournal, IconeMaison, IconeMallette } from "@/components/site-public/IconesSite";
+import {
+  IconeBatiment,
+  IconeEnveloppe,
+  IconeFleche,
+  IconeJournal,
+  IconeMaison,
+  IconeMallette,
+} from "@/components/site-public/IconesSite";
 
 export function EnTetePublic() {
   const pathname = usePathname();
@@ -60,7 +67,18 @@ export function EnTetePublic() {
             ))}
           </nav>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            <Link
+              href={`${p}/contact`}
+              className={`hidden items-center gap-2 rounded-md border px-4 py-2 text-[13px] font-semibold transition-colors md:inline-flex ${
+                pathname.startsWith(`${p}/contact`)
+                  ? "border-gold-500 bg-gold-500 text-encre-950"
+                  : "border-gold-500 text-gold-600 hover:bg-gold-500 hover:text-encre-950"
+              }`}
+            >
+              {t.nav.nousContacter}
+              <IconeFleche className="h-3.5 w-3.5" />
+            </Link>
             <div className="flex items-center gap-0.5 rounded-md border border-slate-200 p-0.5 text-xs font-semibold">
               {(["fr", "en"] as const).map((l) => (
                 <Link
@@ -79,7 +97,10 @@ export function EnTetePublic() {
       </div>
 
       <nav className="flex gap-5 overflow-x-auto border-t border-slate-100 px-4 py-2 sm:px-8 lg:hidden">
-        {liens.map(({ href, label, Icone, actif }) => (
+        {[
+          ...liens,
+          { href: `${p}/contact`, label: t.nav.contact, Icone: IconeEnveloppe, actif: pathname.startsWith(`${p}/contact`) },
+        ].map(({ href, label, Icone, actif }) => (
           <Link
             key={href}
             href={href}

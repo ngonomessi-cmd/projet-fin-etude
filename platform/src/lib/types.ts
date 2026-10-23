@@ -111,6 +111,19 @@ export type ParametresMessagerie = {
 
 export type StatutActualite = "brouillon" | "publie";
 
+export type MessageContact = {
+  id: string;
+  organisation: string;
+  nom: string;
+  email: string;
+  telephone: string | null;
+  entreprise: string | null;
+  sujet: string;
+  message: string;
+  traite: boolean;
+  created_at: string;
+};
+
 export type ActualitePublique = {
   id: string;
   organisation: string;

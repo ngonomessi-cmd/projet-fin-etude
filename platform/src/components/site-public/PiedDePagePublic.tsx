@@ -20,6 +20,7 @@ export function PiedDePagePublic() {
     { href: `${p}/missions`, label: t.nav.missions },
     { href: `${p}/services`, label: t.nav.services },
     { href: `${p}/actualites`, label: t.nav.actualites },
+    { href: `${p}/contact`, label: t.nav.contact },
   ];
 
   return (
