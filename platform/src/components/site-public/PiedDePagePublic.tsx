@@ -25,12 +25,12 @@ export function PiedDePagePublic() {
           <p className="text-sm font-semibold uppercase tracking-wide text-white/50">{t.footer.navTitre}</p>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link href={`${p}/#missions`} className="hover:text-gold-500 hover:underline">
+              <Link href={`${p}/missions`} className="hover:text-gold-500 hover:underline">
                 {t.nav.missions}
               </Link>
             </li>
             <li>
-              <Link href={`${p}/#services`} className="hover:text-gold-500 hover:underline">
+              <Link href={`${p}/services`} className="hover:text-gold-500 hover:underline">
                 {t.nav.services}
               </Link>
             </li>
