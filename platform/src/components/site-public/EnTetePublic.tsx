@@ -5,7 +5,7 @@ import { NOM_ORGANISATION } from "@/lib/organisation";
 const LIENS_PUBLICS = [
   { href: "/", label: "Accueil" },
   { href: "/#missions", label: "Missions" },
-  { href: "/#services", label: "Services aux investisseurs" },
+  { href: "/#services", label: "Services" },
   { href: "/actualites", label: "Actualités" },
 ];
 
@@ -25,13 +25,6 @@ export function EnTetePublic() {
             </Link>
           ))}
         </nav>
-
-        <Link
-          href="/login"
-          className="shrink-0 rounded-md bg-navy-950 px-3 py-2 text-xs font-semibold text-white hover:bg-navy-900 sm:px-4 sm:text-sm"
-        >
-          Espace sécurisé
-        </Link>
       </div>
     </header>
   );
