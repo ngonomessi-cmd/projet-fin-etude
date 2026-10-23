@@ -54,8 +54,8 @@ function FormulaireConnexion() {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
             <span className="font-serif text-lg font-bold text-navy-950">{INITIALE_LOGO}</span>
           </div>
-          <div>
-            <div className="font-serif text-base leading-tight font-semibold">{NOM_ORGANISATION}</div>
+          <div className="min-w-0">
+            <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
             <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
           </div>
         </div>
@@ -78,7 +78,10 @@ function FormulaireConnexion() {
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
               <span className="font-serif text-sm font-bold text-navy-950">{INITIALE_LOGO}</span>
             </div>
-            <span className="font-serif text-base font-semibold">GED sécurisée — {NOM_ORGANISATION}</span>
+            <div className="min-w-0">
+              <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
+              <div className="text-[10px] tracking-wide text-paper-muted uppercase">GED sécurisée</div>
+            </div>
           </div>
 
           <h2 className="mb-1 font-serif text-xl font-semibold">
