@@ -9,6 +9,7 @@ const LIENS: Lien[] = [
   { href: "/messagerie", label: "Messagerie", icone: "messagerie" },
   { href: "/audit", label: "Journal d'audit", icone: "audit" },
   { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"], icone: "utilisateurs" },
+  { href: "/admin/actualites", label: "Actualités", roles: ["administrateur"], icone: "actualites" },
 ];
 
 export async function NavBar() {

@@ -40,3 +40,9 @@ export const RUBAN_COULEURS = (process.env.NEXT_PUBLIC_ORG_COULEUR_RUBAN?.trim()
 // démonstration académique KHS Bank ; à remplacer pour un déploiement réel.
 export const MENTION_CONNEXION =
   process.env.NEXT_PUBLIC_ORG_MENTION_CONNEXION?.trim() || "Démonstration du Lot F — Audit de sécurité et GED sécurisée.";
+
+// Active le site public institutionnel (page d'accueil, pages statiques,
+// actualités) à la place de la redirection directe vers /documents. Désactivé
+// par défaut : la démonstration académique KHS Bank garde son comportement
+// actuel (/ → /documents) sans aucun changement.
+export const SITE_PUBLIC_ACTIF = process.env.NEXT_PUBLIC_ORG_SITE_PUBLIC === "true";

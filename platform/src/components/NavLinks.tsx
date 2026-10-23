@@ -8,7 +8,7 @@ type Lien = {
   href: string;
   label: string;
   roles?: RoleUtilisateur[];
-  icone: "documents" | "messagerie" | "audit" | "utilisateurs";
+  icone: "documents" | "messagerie" | "audit" | "utilisateurs" | "actualites";
   badge?: number;
 };
 
@@ -37,6 +37,13 @@ const ICONES: Record<Lien["icone"], React.ReactNode> = {
       <path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  actualites: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path d="M4 11a1 1 0 0 1 1-1h3V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6Z" />
+      <path d="M8 10V4h11v13" />
+      <path d="M8 14h7M8 17h4" />
     </svg>
   ),
 };

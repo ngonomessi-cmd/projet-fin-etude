@@ -108,3 +108,19 @@ export type ParametresMessagerie = {
   modifie_par: string | null;
   modifie_at: string;
 };
+
+export type StatutActualite = "brouillon" | "publie";
+
+export type ActualitePublique = {
+  id: string;
+  organisation: string;
+  titre: string;
+  slug: string;
+  extrait: string | null;
+  contenu: string;
+  statut: StatutActualite;
+  auteur_id: string;
+  publie_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
