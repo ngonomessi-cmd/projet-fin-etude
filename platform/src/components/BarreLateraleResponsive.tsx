@@ -38,7 +38,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
           <span className="font-serif text-lg font-bold text-navy-950">{INITIALE_LOGO}</span>
         </div>
         <div className="min-w-0">
-          <div className="whitespace-nowrap font-serif text-base leading-tight font-semibold">{NOM_ORGANISATION}</div>
+          <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
           <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
         </div>
         <button
@@ -77,14 +77,18 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
 
   return (
     <>
-      <div className="flex h-14 shrink-0 items-center justify-between bg-navy-950 px-4 text-white lg:hidden">
-        <div className="flex items-center gap-2">
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 bg-navy-950 px-4 text-white lg:hidden">
+        <div className="flex min-w-0 items-center gap-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
             <span className="font-serif text-sm font-bold text-navy-950">{INITIALE_LOGO}</span>
           </div>
-          <span className="font-serif text-sm font-semibold">{NOM_ORGANISATION}</span>
+          <span className="truncate font-serif text-sm font-semibold">{NOM_ORGANISATION}</span>
         </div>
-        <button onClick={() => setOuvert(true)} aria-label="Ouvrir le menu" className="p-1 text-white/90 hover:text-white">
+        <button
+          onClick={() => setOuvert(true)}
+          aria-label="Ouvrir le menu"
+          className="shrink-0 p-1 text-white/90 hover:text-white"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>
