@@ -45,13 +45,14 @@ export default async function PageEditionActualite({ params }: { params: Promise
           <div className="mb-6 flex items-center justify-between gap-3">
             <h1 className="font-serif text-2xl font-semibold">Modifier l&apos;actualité</h1>
             {actualite.statut === "publie" && (
-              <Link
-                href={`/actualites/${actualite.slug}`}
-                target="_blank"
-                className="shrink-0 text-sm text-paper-muted hover:text-gold-600 hover:underline"
-              >
-                Voir sur le site public →
-              </Link>
+              <div className="flex shrink-0 gap-3 text-sm">
+                <Link href={`/actualites/${actualite.slug}`} target="_blank" className="text-paper-muted hover:text-gold-600 hover:underline">
+                  Voir (FR) →
+                </Link>
+                <Link href={`/en/actualites/${actualite.slug}`} target="_blank" className="text-paper-muted hover:text-gold-600 hover:underline">
+                  View (EN) →
+                </Link>
+              </div>
             )}
           </div>
           <FormulaireActualite actualite={actualite} />

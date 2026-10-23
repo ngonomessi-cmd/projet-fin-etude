@@ -115,9 +115,12 @@ export type ActualitePublique = {
   id: string;
   organisation: string;
   titre: string;
+  titre_en: string | null;
   slug: string;
   extrait: string | null;
+  extrait_en: string | null;
   contenu: string;
+  contenu_en: string | null;
   statut: StatutActualite;
   auteur_id: string;
   publie_at: string | null;
