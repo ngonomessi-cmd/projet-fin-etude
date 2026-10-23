@@ -23,12 +23,20 @@ function FormulaireConnexion() {
   // y retourne après connexion au lieu de l'accueil par défaut.
   const redirection = searchParams.get("redirect") || "/documents";
   const [mode, setMode] = useState<"connexion" | "inscription">("connexion");
-  const [erreur, setErreur] = useState<string | null>(null);
+  const [erreur, setErreur] = useState<string | null>(
+    searchParams.get("lien") === "invalide"
+      ? "Ce lien de confirmation a expiré ou a déjà été utilisé. Essayez de vous connecter, ou recréez votre compte."
+      : null
+  );
+  const [info, setInfo] = useState<string | null>(
+    searchParams.get("confirme") ? "Adresse e-mail confirmée. Vous pouvez maintenant vous connecter." : null
+  );
   const [enCours, setEnCours] = useState(false);
 
   async function soumettre(formData: FormData) {
     setEnCours(true);
     setErreur(null);
+    setInfo(null);
     const resultat = mode === "connexion" ? await connecterAction(formData) : await inscrireAction(formData);
     setEnCours(false);
 
@@ -38,8 +46,8 @@ function FormulaireConnexion() {
     }
 
     if (mode === "inscription") {
-      setErreur(
-        "Compte créé. Un e-mail de confirmation vient de vous être envoyé — cliquez sur le lien qu'il contient avant de vous connecter."
+      setInfo(
+        "Compte créé. Un e-mail de confirmation vient de vous être envoyé — cliquez sur le lien qu'il contient (pensez à vérifier les courriers indésirables), puis connectez-vous."
       );
       setMode("connexion");
       return;
@@ -105,6 +113,9 @@ function FormulaireConnexion() {
             <Champ nom="mot_de_passe" libelle="Mot de passe" type="password" requis />
 
             {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+            {info && (
+              <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{info}</p>
+            )}
 
             <button
               type="submit"
@@ -118,6 +129,7 @@ function FormulaireConnexion() {
           <button
             onClick={() => {
               setErreur(null);
+              setInfo(null);
               setMode(mode === "connexion" ? "inscription" : "connexion");
             }}
             className="mt-4 text-sm text-gold-600 hover:underline"

@@ -1,0 +1,21 @@
+<!-- Modèle à coller dans Supabase › Authentication › Emails › « Confirm signup ».
+     Objet conseillé : Confirmez votre adresse e-mail -->
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 520px; margin: 0 auto; color: #1c2029;">
+  <h2 style="color: #00183d; margin-bottom: 8px;">Confirmez votre adresse e-mail</h2>
+  <p style="line-height: 1.6;">
+    Bonjour,<br />
+    Votre compte sur la plateforme GED sécurisée vient d'être créé. Cliquez sur le bouton ci-dessous pour
+    confirmer votre adresse e-mail et activer votre compte.
+  </p>
+  <p style="margin: 28px 0;">
+    <a
+      href="{{ .ConfirmationURL }}"
+      style="background: #f8bc3a; color: #00183d; padding: 12px 22px; border-radius: 6px; text-decoration: none; font-weight: bold;"
+      >Confirmer mon adresse</a
+    >
+  </p>
+  <p style="font-size: 13px; color: #6b7280; line-height: 1.5;">
+    Votre compte est créé avec le rôle « Lecteur » ; un administrateur vous attribuera ensuite le rôle adapté.<br />
+    Si vous n'êtes pas à l'origine de cette inscription, ignorez simplement ce message.
+  </p>
+</div>
