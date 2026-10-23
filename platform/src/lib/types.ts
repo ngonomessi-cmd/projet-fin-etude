@@ -13,6 +13,7 @@ export type Profil = {
   id: string;
   nom_complet: string;
   departement: string;
+  organisation: string;
   role: RoleUtilisateur;
   created_at: string;
   derniere_activite_at?: string | null;
@@ -26,6 +27,7 @@ export type Document = {
   classification: ClassificationDocument;
   statut: StatutDocument;
   departement: string;
+  organisation: string;
   storage_path: string | null;
   owner_id: string;
   validated_by: string | null;
@@ -51,6 +53,7 @@ export type Conversation = {
   type: TypeConversation;
   titre: string | null;
   departement: string | null;
+  organisation: string;
   canal_general: boolean;
   created_by: string;
   created_at: string;
@@ -100,7 +103,7 @@ export type PieceJointeMessage = {
 };
 
 export type ParametresMessagerie = {
-  id: true;
+  organisation: string;
   duree_conservation_ans: number;
   modifie_par: string | null;
   modifie_at: string;
