@@ -6,7 +6,8 @@ import { LABEL_ROLE } from "@/lib/labels";
 import type { Profil } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
 import { NavLinks, type Lien } from "@/components/NavLinks";
-import { INITIALE_LOGO, NOM_ORGANISATION } from "@/lib/organisation";
+import { LogoOrganisation } from "@/components/LogoOrganisation";
+import { NOM_ORGANISATION } from "@/lib/organisation";
 
 function initiales(nomComplet: string) {
   return nomComplet
@@ -34,11 +35,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
   const contenu = (
     <>
       <div className="mb-5 flex items-center gap-2.5 border-b border-navy-line px-1.5 pb-8">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-gold-500">
-          <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-xs" : "text-lg"}`}>
-            {INITIALE_LOGO}
-          </span>
-        </div>
+        <LogoOrganisation taille="lg" />
         <div className="min-w-0">
           <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
           <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
@@ -81,11 +78,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
     <>
       <div className="flex h-14 shrink-0 items-center justify-between gap-2 bg-navy-950 px-4 text-white lg:hidden">
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-gold-500">
-            <span className={`font-serif font-bold text-navy-950 ${INITIALE_LOGO.length > 1 ? "text-[9px]" : "text-sm"}`}>
-              {INITIALE_LOGO}
-            </span>
-          </div>
+          <LogoOrganisation taille="sm" />
           <span className="truncate font-serif text-sm font-semibold">{NOM_ORGANISATION}</span>
         </div>
         <button

@@ -9,8 +9,16 @@ export const NOM_ORGANISATION = process.env.NEXT_PUBLIC_ORG_NOM?.trim() || "KHS 
 
 export const SIGLE_ORGANISATION = process.env.NEXT_PUBLIC_ORG_SIGLE?.trim() || "KHS";
 
-// Lettre affichée dans le logo carré de la barre latérale / page de connexion.
+// Lettre affichée dans le logo carré de la barre latérale / page de connexion
+// — utilisée seulement si aucune image de logo n'est fournie ci-dessous.
 export const INITIALE_LOGO = (process.env.NEXT_PUBLIC_ORG_LOGO_LETTRE?.trim() || SIGLE_ORGANISATION.charAt(0) || "K").toUpperCase();
+
+// Chemin (sous public/) ou URL complète d'un vrai logo image, déposé dans le
+// dépôt (ex. "/logos/mon-logo.png") — prioritaire sur le badge-lettre
+// ci-dessus quand il est défini. Laissé vide, chaque déploiement garde son
+// badge-lettre (aucun fichier image n'est donc affiché pour les autres
+// organisations qui partagent ce même code).
+export const URL_LOGO_ORGANISATION = process.env.NEXT_PUBLIC_ORG_LOGO_URL?.trim() || null;
 
 // Mention en bas du panneau de la page de connexion — par défaut celle de la
 // démonstration académique KHS Bank ; à remplacer pour un déploiement réel.
