@@ -66,6 +66,15 @@ export async function mettreAJourSession(requete: NextRequest) {
       return NextResponse.redirect(urlMfa);
     }
   }
+  // Code déjà validé : la page /mfa renvoie directement vers la destination.
+  if (user && pageMfa) {
+    const { data: niveau } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (niveau?.currentLevel === "aal2") {
+      const demande = requete.nextUrl.searchParams.get("redirect");
+      const suite = demande && demande.startsWith("/") && !demande.startsWith("//") ? demande : "/documents";
+      return NextResponse.redirect(new URL(suite, requete.url));
+    }
+  }
   if (!user && pageMfa) {
     const urlConnexion = requete.nextUrl.clone();
     urlConnexion.pathname = "/login";
