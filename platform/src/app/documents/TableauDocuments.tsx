@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Badge } from "@/components/Badge";
-import { COULEUR_CLASSIFICATION, LABEL_CLASSIFICATION, libelleNature, statutAffiche } from "@/lib/labels";
+import { COULEUR_CLASSIFICATION, libelleNature, libelles, statutAffiche } from "@/lib/labels";
+import { useTraduction } from "@/components/i18n/Langue";
+import type { Langue } from "@/lib/i18n/plateforme";
 import type { Document } from "@/lib/types";
 
 export type LigneDocument = Pick<
@@ -20,9 +24,9 @@ export type LigneDocument = Pick<
 > & { auteur?: string | null; extrait?: string | null; note?: string | null };
 
 export const PASTILLE_FORMAT = {
-  texte: { lettre: "W", teinte: "bg-[#2b579a]", titre: "Document texte (Word)" },
-  tableur: { lettre: "X", teinte: "bg-[#217346]", titre: "Classeur (Excel)" },
-  presentation: { lettre: "P", teinte: "bg-[#c43e1c]", titre: "Présentation (PowerPoint)" },
+  texte: { lettre: "W", teinte: "bg-[#2b579a]", titre: "Document texte (Word)", titreEn: "Text document (Word)" },
+  tableur: { lettre: "X", teinte: "bg-[#217346]", titre: "Classeur (Excel)", titreEn: "Spreadsheet (Excel)" },
+  presentation: { lettre: "P", teinte: "bg-[#c43e1c]", titre: "Présentation (PowerPoint)", titreEn: "Presentation (PowerPoint)" },
 } as const;
 
 // Surlignage des mots trouvés : la recherche entoure chaque occurrence de
@@ -46,23 +50,27 @@ function Extrait({ texte }: { texte: string }) {
   );
 }
 
-function dateCourte(iso: string | null | undefined) {
-  return iso ? new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+function dateCourte(iso: string | null | undefined, langue: Langue) {
+  return iso
+    ? new Date(iso).toLocaleDateString(langue === "en" ? "en-GB" : "fr-FR", { day: "2-digit", month: "short", year: "numeric" })
+    : "—";
 }
 
 export function TableauDocuments({
   documents,
   afficherDepartement = false,
   colonneDate = "maj",
-  vide = "Aucun document.",
+  vide,
 }: {
   documents: LigneDocument[];
   afficherDepartement?: boolean;
   colonneDate?: "maj" | "publication";
   vide?: string;
 }) {
+  const { t, langue } = useTraduction();
+  const L = libelles(langue);
   if (documents.length === 0) {
-    return <p className="px-4 py-4 text-sm text-paper-muted">{vide}</p>;
+    return <p className="px-4 py-4 text-sm text-paper-muted">{vide ?? t("Aucun document.", "No documents.")}</p>;
   }
   return (
     <div className="overflow-x-auto">
@@ -70,15 +78,17 @@ export function TableauDocuments({
         <thead className="bg-paper-50 text-left text-paper-muted">
           <tr>
             <th className="px-4 py-2 font-medium">Document</th>
-            <th className="px-4 py-2 font-medium">Nature</th>
-            {afficherDepartement && <th className="px-4 py-2 font-medium">Département</th>}
-            <th className="px-4 py-2 font-medium">Statut</th>
-            <th className="px-4 py-2 font-medium">{colonneDate === "publication" ? "Publié le" : "Mis à jour"}</th>
+            <th className="px-4 py-2 font-medium">{t("Nature", "Type")}</th>
+            {afficherDepartement && <th className="px-4 py-2 font-medium">{t("Département", "Department")}</th>}
+            <th className="px-4 py-2 font-medium">{t("Statut", "Status")}</th>
+            <th className="px-4 py-2 font-medium">
+              {colonneDate === "publication" ? t("Publié le", "Published") : t("Mis à jour", "Updated")}
+            </th>
           </tr>
         </thead>
         <tbody>
           {documents.map((doc) => {
-            const statut = statutAffiche(doc);
+            const statut = statutAffiche(doc, langue);
             return (
               <tr key={doc.id} className="border-t border-paper-200 align-top hover:bg-paper-50">
                 <td className="px-4 py-2.5">
@@ -88,7 +98,7 @@ export function TableauDocuments({
                   >
                     {doc.format_atelier && (
                       <span
-                        title={PASTILLE_FORMAT[doc.format_atelier].titre}
+                        title={langue === "en" ? PASTILLE_FORMAT[doc.format_atelier].titreEn : PASTILLE_FORMAT[doc.format_atelier].titre}
                         className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold text-white ${PASTILLE_FORMAT[doc.format_atelier].teinte}`}
                       >
                         {PASTILLE_FORMAT[doc.format_atelier].lettre}
@@ -104,18 +114,18 @@ export function TableauDocuments({
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-paper-soft">
                     <span className="font-mono">{doc.reference}</span>
                     {doc.auteur && <span>· {doc.auteur}</span>}
-                    <Badge texte={LABEL_CLASSIFICATION[doc.classification]} classesCouleur={COULEUR_CLASSIFICATION[doc.classification]} />
+                    <Badge texte={L.classification[doc.classification]} classesCouleur={COULEUR_CLASSIFICATION[doc.classification]} />
                   </div>
                   {doc.note && <p className="mt-1 text-xs text-red-700">{doc.note}</p>}
                   {doc.extrait && <Extrait texte={doc.extrait} />}
                 </td>
-                <td className="px-4 py-2.5 text-paper-muted">{libelleNature(doc.nature)}</td>
+                <td className="px-4 py-2.5 text-paper-muted">{libelleNature(doc.nature, langue)}</td>
                 {afficherDepartement && <td className="px-4 py-2.5 text-paper-muted">{doc.departement}</td>}
                 <td className="px-4 py-2.5">
                   <Badge texte={statut.texte} classesCouleur={statut.couleur} />
                 </td>
                 <td className="whitespace-nowrap px-4 py-2.5 text-paper-soft">
-                  {dateCourte(colonneDate === "publication" ? doc.publie_le : doc.updated_at)}
+                  {dateCourte(colonneDate === "publication" ? doc.publie_le : doc.updated_at, langue)}
                 </td>
               </tr>
             );

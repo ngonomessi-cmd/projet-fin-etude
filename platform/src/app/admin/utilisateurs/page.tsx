@@ -1,13 +1,16 @@
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { DESCRIPTION_ROLE, LABEL_ROLE } from "@/lib/labels";
+import { LABEL_ROLE, libelles } from "@/lib/labels";
 import type { RoleUtilisateur } from "@/lib/types";
 import type { Profil } from "@/lib/types";
 import { SelecteurRole } from "./SelecteurRole";
 import { ChampTexteModifiable } from "./ChampTexteModifiable";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageUtilisateurs() {
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
+  const L = libelles(langue);
 
   const {
     data: { user },
@@ -22,10 +25,10 @@ export default async function PageUtilisateurs() {
         <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
           <div className="mx-auto max-w-3xl">
             <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Accès réservé au rôle Administrateur. Cette page serait de toute façon vide pour vous : la
-              table "profiles" ne masque pas sa lecture, mais seule la fonction changer_role_utilisateur
-              (appelée par les contrôles ci-dessous) vérifie et refuse côté base toute tentative d&apos;un
-              autre rôle.
+              {t(
+                "Accès réservé au rôle Administrateur. Cette page serait de toute façon vide pour vous : la table \"profiles\" ne masque pas sa lecture, mais seule la fonction changer_role_utilisateur (appelée par les contrôles ci-dessous) vérifie et refuse côté base toute tentative d'un autre rôle.",
+                "Administrators only. Any attempt from another role is checked and refused by the database (changer_role_utilisateur function)."
+              )}
             </p>
           </div>
         </main>
@@ -41,22 +44,22 @@ export default async function PageUtilisateurs() {
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-3xl">
-          <h1 className="mb-1 font-serif text-2xl font-semibold">Utilisateurs</h1>
+          <h1 className="mb-1 font-serif text-2xl font-semibold">{t("Utilisateurs", "Users")}</h1>
           <p className="mb-6 text-sm text-paper-muted">
-            Gestion des rôles RBAC (contrôle d&apos;accès basé sur les rôles) et des profils. Le nom et le
-            département se modifient directement dans le tableau (cliquez, modifiez, cliquez ailleurs
-            pour enregistrer). Chaque changement est enregistré dans le journal d&apos;audit, via les
-            fonctions PostgreSQL changer_role_utilisateur et modifier_profil_utilisateur.
+            {t(
+              "Gestion des rôles RBAC (contrôle d'accès basé sur les rôles) et des profils. Le nom et le département se modifient directement dans le tableau (cliquez, modifiez, cliquez ailleurs pour enregistrer). Chaque changement est enregistré dans le journal d'audit, via les fonctions PostgreSQL changer_role_utilisateur et modifier_profil_utilisateur.",
+              "Manage RBAC roles (role-based access control) and profiles. Name and department are edited directly in the table (click, edit, click elsewhere to save). Every change is recorded in the audit log, through the PostgreSQL functions changer_role_utilisateur and modifier_profil_utilisateur."
+            )}
           </p>
 
           <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
             <table className="w-full min-w-[640px] text-sm">
               <thead className="bg-paper-50 text-left text-paper-muted">
                 <tr>
-                  <th className="px-4 py-2.5 font-medium">Nom</th>
-                  <th className="px-4 py-2.5 font-medium">E-mail</th>
-                  <th className="px-4 py-2.5 font-medium">Département</th>
-                  <th className="px-4 py-2.5 font-medium">Rôle</th>
+                  <th className="px-4 py-2.5 font-medium">{t("Nom", "Name")}</th>
+                  <th className="px-4 py-2.5 font-medium">{t("E-mail", "Email")}</th>
+                  <th className="px-4 py-2.5 font-medium">{t("Département", "Department")}</th>
+                  <th className="px-4 py-2.5 font-medium">{t("Rôle", "Role")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,18 +82,20 @@ export default async function PageUtilisateurs() {
           </div>
 
           <section className="mt-6 rounded-lg border border-paper-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 font-serif text-base font-semibold">Ce que permet chaque rôle</h2>
+            <h2 className="mb-3 font-serif text-base font-semibold">{t("Ce que permet chaque rôle", "What each role can do")}</h2>
             <dl className="grid gap-x-4 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
               {(Object.keys(LABEL_ROLE) as RoleUtilisateur[]).map((r) => (
                 <div key={r} className="contents">
-                  <dt className="font-medium text-[#1c2029]">{LABEL_ROLE[r]}</dt>
-                  <dd className="text-paper-muted">{DESCRIPTION_ROLE[r]}</dd>
+                  <dt className="font-medium text-[#1c2029]">{L.role[r]}</dt>
+                  <dd className="text-paper-muted">{L.descriptionRole[r]}</dd>
                 </div>
               ))}
             </dl>
             <p className="mt-3 text-xs text-paper-soft">
-              Partage : avec toute personne que l&apos;on peut contacter dans la messagerie ; un document confidentiel reste
-              dans son département. Chaque partage est inscrit au journal d&apos;audit.
+              {t(
+                "Partage : avec toute personne que l'on peut contacter dans la messagerie ; un document confidentiel reste dans son département. Chaque partage est inscrit au journal d'audit.",
+                "Sharing: with anyone you can contact in messaging; a confidential document stays within its department. Every share is recorded in the audit log."
+              )}
             </p>
           </section>
         </div>

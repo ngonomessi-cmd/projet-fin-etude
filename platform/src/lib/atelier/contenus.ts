@@ -41,6 +41,16 @@ export const LABEL_FORMAT: Record<FormatAtelier, string> = {
   presentation: "Présentation (PowerPoint)",
 };
 
+export const LABEL_FORMAT_EN: Record<FormatAtelier, string> = {
+  texte: "Text document (Word)",
+  tableur: "Spreadsheet (Excel)",
+  presentation: "Presentation (PowerPoint)",
+};
+
+export function libelleFormat(format: FormatAtelier, langue: "fr" | "en" = "fr"): string {
+  return (langue === "en" ? LABEL_FORMAT_EN : LABEL_FORMAT)[format];
+}
+
 export const LABEL_FORMAT_COURT: Record<FormatAtelier, string> = {
   texte: "Word",
   tableur: "Excel",

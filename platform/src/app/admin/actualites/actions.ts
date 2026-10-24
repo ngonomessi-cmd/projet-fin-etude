@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { StatutActualite } from "@/lib/types";
 import { IMAGES_ACTUALITES } from "@/lib/images-actualites";
+import { langueServeur } from "@/lib/i18n/serveur";
+import { traducteur } from "@/lib/i18n/plateforme";
+import { traduireErreur } from "@/lib/i18n/erreurs";
+
+// Messages renvoyés à l'interface dans la langue de la personne connectée.
+const T = async (fr: string, en: string) => traducteur(await langueServeur())(fr, en);
+const E = async (message: string) => traduireErreur(message, await langueServeur());
 
 function lireImage(formData: FormData): string | null {
   const url = String(formData.get("image_url") ?? "");
@@ -34,8 +41,8 @@ export async function creerActualiteAction(formData: FormData): Promise<Resultat
   const contenuEn = String(formData.get("contenu_en") ?? "").trim();
   const statut = String(formData.get("statut") ?? "brouillon") as StatutActualite;
 
-  if (!titre) return { erreur: "Le titre est obligatoire." };
-  if (!contenu) return { erreur: "Le contenu est obligatoire." };
+  if (!titre) return { erreur: await T("Le titre est obligatoire.", "The title is required.") };
+  if (!contenu) return { erreur: await T("Le contenu est obligatoire.", "The content is required.") };
 
   const slugBase = genererSlug(titre) || "actualite";
   let slug = slugBase;
@@ -71,10 +78,10 @@ export async function creerActualiteAction(formData: FormData): Promise<Resultat
       slug = `${slugBase}-${tentative}`;
       continue;
     }
-    return { erreur: error?.message ?? "Échec de la création." };
+    return { erreur: error ? await E(error.message) : await T("Échec de la création.", "Creation failed.") };
   }
 
-  if (!idCree) return { erreur: "Impossible de générer une adresse unique pour cet article." };
+  if (!idCree) return { erreur: await T("Impossible de générer une adresse unique pour cet article.", "Could not generate a unique address for this article.") };
 
   revalidatePath("/admin/actualites");
   revalidatePath("/actualites");
@@ -92,8 +99,8 @@ export async function modifierActualiteAction(id: string, formData: FormData): P
   const contenuEn = String(formData.get("contenu_en") ?? "").trim();
   const statut = String(formData.get("statut") ?? "brouillon") as StatutActualite;
 
-  if (!titre) return { erreur: "Le titre est obligatoire." };
-  if (!contenu) return { erreur: "Le contenu est obligatoire." };
+  if (!titre) return { erreur: await T("Le titre est obligatoire.", "The title is required.") };
+  if (!contenu) return { erreur: await T("Le contenu est obligatoire.", "The content is required.") };
 
   const { error } = await supabase
     .from("actualites_publiques")
@@ -109,7 +116,7 @@ export async function modifierActualiteAction(id: string, formData: FormData): P
     })
     .eq("id", id);
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/admin/actualites");
   revalidatePath(`/admin/actualites/${id}`);
@@ -121,7 +128,7 @@ export async function supprimerActualiteAction(id: string): Promise<ResultatActu
   const supabase = await creerClientServeur();
 
   const { error } = await supabase.from("actualites_publiques").delete().eq("id", id);
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/admin/actualites");
   revalidatePath("/actualites");

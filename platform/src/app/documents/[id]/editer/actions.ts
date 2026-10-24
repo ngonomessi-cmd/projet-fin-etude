@@ -2,13 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
+import { langueServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 export type EtatVerrou = { ok: boolean; motif?: "lecture_seule" | "verrouille"; par?: string; jusqua?: string; erreur?: string };
 
 export async function prendreVerrouAction(documentId: string): Promise<EtatVerrou> {
   const supabase = await creerClientServeur();
   const { data, error } = await supabase.rpc("prendre_verrou_document", { p_document_id: documentId });
-  if (error) return { ok: false, erreur: error.message };
+  if (error) return { ok: false, erreur: traduireErreur(error.message, await langueServeur()) };
   return data as EtatVerrou;
 }
 
@@ -28,7 +30,7 @@ export async function enregistrerContenuAction(
     p_contenu: contenu,
     p_titre: titre,
   });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
   revalidatePath(`/documents/${documentId}`);
   return { erreur: null, enregistreLe: data as string };
 }

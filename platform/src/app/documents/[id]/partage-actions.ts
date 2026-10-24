@@ -5,6 +5,8 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { exporterDocument, type FichierExporte } from "@/lib/atelier/exporter";
 import { envoyerAlertesPourMessage } from "@/lib/messagerie/alertes";
 import type { Document, Profil } from "@/lib/types";
+import { traductionServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 export type ResultatPartage = { erreur: string | null; succes?: string };
 
@@ -12,10 +14,11 @@ const TAILLE_MAX_PJ = 4 * 1024 * 1024;
 
 export async function partagerDocumentAction(documentId: string, formData: FormData): Promise<ResultatPartage> {
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: t("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const profils = formData.getAll("profils").map(String).filter(Boolean);
   const conversationId = String(formData.get("conversation_id") ?? "") || null;
@@ -23,7 +26,7 @@ export async function partagerDocumentAction(documentId: string, formData: FormD
   const mot = String(formData.get("message") ?? "").trim().slice(0, 1000);
   const joindrePdf = formData.get("joindre_pdf") === "on";
 
-  if (profils.length === 0 && !conversationId) return { erreur: "Choisissez au moins une personne ou une conversation." };
+  if (profils.length === 0 && !conversationId) return { erreur: t("Choisissez au moins une personne ou une conversation.", "Choose at least one person or conversation.") };
 
   // 1. Les droits d'abord : toutes les règles (rôle, personnes contactables,
   //    confidentialité par département) sont vérifiées par la base.
@@ -33,7 +36,7 @@ export async function partagerDocumentAction(documentId: string, formData: FormD
     p_conversation_id: conversationId,
     p_droit: droit,
   });
-  if (erreurPartage) return { erreur: erreurPartage.message };
+  if (erreurPartage) return { erreur: traduireErreur(erreurPartage.message, langue) };
 
   const [{ data: docData }, { data: moiData }] = await Promise.all([
     supabase.from("documents").select("*").eq("id", documentId).single(),
@@ -45,15 +48,18 @@ export async function partagerDocumentAction(documentId: string, formData: FormD
   // 2. Une copie PDF figée, si demandée (documents rédigés dans la plateforme).
   let pdf: FichierExporte | null = null;
   if (joindrePdf && doc.format_atelier) {
-    pdf = await exporterDocument(doc, "pdf");
+    pdf = await exporterDocument(doc, "pdf", langue);
     if (pdf.tampon.length > TAILLE_MAX_PJ) pdf = null;
   }
 
   // 3. Un message dans la messagerie interne de chaque destinataire.
   const texte = [
-    `${moi.nom_complet} a partagé le document « ${doc.titre} » (${droit === "edition" ? "lecture et modification" : "lecture"}).`,
+    t(
+      `${moi.nom_complet} a partagé le document « ${doc.titre} » (${droit === "edition" ? "lecture et modification" : "lecture"}).`,
+      `${moi.nom_complet} shared the document "${doc.titre}" (${droit === "edition" ? "read and edit" : "read-only"}).`
+    ),
     mot,
-    `Ouvrir : /documents/${doc.id}`,
+    `${t("Ouvrir", "Open")} : /documents/${doc.id}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -98,14 +104,18 @@ export async function partagerDocumentAction(documentId: string, formData: FormD
   const n = profils.length + (conversationId ? 1 : 0);
   return {
     erreur: null,
-    succes: `Document partagé (${n} destinataire${n > 1 ? "s" : ""}${messagesEnvoyes ? ", prévenu" + (n > 1 ? "s" : "") + " par la messagerie" : ""}${pdf ? ", PDF joint" : ""}).`,
+    succes: t(
+      `Document partagé (${n} destinataire${n > 1 ? "s" : ""}${messagesEnvoyes ? ", prévenu" + (n > 1 ? "s" : "") + " par la messagerie" : ""}${pdf ? ", PDF joint" : ""}).`,
+      `Document shared (${n} recipient${n > 1 ? "s" : ""}${messagesEnvoyes ? ", notified via messaging" : ""}${pdf ? ", PDF attached" : ""}).`
+    ),
   };
 }
 
 export async function retirerPartageAction(partageId: string, documentId: string): Promise<ResultatPartage> {
   const supabase = await creerClientServeur();
+  const { langue } = await traductionServeur();
   const { error } = await supabase.rpc("retirer_partage", { p_partage_id: partageId });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, langue) };
   revalidatePath(`/documents/${documentId}`);
   return { erreur: null };
 }

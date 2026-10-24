@@ -6,6 +6,7 @@ import { genererPdfDocument } from "@/lib/pdf";
 import { LABEL_CLASSIFICATION } from "@/lib/labels";
 import { NOM_ORGANISATION } from "@/lib/organisation";
 import type { Document, Profil } from "@/lib/types";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export type ResultatGenerationFichiers = { erreur: string | null; genere: number };
 
@@ -18,16 +19,17 @@ export type ResultatGenerationFichiers = { erreur: string | null; genere: number
 // l'auteur.
 export async function genererFichiersDocumentsFictifsAction(): Promise<ResultatGenerationFichiers> {
   const supabase = await creerClientServeur();
+  const { t } = await traductionServeur();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter.", genere: 0 };
+  if (!user) return { erreur: t("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again."), genere: 0 };
 
   const { data: profilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const profil = profilData as Profil | null;
   if (!profil || profil.role !== "administrateur") {
-    return { erreur: "Réservé à l'administrateur.", genere: 0 };
+    return { erreur: t("Réservé à l'administrateur.", "Administrators only."), genere: 0 };
   }
 
   const { data: documentsData, error: erreurLecture } = await supabase

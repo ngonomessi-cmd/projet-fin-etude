@@ -8,12 +8,15 @@ import { ArchiverBouton } from "./ArchiverBouton";
 import { SourdineBouton } from "./SourdineBouton";
 import { GererCanalBouton } from "./GererCanalBouton";
 import { PanneauDetails } from "./PanneauDetails";
-import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
 import type { Conversation, Message, ParticipantConversation, PieceJointeMessage, Profil, StatutMessage } from "@/lib/types";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageConversation({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
+  const LABEL_TYPE_CONVERSATION = libelles(langue).typeConversation;
 
   const {
     data: { user },
@@ -98,12 +101,12 @@ export default async function PageConversation({ params }: { params: Promise<{ i
     .filter((c): c is ConversationAllegee => c !== null && c !== undefined)
     .map((c) => ({
       id: c.id,
-      nom: c.type === "privee" ? "Conversation privée" : (c.titre ?? LABEL_TYPE_CONVERSATION[c.type]),
+      nom: c.type === "privee" ? LABEL_TYPE_CONVERSATION.privee : (c.titre ?? LABEL_TYPE_CONVERSATION[c.type]),
     }));
 
   const titre =
     conversation.type === "privee"
-      ? (participants.find((p) => p.profil_id !== user.id)?.profiles?.nom_complet ?? "Conversation privée")
+      ? (participants.find((p) => p.profil_id !== user.id)?.profiles?.nom_complet ?? LABEL_TYPE_CONVERSATION.privee)
       : (conversation.titre ?? LABEL_TYPE_CONVERSATION[conversation.type]);
 
   const initiales = titre
@@ -123,7 +126,7 @@ export default async function PageConversation({ params }: { params: Promise<{ i
             <div className="flex min-w-0 items-center gap-3">
               <Link
                 href="/messagerie"
-                aria-label="Retour à la messagerie"
+                aria-label={t("Retour à la messagerie", "Back to messaging")}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-paper-muted hover:bg-paper-50 hover:text-[#1c2029]"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
@@ -139,7 +142,7 @@ export default async function PageConversation({ params }: { params: Promise<{ i
                   {LABEL_TYPE_CONVERSATION[conversation.type]}
                   {conversation.type !== "privee" && ` · ${participants.length} participant${participants.length > 1 ? "s" : ""}`}
                   {conversation.type === "canal" &&
-                    ` · publient : ${participants
+                    ` · ${t("publient", "posting")} : ${participants
                       .filter((p) => p.peut_publier)
                       .map((p) => p.profiles?.nom_complet)
                       .join(", ")}`}
@@ -151,7 +154,7 @@ export default async function PageConversation({ params }: { params: Promise<{ i
                 <PanneauDetails
                   participants={participants.map((p) => ({
                     profilId: p.profil_id,
-                    nom: p.profiles?.nom_complet ?? "Agent",
+                    nom: p.profiles?.nom_complet ?? t("Agent", "Member"),
                     role: p.profiles?.role ?? "lecteur",
                   }))}
                   dernierMessagePropre={[...messages].reverse().find((m) => m.auteur_id === user.id) ?? null}

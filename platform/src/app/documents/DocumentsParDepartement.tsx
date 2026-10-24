@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TableauDocuments, type LigneDocument } from "./TableauDocuments";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export type GroupeDepartement = { departement: string; documents: LigneDocument[]; special?: boolean };
 
@@ -15,6 +16,7 @@ export function DocumentsParDepartement({
   toutOuvrir?: boolean;
 }) {
   const [ouverts, setOuverts] = useState<Record<string, boolean>>({});
+  const { t } = useTraduction();
 
   function basculer(departement: string) {
     setOuverts((o) => ({ ...o, [departement]: !(o[departement] ?? toutOuvrir) }));
@@ -57,7 +59,7 @@ export function DocumentsParDepartement({
                 <TableauDocuments
                   documents={g.documents}
                   colonneDate={colonneDate}
-                  vide="Aucun document dans ce département pour l'instant."
+                  vide={t("Aucun document dans ce département pour l'instant.", "No documents in this department yet.")}
                 />
               </div>
             )}

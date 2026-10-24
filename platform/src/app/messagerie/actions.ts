@@ -9,6 +9,13 @@ import {
 } from "@/lib/labels";
 import { analyserPieceJointe } from "@/lib/messagerie/antivirus";
 import { envoyerAlertesPourMessage } from "@/lib/messagerie/alertes";
+import { langueServeur } from "@/lib/i18n/serveur";
+import { traducteur } from "@/lib/i18n/plateforme";
+import { traduireErreur } from "@/lib/i18n/erreurs";
+
+// Messages renvoyés à l'interface dans la langue de la personne connectée.
+const T = async (fr: string, en: string) => traducteur(await langueServeur())(fr, en);
+const E = async (message: string) => traduireErreur(message, await langueServeur());
 
 export type ResultatMessagerie = { erreur: string | null };
 
@@ -20,7 +27,7 @@ export async function ouvrirConversationPriveeAction(autreId: string): Promise<R
 
   const { data, error } = await supabase.rpc("ouvrir_conversation_privee", { p_autre_id: autreId });
   if (error || !data) {
-    return { erreur: error?.message ?? "Impossible d'ouvrir cette conversation." };
+    return { erreur: error ? await E(error.message) : await T("Impossible d'ouvrir cette conversation.", "Could not open this conversation.") };
   }
 
   redirect(`/messagerie/${data.id}`);
@@ -32,15 +39,15 @@ export async function creerGroupeAction(formData: FormData): Promise<ResultatMes
   const titre = String(formData.get("titre") ?? "").trim();
   const participants = formData.getAll("participants").map(String);
 
-  if (!titre) return { erreur: "Le groupe doit avoir un objet." };
-  if (participants.length === 0) return { erreur: "Sélectionnez au moins un agent." };
+  if (!titre) return { erreur: await T("Le groupe doit avoir un objet.", "The group must have a subject.") };
+  if (participants.length === 0) return { erreur: await T("Sélectionnez au moins un agent.", "Select at least one person.") };
 
   const { data, error } = await supabase.rpc("creer_groupe_messagerie", {
     p_titre: titre,
     p_participants: participants,
   });
   if (error || !data) {
-    return { erreur: error?.message ?? "Impossible de créer le groupe." };
+    return { erreur: error ? await E(error.message) : await T("Impossible de créer le groupe.", "Could not create the group.") };
   }
 
   redirect(`/messagerie/${data.id}`);
@@ -52,23 +59,23 @@ export async function envoyerMessageAction(conversationId: string, formData: For
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: await T("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const contenu = String(formData.get("contenu") ?? "").trim();
   const urgent = formData.get("urgent") === "on";
   const fichier = formData.get("fichier") as File | null;
 
-  if (!contenu) return { erreur: "Le message ne peut pas être vide." };
-  if (contenu.length > 10000) return { erreur: "Message trop long (10 000 caractères au plus)." };
+  if (!contenu) return { erreur: await T("Le message ne peut pas être vide.", "The message cannot be empty.") };
+  if (contenu.length > 10000) return { erreur: await T("Message trop long (10 000 caractères au plus).", "Message too long (10,000 characters at most).") };
 
   let tamponFichier: Buffer | null = null;
 
   if (fichier && fichier.size > 0) {
     if (fichier.size > TAILLE_MAX_PIECE_JOINTE_OCTETS) {
-      return { erreur: "Pièce jointe trop volumineuse (10 Mo au plus)." };
+      return { erreur: await T("Pièce jointe trop volumineuse (10 Mo au plus).", "Attachment too large (10 MB at most).") };
     }
     if (!TYPES_MIME_AUTORISES_PIECE_JOINTE.includes(fichier.type as (typeof TYPES_MIME_AUTORISES_PIECE_JOINTE)[number])) {
-      return { erreur: "Type de fichier non autorisé pour une pièce jointe." };
+      return { erreur: await T("Type de fichier non autorisé pour une pièce jointe.", "File type not allowed as an attachment.") };
     }
 
     // Analyse de sécurité AVANT tout envoi (cf. lib/messagerie/antivirus.ts) :
@@ -79,7 +86,7 @@ export async function envoyerMessageAction(conversationId: string, formData: For
     tamponFichier = Buffer.from(await fichier.arrayBuffer());
     const resultatAnalyse = await analyserPieceJointe(tamponFichier, fichier.name, fichier.type || "application/octet-stream");
     if (!resultatAnalyse.propre) {
-      return { erreur: resultatAnalyse.motif ?? "Pièce jointe refusée par l'analyse de sécurité." };
+      return { erreur: resultatAnalyse.motif ? await E(resultatAnalyse.motif) : await T("Pièce jointe refusée par l'analyse de sécurité.", "Attachment rejected by the security scan.") };
     }
   }
 
@@ -92,7 +99,7 @@ export async function envoyerMessageAction(conversationId: string, formData: For
     .single();
 
   if (erreurMessage || !message) {
-    return { erreur: `Message non envoyé : ${erreurMessage?.message}` };
+    return { erreur: `${await T("Message non envoyé", "Message not sent")} : ${await E(erreurMessage?.message ?? "")}` };
   }
 
   // 2. Pièce jointe éventuelle (déjà analysée ci-dessus), sous
@@ -104,7 +111,7 @@ export async function envoyerMessageAction(conversationId: string, formData: For
       .upload(cheminStockage, tamponFichier, { contentType: fichier.type || undefined });
 
     if (erreurUpload) {
-      return { erreur: `Message envoyé, mais pièce jointe refusée : ${erreurUpload.message}` };
+      return { erreur: `${await T("Message envoyé, mais pièce jointe refusée", "Message sent, but attachment rejected")} : ${erreurUpload.message}` };
     }
 
     await supabase.from("pieces_jointes_message").insert({
@@ -130,8 +137,8 @@ export async function modifierMessageAction(messageId: string, contenu: string):
   const supabase = await creerClientServeur();
 
   const texte = contenu.trim();
-  if (!texte) return { erreur: "Le message ne peut pas être vide." };
-  if (texte.length > 10000) return { erreur: "Message trop long (10 000 caractères au plus)." };
+  if (!texte) return { erreur: await T("Le message ne peut pas être vide.", "The message cannot be empty.") };
+  if (texte.length > 10000) return { erreur: await T("Message trop long (10 000 caractères au plus).", "Message too long (10,000 characters at most).") };
 
   // La policy RLS "messages_correction_auteur_15_minutes" refuse la mise à
   // jour au-delà de 15 minutes après l'envoi : en cas de refus, Supabase ne
@@ -143,8 +150,8 @@ export async function modifierMessageAction(messageId: string, contenu: string):
     .select()
     .maybeSingle();
 
-  if (error) return { erreur: error.message };
-  if (!data) return { erreur: "Ce message ne peut plus être modifié (délai de 15 minutes dépassé)." };
+  if (error) return { erreur: await E(error.message) };
+  if (!data) return { erreur: await T("Ce message ne peut plus être modifié (délai de 15 minutes dépassé).", "This message can no longer be edited (15-minute limit exceeded).") };
 
   revalidatePath(`/messagerie/${data.conversation_id}`);
   return { erreur: null };
@@ -160,8 +167,8 @@ export async function supprimerMessageAction(messageId: string): Promise<Resulta
     .select()
     .maybeSingle();
 
-  if (error) return { erreur: error.message };
-  if (!data) return { erreur: "Ce message ne peut plus être supprimé (délai de 15 minutes dépassé)." };
+  if (error) return { erreur: await E(error.message) };
+  if (!data) return { erreur: await T("Ce message ne peut plus être supprimé (délai de 15 minutes dépassé).", "This message can no longer be deleted (15-minute limit exceeded).") };
 
   revalidatePath(`/messagerie/${data.conversation_id}`);
   return { erreur: null };
@@ -173,7 +180,7 @@ export async function archiverConversationAction(conversationId: string, archive
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: await T("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const { error } = await supabase
     .from("conversation_participants")
@@ -181,7 +188,7 @@ export async function archiverConversationAction(conversationId: string, archive
     .eq("conversation_id", conversationId)
     .eq("profil_id", user.id);
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   return { erreur: null };
@@ -201,7 +208,7 @@ export async function basculerSourdineAction(conversationId: string, sourdine: b
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: await T("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const { error } = await supabase
     .from("conversation_participants")
@@ -209,7 +216,7 @@ export async function basculerSourdineAction(conversationId: string, sourdine: b
     .eq("conversation_id", conversationId)
     .eq("profil_id", user.id);
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   return { erreur: null };
@@ -223,7 +230,7 @@ export async function transfererMessageAction(messageId: string, conversationCib
     p_conversation_cible_id: conversationCibleId,
   });
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath(`/messagerie/${conversationCibleId}`);
   return { erreur: null };
@@ -233,7 +240,7 @@ export async function changerDureeConservationAction(annees: number): Promise<Re
   const supabase = await creerClientServeur();
 
   const { error } = await supabase.rpc("definir_duree_conservation_messagerie", { p_annees: annees });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   return { erreur: null };
@@ -243,10 +250,10 @@ export async function creerCanalDepartementAction(departement: string): Promise<
   const supabase = await creerClientServeur();
 
   const nom = departement.trim();
-  if (!nom) return { erreur: "Le département ne peut pas être vide." };
+  if (!nom) return { erreur: await T("Le département ne peut pas être vide.", "The department cannot be empty.") };
 
   const { error } = await supabase.rpc("creer_canal_departement", { p_departement: nom });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   return { erreur: null };
@@ -256,10 +263,10 @@ export async function renommerCanalAction(conversationId: string, nouveauTitre: 
   const supabase = await creerClientServeur();
 
   const titre = nouveauTitre.trim();
-  if (!titre) return { erreur: "Le titre ne peut pas être vide." };
+  if (!titre) return { erreur: await T("Le titre ne peut pas être vide.", "The title cannot be empty.") };
 
   const { error } = await supabase.rpc("renommer_canal", { p_conversation_id: conversationId, p_nouveau_titre: titre });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   revalidatePath(`/messagerie/${conversationId}`);
@@ -270,7 +277,7 @@ export async function supprimerCanalAction(conversationId: string): Promise<Resu
   const supabase = await creerClientServeur();
 
   const { error } = await supabase.rpc("supprimer_canal", { p_conversation_id: conversationId });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: await E(error.message) };
 
   revalidatePath("/messagerie");
   return { erreur: null };

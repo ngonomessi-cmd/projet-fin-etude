@@ -49,6 +49,13 @@ export const RUBAN_COULEURS = (process.env.NEXT_PUBLIC_ORG_COULEUR_RUBAN?.trim()
 export const MENTION_CONNEXION =
   process.env.NEXT_PUBLIC_ORG_MENTION_CONNEXION?.trim() || "Démonstration du Lot F — Audit de sécurité et GED sécurisée.";
 
+// Version anglaise (plateforme bilingue) ; à défaut, la mention personnalisée
+// est reprise telle quelle.
+export const MENTION_CONNEXION_EN =
+  process.env.NEXT_PUBLIC_ORG_MENTION_CONNEXION_EN?.trim() ||
+  process.env.NEXT_PUBLIC_ORG_MENTION_CONNEXION?.trim() ||
+  "Lot F demonstration — Security audit and secure EDMS.";
+
 // Active le site public institutionnel (page d'accueil, pages statiques,
 // actualités) à la place de la redirection directe vers /documents. Désactivé
 // par défaut : la démonstration académique KHS Bank garde son comportement

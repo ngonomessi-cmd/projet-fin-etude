@@ -1,14 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { NOM_ORGANISATION } from "@/lib/organisation";
+import { nomOrganisation } from "@/lib/organisation";
 import type { Document } from "@/lib/types";
 import { AtelierDocument } from "./AtelierDocument";
-import { LABEL_CLASSIFICATION } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
+import { langueServeur } from "@/lib/i18n/serveur";
 
 export default async function PageEditerDocument({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
+  const langue = await langueServeur();
 
   const { data } = await supabase.from("documents").select("*").eq("id", id).maybeSingle();
   const doc = data as Document | null;
@@ -29,8 +31,8 @@ export default async function PageEditerDocument({ params }: { params: Promise<{
             contenuInitial={doc.contenu}
             peutEditer={Boolean(peutEditer)}
             archive={Boolean(doc.archive_le)}
-            classification={LABEL_CLASSIFICATION[doc.classification]}
-            organisation={NOM_ORGANISATION}
+            classification={libelles(langue).classification[doc.classification]}
+            organisation={nomOrganisation(langue)}
           />
         </div>
       </main>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { LABEL_ROLE } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
 import type { Message, RoleUtilisateur, StatutMessage } from "@/lib/types";
+import { useTraduction } from "@/components/i18n/Langue";
 
 type ParticipantAffiche = { profilId: string; nom: string; role: RoleUtilisateur };
 
@@ -18,6 +19,7 @@ export function PanneauDetails({
   utilisateurId: string;
 }) {
   const [ouvert, setOuvert] = useState(false);
+  const { t, langue, dl } = useTraduction();
 
   const statutsDernierMessage = dernierMessagePropre
     ? new Map(statuts.filter((s) => s.message_id === dernierMessagePropre.id).map((s) => [s.profil_id, s]))
@@ -29,7 +31,7 @@ export function PanneauDetails({
         onClick={() => setOuvert((v) => !v)}
         className="rounded-md border border-paper-200 px-3 py-1.5 text-sm text-paper-muted hover:bg-paper-50"
       >
-        Détails
+        {t("Détails", "Details")}
       </button>
 
       {ouvert && (
@@ -40,25 +42,25 @@ export function PanneauDetails({
             <ul className="mb-3 max-h-48 space-y-1 overflow-y-auto text-sm">
               {participants.map((p) => (
                 <li key={p.profilId} className="flex items-center justify-between">
-                  <span className="text-[#1c2029]">{p.profilId === utilisateurId ? `${p.nom} (vous)` : p.nom}</span>
-                  <span className="text-xs text-paper-soft">{LABEL_ROLE[p.role]}</span>
+                  <span className="text-[#1c2029]">{p.profilId === utilisateurId ? `${p.nom} (${t("vous", "you")})` : p.nom}</span>
+                  <span className="text-xs text-paper-soft">{libelles(langue).role[p.role]}</span>
                 </li>
               ))}
             </ul>
 
             {dernierMessagePropre && statutsDernierMessage && (
               <>
-                <h3 className="mb-2 font-serif text-sm font-semibold">Accusés — votre dernier message</h3>
+                <h3 className="mb-2 font-serif text-sm font-semibold">{t("Accusés — votre dernier message", "Receipts — your last message")}</h3>
                 <ul className="max-h-48 space-y-1 overflow-y-auto text-sm">
                   {participants
                     .filter((p) => p.profilId !== utilisateurId)
                     .map((p) => {
                       const statut = statutsDernierMessage.get(p.profilId);
                       const texte = statut?.lu_at
-                        ? `Lu à ${new Date(statut.lu_at).toLocaleTimeString("fr-FR")}`
+                        ? `${t("Lu à", "Read at")} ${new Date(statut.lu_at).toLocaleTimeString(dl)}`
                         : statut?.recu_at
-                          ? `Reçu à ${new Date(statut.recu_at).toLocaleTimeString("fr-FR")}`
-                          : "Pas encore reçu";
+                          ? `${t("Reçu à", "Received at")} ${new Date(statut.recu_at).toLocaleTimeString(dl)}`
+                          : t("Pas encore reçu", "Not received yet");
                       return (
                         <li key={p.profilId} className="flex items-center justify-between">
                           <span className="text-[#1c2029]">{p.nom}</span>

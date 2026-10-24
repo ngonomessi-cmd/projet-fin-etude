@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import type { ActualitePublique } from "@/lib/types";
 import { IMAGES_ACTUALITES } from "@/lib/images-actualites";
 import { creerActualiteAction, modifierActualiteAction, supprimerActualiteAction } from "./actions";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export function FormulaireActualite({ actualite }: { actualite?: ActualitePublique }) {
   const router = useRouter();
+  const { t, langue } = useTraduction();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
   const [image, setImage] = useState<string>(actualite?.image_url ?? "");
@@ -28,7 +30,15 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
 
   async function supprimer() {
     if (!actualite) return;
-    if (!window.confirm(`Supprimer définitivement « ${actualite.titre} » ? Cette action est irréversible.`)) return;
+    if (
+      !window.confirm(
+        t(
+          `Supprimer définitivement « ${actualite.titre} » ? Cette action est irréversible.`,
+          `Permanently delete "${actualite.titre}"? This cannot be undone.`
+        )
+      )
+    )
+      return;
     setEnCours(true);
     const resultat = await supprimerActualiteAction(actualite.id);
     if (resultat?.erreur) {
@@ -40,10 +50,10 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
   return (
     <form action={soumettre} className="space-y-6 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
       <div className="space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-paper-soft">Français</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-paper-soft">{t("Français", "French")}</p>
 
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-[#1c2029]">Titre</span>
+          <span className="mb-1 block font-medium text-[#1c2029]">{t("Titre", "Title")}</span>
           <input
             name="titre"
             required
@@ -53,7 +63,7 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
         </label>
 
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-[#1c2029]">Extrait (résumé affiché dans la liste)</span>
+          <span className="mb-1 block font-medium text-[#1c2029]">{t("Extrait (résumé affiché dans la liste)", "Excerpt (summary shown in the list)")}</span>
           <textarea
             name="extrait"
             rows={2}
@@ -63,7 +73,7 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
         </label>
 
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-[#1c2029]">Contenu</span>
+          <span className="mb-1 block font-medium text-[#1c2029]">{t("Contenu", "Content")}</span>
           <textarea
             name="contenu"
             required
@@ -72,14 +82,14 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
             className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm leading-relaxed"
           />
           <span className="mt-1 block text-xs text-paper-soft">
-            Texte simple : les lignes vides séparent les paragraphes à l&apos;affichage.
+            {t("Texte simple : les lignes vides séparent les paragraphes à l'affichage.", "Plain text: blank lines separate paragraphs when displayed.")}
           </span>
         </label>
       </div>
 
       <div className="space-y-4 border-t border-paper-200 pt-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-paper-soft">
-          English <span className="font-normal normal-case text-paper-soft">(optionnel — à défaut, la version française s&apos;affiche)</span>
+          English <span className="font-normal normal-case text-paper-soft">({t("optionnel — à défaut, la version française s'affiche", "optional — otherwise the French version is shown")})</span>
         </p>
 
         <label className="block text-sm">
@@ -114,7 +124,7 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
 
       <div className="block text-sm">
         <label htmlFor="image_url" className="mb-1 block font-medium text-[#1c2029]">
-          Illustration
+          {t("Illustration", "Image")}
         </label>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <select
@@ -124,10 +134,10 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
             onChange={(e) => setImage(e.target.value)}
             className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm sm:flex-1"
           >
-            <option value="">Image par défaut</option>
+            <option value="">{t("Image par défaut", "Default image")}</option>
             {IMAGES_ACTUALITES.map((i) => (
               <option key={i.url} value={i.url}>
-                {i.libelle}
+                {langue === "en" ? i.libelleEn : i.libelle}
               </option>
             ))}
           </select>
@@ -139,14 +149,14 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
       </div>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-[#1c2029]">Statut</span>
+        <span className="mb-1 block font-medium text-[#1c2029]">{t("Statut", "Status")}</span>
         <select
           name="statut"
           defaultValue={actualite?.statut ?? "brouillon"}
           className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm"
         >
-          <option value="brouillon">Brouillon (non visible sur le site public)</option>
-          <option value="publie">Publié (visible sur le site public)</option>
+          <option value="brouillon">{t("Brouillon (non visible sur le site public)", "Draft (not visible on the public website)")}</option>
+          <option value="publie">{t("Publié (visible sur le site public)", "Published (visible on the public website)")}</option>
         </select>
       </label>
 
@@ -158,7 +168,7 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
           disabled={enCours}
           className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900 disabled:opacity-50"
         >
-          {enCours ? "Enregistrement…" : actualite ? "Enregistrer" : "Créer"}
+          {enCours ? t("Enregistrement…", "Saving…") : actualite ? t("Enregistrer", "Save") : t("Créer", "Create")}
         </button>
         {actualite && (
           <button
@@ -167,7 +177,7 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
             disabled={enCours}
             className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
           >
-            Supprimer
+            {t("Supprimer", "Delete")}
           </button>
         )}
       </div>

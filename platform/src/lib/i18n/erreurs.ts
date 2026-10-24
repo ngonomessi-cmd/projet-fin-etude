@@ -1,0 +1,73 @@
+import type { Langue } from "@/lib/i18n/plateforme";
+
+// Les fonctions de la base (migrations SQL) lèvent leurs erreurs en français :
+// version anglaise des messages connus, le texte d'origine sinon.
+const TRADUCTIONS: [RegExp, string][] = [
+  [/^Canal introuvable\.$/, "Channel not found."],
+  [/^Ce document est déjà archivé\.$/, "This document is already archived."],
+  [/^Ce document n'est pas archivé : il n'a pas encore d'empreinte scellée\.$/, "This document is not archived: it has no sealed fingerprint yet."],
+  [/^Ce document n'est pas modifiable par vous.*$/, "You cannot edit this document (permissions, or document already submitted for approval)."],
+  [/^Cet utilisateur n'appartient pas à votre organisation\.$/, "This user does not belong to your organisation."],
+  [/^Choisissez au moins un destinataire\.$/, "Choose at least one recipient."],
+  [/^Destinataire introuvable\.$/, "Recipient not found."],
+  [/^Document archivé \((.+)\) : lecture seule définitive\.$/, "Archived document ($1): permanently read-only."],
+  [/^Document archivé \((.+)\) : suppression interdite\.$/, "Archived document ($1): deletion forbidden."],
+  [/^Document archivé : partage en lecture seule uniquement\.$/, "Archived document: read-only sharing only."],
+  [/^Document archivé : son classement ne peut plus changer\.$/, "Archived document: its classification can no longer change."],
+  [/^Document confidentiel : (.+) n'appartient pas au département (.+)\.$/, "Confidential document: $1 is not in the $2 department."],
+  [/^Document confidentiel : cette conversation compte des membres hors du département (.+)\.$/, "Confidential document: this conversation includes members outside the $1 department."],
+  [/^Document en cours de modification par une autre personne\.$/, "Someone else is currently editing this document."],
+  [/^Document introuvable.*$/, "Document not found."],
+  [/^Droit de partage inconnu\.$/, "Unknown sharing permission."],
+  [/^Durée invalide pour (.+) \(.*\)\.$/, "Invalid retention period for $1 (whole number of years between 0 and 100)."],
+  [/^La durée de conservation doit être comprise entre 1 et 20 ans\.$/, "The retention period must be between 1 and 20 years."],
+  [/^Le délai d'archivage automatique doit être compris entre 0 et 120 mois\.$/, "The automatic archiving delay must be between 0 and 120 months."],
+  [/^Le département ne peut pas être vide\.$/, "The department cannot be empty."],
+  [/^Le groupe doit avoir un objet\.$/, "The group must have a subject."],
+  [/^Le titre ne peut pas être vide\.$/, "The title cannot be empty."],
+  [/^Limite de 30 messages par minute atteinte.*$/, "Limit of 30 messages per minute reached, try again in a moment."],
+  [/^Message introuvable ou supprimé\.$/, "Message not found or deleted."],
+  [/^Nature inconnue : (.+)\.$/, "Unknown document type: $1."],
+  [/^Partage introuvable\.$/, "Share not found."],
+  [/^Profil introuvable.*$/, "Profile not found for the current user."],
+  [/^Seul un administrateur de cette organisation peut renommer ce canal\.$/, "Only an administrator of this organisation can rename this channel."],
+  [/^Seul un administrateur de cette organisation peut supprimer ce canal\.$/, "Only an administrator of this organisation can delete this channel."],
+  [/^Seul un administrateur peut créer un canal de département\.$/, "Only an administrator can create a department channel."],
+  [/^Seul un administrateur peut modifier la durée de conservation de la messagerie\.$/, "Only an administrator can change the messaging retention period."],
+  [/^Seul un administrateur peut modifier le profil d'un autre utilisateur\.$/, "Only an administrator can edit another user's profile."],
+  [/^Seul un administrateur peut modifier le rôle d'un utilisateur\.$/, "Only an administrator can change a user's role."],
+  [/^Seul un administrateur peut renommer un canal\.$/, "Only an administrator can rename a channel."],
+  [/^Seul un administrateur peut régler l'archivage\.$/, "Only an administrator can configure archiving."],
+  [/^Seul un administrateur peut supprimer un canal\.$/, "Only an administrator can delete a channel."],
+  [/^Seul un document publié ou archivé donne lieu à une nouvelle version.*$/, "Only a published or archived document can have a new version; a draft is edited directly."],
+  [/^Seul un document publié peut être archivé.*$/, "Only a published document can be archived (approval required)."],
+  [/^Seuls l'auteur, le département (.+) ou un administrateur peuvent réviser ce document\.$/, "Only the author, the $1 department or an administrator can revise this document."],
+  [/^Seuls l'auteur, un co-éditeur ou un administrateur peuvent partager ce document\.$/, "Only the author, a co-editor or an administrator can share this document."],
+  [/^Seuls le validateur du département (.+) et l'administrateur peuvent archiver ce document\.$/, "Only the $1 department approver and the administrator can archive this document."],
+  [/^Transition de "(.+)" vers "(.+)" non autorisée pour le rôle "(.+)"\.$/, 'Transition from "$1" to "$2" not allowed for role "$3".'],
+  [/^Un auditeur ne peut pas créer de groupe de travail\.$/, "An auditor cannot create a working group."],
+  [/^Un groupe de travail ne peut pas dépasser 60 agents\.$/, "A working group cannot exceed 60 members."],
+  [/^Une nouvelle version \((.+)\) est déjà en préparation par (.+)\.$/, "A new version ($1) is already being prepared by $2."],
+  [/^Utilisateur introuvable\.$/, "User not found."],
+  [/^Votre rôle ne permet pas de partager un document\.$/, "Your role does not allow sharing documents."],
+  [/^Votre rôle ne permet pas de produire un document\.$/, "Your role does not allow producing documents."],
+  [/^Vous ne pouvez pas modifier la nature de ce document\.$/, "You cannot change this document's type."],
+  [/^Vous ne pouvez pas ouvrir de conversation avec cet agent\.$/, "You cannot open a conversation with this person."],
+  [/^Vous ne pouvez pas partager avec (.+) : vous n'êtes pas autorisé à le contacter\.$/, "You cannot share with $1: you are not allowed to contact them."],
+  [/^Vous ne pouvez pas publier dans cette conversation\.$/, "You cannot post in this conversation."],
+  [/^Vous ne pouvez pas retirer ce partage\.$/, "You cannot remove this share."],
+  [/^Fichier refusé : le contenu réel ne correspond pas au type déclaré\.$/, "File rejected: its real content does not match the declared type."],
+  [/^Fichier refusé : macro Office détectée\.$/, "File rejected: Office macro detected."],
+  [/^Fichier refusé : JavaScript intégré détecté dans le PDF\.$/, "File rejected: embedded JavaScript detected in the PDF."],
+  [/^Fichier refusé : détecté comme infecté par Cloudmersive Virus Scan\.$/, "File rejected: flagged as infected by Cloudmersive Virus Scan."],
+  [/^Fichier refusé : (.+) détecté\.$/, "File rejected: $1 detected."],
+  [/^new row violates row-level security policy.*$/, "Action not allowed for your account."],
+];
+
+export function traduireErreur(message: string, langue: Langue): string {
+  if (langue !== "en") return message;
+  for (const [motif, anglais] of TRADUCTIONS) {
+    if (motif.test(message)) return message.replace(motif, anglais);
+  }
+  return message;
+}

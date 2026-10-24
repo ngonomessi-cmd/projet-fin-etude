@@ -14,6 +14,7 @@ import { EditeurTexte } from "@/components/atelier/EditeurTexte";
 import { EditeurTableur } from "@/components/atelier/EditeurTableur";
 import { EditeurPresentation } from "@/components/atelier/EditeurPresentation";
 import { enregistrerContenuAction, libererVerrouAction, prendreVerrouAction } from "./actions";
+import { useTraduction } from "@/components/i18n/Langue";
 
 type Statut = "pret" | "modifie" | "enregistrement" | "enregistre" | "erreur";
 
@@ -40,6 +41,7 @@ export function AtelierDocument({
   organisation: string;
 }) {
   const router = useRouter();
+  const { t, dl } = useTraduction();
   const [titre, setTitre] = useState(titreInitial);
   const [modeEdition, setModeEdition] = useState(false);
   const [verrouAutre, setVerrouAutre] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export function AtelierDocument({
         setVerrouAutre(null);
       } else if (etat.motif === "verrouille") {
         setModeEdition(false);
-        setVerrouAutre(etat.par ?? "une autre personne");
+        setVerrouAutre(etat.par ?? t("une autre personne", "someone else"));
       } else {
         setModeEdition(false);
       }
@@ -74,7 +76,7 @@ export function AtelierDocument({
       clearInterval(intervalle);
       libererVerrouAction(documentId);
     };
-  }, [documentId, peutEditer]);
+  }, [documentId, peutEditer, t]);
 
   const enregistrer = useCallback(async () => {
     if (minuteur.current) clearTimeout(minuteur.current);
@@ -89,9 +91,9 @@ export function AtelierDocument({
       return false;
     }
     setStatut("enregistre");
-    setMessage(r.enregistreLe ? new Date(r.enregistreLe).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : null);
+    setMessage(r.enregistreLe ? new Date(r.enregistreLe).toLocaleTimeString(dl, { hour: "2-digit", minute: "2-digit" }) : null);
     return true;
-  }, [documentId]);
+  }, [documentId, dl]);
 
   const signalerModification = useCallback(() => {
     enAttente.current = true;
@@ -125,11 +127,11 @@ export function AtelierDocument({
 
   const lectureSeule = !modeEdition;
   const libelleStatut: Record<Statut, string> = {
-    pret: modeEdition ? "Prêt" : "Lecture seule",
-    modifie: "Modifications non enregistrées…",
-    enregistrement: "Enregistrement…",
-    enregistre: message ? `Enregistré à ${message}` : "Enregistré",
-    erreur: `Échec de l'enregistrement : ${message ?? ""}`,
+    pret: modeEdition ? t("Prêt", "Ready") : t("Lecture seule", "Read-only"),
+    modifie: t("Modifications non enregistrées…", "Unsaved changes…"),
+    enregistrement: t("Enregistrement…", "Saving…"),
+    enregistre: message ? t(`Enregistré à ${message}`, `Saved at ${message}`) : t("Enregistré", "Saved"),
+    erreur: `${t("Échec de l'enregistrement", "Save failed")} : ${message ?? ""}`,
   };
 
   return (
@@ -137,7 +139,7 @@ export function AtelierDocument({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
           <Link href={`/documents/${documentId}`} className="text-sm text-paper-muted hover:text-gold-600 hover:underline">
-            ← Fiche du document
+            ← {t("Fiche du document", "Document details")}
           </Link>
           <input
             value={titre}
@@ -148,7 +150,7 @@ export function AtelierDocument({
               signalerModification();
             }}
             className="mt-1 block w-full truncate rounded-md border border-transparent bg-transparent px-1 py-0.5 font-serif text-2xl font-semibold hover:border-paper-200 focus:border-paper-200 focus:bg-white focus:outline-none read-only:hover:border-transparent"
-            aria-label="Titre du document"
+            aria-label={t("Titre du document", "Document title")}
           />
           <p className={`px-1 text-xs ${statut === "erreur" ? "text-red-600" : "text-paper-soft"}`}>{libelleStatut[statut]}</p>
         </div>
@@ -173,7 +175,7 @@ export function AtelierDocument({
               onClick={terminer}
               className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
             >
-              Enregistrer et fermer
+              {t("Enregistrer et fermer", "Save and close")}
             </button>
           )}
         </div>
@@ -181,8 +183,11 @@ export function AtelierDocument({
 
       {verrouAutre && (
         <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
-          {verrouAutre} est en train de modifier ce document : il s&apos;affiche en lecture seule. Vous pourrez le
-          modifier dès qu&apos;il ou elle l&apos;aura fermé (vérification automatique chaque minute).
+          {verrouAutre}
+          {t(
+            " est en train de modifier ce document : il s'affiche en lecture seule. Vous pourrez le modifier dès qu'il ou elle l'aura fermé (vérification automatique chaque minute).",
+            " is editing this document: it is shown read-only. You can edit it as soon as they close it (checked automatically every minute)."
+          )}
         </p>
       )}
       {!peutEditer && (
@@ -192,8 +197,14 @@ export function AtelierDocument({
           }`}
         >
           {archive
-            ? "Document archivé : lecture seule définitive. Pour le faire évoluer, créez une nouvelle version depuis sa fiche."
-            : "Lecture seule : seuls l'auteur et les co-éditeurs peuvent modifier ce document, tant qu'il n'a pas été soumis à validation."}
+            ? t(
+                "Document archivé : lecture seule définitive. Pour le faire évoluer, créez une nouvelle version depuis sa fiche.",
+                "Archived document: permanently read-only. To change it, create a new version from its details page."
+              )
+            : t(
+                "Lecture seule : seuls l'auteur et les co-éditeurs peuvent modifier ce document, tant qu'il n'a pas été soumis à validation.",
+                "Read-only: only the author and co-editors can edit this document, until it is submitted for approval."
+              )}
         </p>
       )}
 

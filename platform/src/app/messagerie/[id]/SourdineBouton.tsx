@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { basculerSourdineAction } from "../actions";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export function SourdineBouton({ conversationId, sourdine }: { conversationId: string; sourdine: boolean }) {
   const router = useRouter();
+  const { t } = useTraduction();
   const [enCours, setEnCours] = useState(false);
 
   async function basculer() {
@@ -19,7 +21,7 @@ export function SourdineBouton({ conversationId, sourdine }: { conversationId: s
     <button
       onClick={basculer}
       disabled={enCours}
-      title={sourdine ? "Réactiver les notifications" : "Mettre en sourdine"}
+      title={sourdine ? t("Réactiver les notifications", "Unmute notifications") : t("Mettre en sourdine", "Mute")}
       className="rounded-md border border-paper-200 px-3 py-1.5 text-sm text-paper-muted hover:bg-paper-50 disabled:opacity-50"
     >
       {sourdine ? (

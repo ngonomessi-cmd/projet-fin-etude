@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { NOMS_MOIS } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
+import { traducteur, type Langue } from "@/lib/i18n/plateforme";
 import { DocumentsParDepartement, type GroupeDepartement } from "./DocumentsParDepartement";
 import type { LigneDocument } from "./TableauDocuments";
 
@@ -11,28 +12,32 @@ function moisDe(doc: Ligne): string {
   return (doc.publie_le ?? doc.archive_le ?? doc.updated_at).slice(0, 7);
 }
 
-function libelleMois(cle: string): string {
+function libelleMois(cle: string, langue: Langue): string {
   const [annee, mois] = cle.split("-");
-  return `${NOMS_MOIS[Number(mois) - 1]} ${annee}`;
+  return `${libelles(langue).mois[Number(mois) - 1]} ${annee}`;
 }
 
-export function grouperParDepartement(documents: Ligne[], departements?: string[]): GroupeDepartement[] {
+export function grouperParDepartement(documents: Ligne[], departements?: string[], langue: Langue = "fr"): GroupeDepartement[] {
   const noms = new Set(departements ?? []);
   for (const d of documents) if (d.departement?.trim()) noms.add(d.departement.trim());
   return [...noms]
-    .sort((a, b) => a.localeCompare(b, "fr"))
+    .sort((a, b) => a.localeCompare(b, langue))
     .map((departement) => ({ departement, documents: documents.filter((d) => d.departement === departement) }));
 }
 
-export function Archives({ archives, mois }: { archives: Ligne[]; mois: string }) {
+export function Archives({ archives, mois, langue }: { archives: Ligne[]; mois: string; langue: Langue }) {
+  const t = traducteur(langue);
+  const nomsMois = libelles(langue).mois;
   const bandeau = (
     <p className="mb-4 flex items-start gap-2 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-900">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0" aria-hidden="true">
         <rect x="4" y="11" width="16" height="10" rx="2" />
         <path d="M8 11V7a4 4 0 0 1 8 0v4" />
       </svg>
-      Les documents archivés sont en lecture seule définitive et scellés par une empreinte numérique. Ils sont classés
-      par mois de publication.
+      {t(
+        "Les documents archivés sont en lecture seule définitive et scellés par une empreinte numérique. Ils sont classés par mois de publication.",
+        "Archived documents are permanently read-only and sealed with a digital fingerprint. They are filed by month of publication."
+      )}
     </p>
   );
 
@@ -42,16 +47,16 @@ export function Archives({ archives, mois }: { archives: Ligne[]; mois: string }
       <>
         <div className="mb-3 flex items-center gap-2 text-sm">
           <Link href="/documents?vue=archives" className="text-paper-muted hover:text-gold-600 hover:underline">
-            Archives
+            {t("Archives", "Archives")}
           </Link>
           <span className="text-paper-soft">›</span>
-          <span className="font-semibold text-[#1c2029]">{libelleMois(mois)}</span>
+          <span className="font-semibold text-[#1c2029]">{libelleMois(mois, langue)}</span>
         </div>
         {bandeau}
         {duMois.length === 0 ? (
-          <p className="rounded-lg border border-paper-200 bg-white p-5 text-sm text-paper-muted">Aucun document archivé pour ce mois.</p>
+          <p className="rounded-lg border border-paper-200 bg-white p-5 text-sm text-paper-muted">{t("Aucun document archivé pour ce mois.", "No archived documents for this month.")}</p>
         ) : (
-          <DocumentsParDepartement groupes={grouperParDepartement(duMois)} colonneDate="publication" toutOuvrir />
+          <DocumentsParDepartement groupes={grouperParDepartement(duMois, undefined, langue)} colonneDate="publication" toutOuvrir />
         )}
       </>
     );
@@ -66,7 +71,7 @@ export function Archives({ archives, mois }: { archives: Ligne[]; mois: string }
       {bandeau}
       {annees.length === 0 ? (
         <p className="rounded-lg border border-paper-200 bg-white p-5 text-sm text-paper-muted">
-          Aucun document archivé pour l&apos;instant.
+          {t("Aucun document archivé pour l'instant.", "No archived documents yet.")}
         </p>
       ) : (
         <div className="flex flex-col gap-6">
@@ -93,7 +98,7 @@ export function Archives({ archives, mois }: { archives: Ligne[]; mois: string }
                       </svg>
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold text-[#1c2029] group-hover:text-gold-600">
-                          {NOMS_MOIS[Number(m.slice(5, 7)) - 1]}
+                          {nomsMois[Number(m.slice(5, 7)) - 1]}
                         </span>
                         <span className="block text-xs text-paper-muted">
                           {parMois.get(m)} document{(parMois.get(m) ?? 0) > 1 ? "s" : ""}

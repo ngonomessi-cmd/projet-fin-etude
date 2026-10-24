@@ -4,20 +4,22 @@ import { type Lien } from "@/components/NavLinks";
 import { PresenceMessagerie } from "@/components/PresenceMessagerie";
 import { BarreLateraleResponsive } from "@/components/BarreLateraleResponsive";
 import { SITE_PUBLIC_ACTIF } from "@/lib/organisation";
+import { traductionServeur } from "@/lib/i18n/serveur";
+import type { Traduire } from "@/lib/i18n/plateforme";
 
-const LIENS: Lien[] = [
+const liensNavigation = (t: Traduire): Lien[] => [
   { href: "/documents", label: "Documents", icone: "documents" },
-  { href: "/messagerie", label: "Messagerie", icone: "messagerie" },
-  { href: "/audit", label: "Journal d'audit", icone: "audit" },
-  { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"], icone: "utilisateurs" },
-  { href: "/admin/modeles", label: "Modèles", roles: ["administrateur"], icone: "modeles" },
-  { href: "/admin/archivage", label: "Archivage", roles: ["administrateur"], icone: "archives" },
+  { href: "/messagerie", label: t("Messagerie", "Messaging"), icone: "messagerie" },
+  { href: "/audit", label: t("Journal d'audit", "Audit log"), icone: "audit" },
+  { href: "/admin/utilisateurs", label: t("Utilisateurs", "Users"), roles: ["administrateur"], icone: "utilisateurs" },
+  { href: "/admin/modeles", label: t("Modèles", "Templates"), roles: ["administrateur"], icone: "modeles" },
+  { href: "/admin/archivage", label: t("Archivage", "Archiving"), roles: ["administrateur"], icone: "archives" },
   // Gestion du site public : seulement sur un déploiement qui l'active
   // (la barre latérale de la démonstration KHS Bank reste inchangée).
   ...(SITE_PUBLIC_ACTIF
     ? ([
-        { href: "/admin/actualites", label: "Actualités", roles: ["administrateur"], icone: "actualites" },
-        { href: "/admin/messages-contact", label: "Messages reçus", roles: ["administrateur"], icone: "contact" },
+        { href: "/admin/actualites", label: t("Actualités", "News"), roles: ["administrateur"], icone: "actualites" },
+        { href: "/admin/messages-contact", label: t("Messages reçus", "Inbox"), roles: ["administrateur"], icone: "contact" },
       ] satisfies Lien[])
     : []),
 ];
@@ -37,7 +39,8 @@ export async function NavBar() {
     messagesNonLus = compteur ?? 0;
   }
 
-  const liens = LIENS.map((lien) => (lien.href === "/messagerie" ? { ...lien, badge: messagesNonLus } : lien));
+  const { t } = await traductionServeur();
+  const liens = liensNavigation(t).map((lien) => (lien.href === "/messagerie" ? { ...lien, badge: messagesNonLus } : lien));
 
   return (
     <>

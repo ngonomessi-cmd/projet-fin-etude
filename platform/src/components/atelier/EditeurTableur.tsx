@@ -11,6 +11,7 @@ import {
   indexEnColonne,
   reference,
 } from "@/lib/atelier/formules";
+import { useTraduction } from "@/components/i18n/Langue";
 
 type Position = { col: number; ligne: number };
 
@@ -25,6 +26,7 @@ export function EditeurTableur({
   lectureSeule?: boolean;
   onChange?: (contenu: ContenuTableur) => void;
 }) {
+  const { t } = useTraduction();
   const [feuilles, setFeuilles] = useState<Feuille[]>(contenu.feuilles);
   const feuillesRef = useRef<Feuille[]>(contenu.feuilles);
   const [active, setActive] = useState(0);
@@ -125,20 +127,20 @@ export function EditeurTableur({
   }
 
   function ajouterFeuille() {
-    const nom = `Feuille ${feuilles.length + 1}`;
+    const nom = `${t("Feuille", "Sheet")} ${feuilles.length + 1}`;
     publier([...feuillesRef.current, { nom, cellules: {}, gras: [] }]);
     setActive(feuilles.length);
     setSelection({ col: 0, ligne: 0 });
   }
 
   function renommerFeuille(index: number) {
-    const nom = window.prompt("Nom de la feuille :", feuilles[index].nom)?.trim();
+    const nom = window.prompt(t("Nom de la feuille :", "Sheet name:"), feuilles[index].nom)?.trim();
     if (nom) publier(feuillesRef.current.map((f, i) => (i === index ? { ...f, nom } : f)));
   }
 
   function supprimerFeuille(index: number) {
     if (feuilles.length <= 1) return;
-    if (!window.confirm(`Supprimer la feuille « ${feuilles[index].nom} » et son contenu ?`)) return;
+    if (!window.confirm(t(`Supprimer la feuille « ${feuilles[index].nom} » et son contenu ?`, `Delete the sheet "${feuilles[index].nom}" and its content?`))) return;
     publier(feuillesRef.current.filter((_, i) => i !== index));
     setActive(Math.max(0, index - 1));
   }
@@ -167,7 +169,7 @@ export function EditeurTableur({
               grille.current?.focus();
             }
           }}
-          placeholder={lectureSeule ? "" : "Valeur ou formule, ex. =SOMME(B2:B10)"}
+          placeholder={lectureSeule ? "" : t("Valeur ou formule, ex. =SOMME(B2:B10)", "Value or formula, e.g. =SUM(B2:B10)")}
           className="min-w-0 flex-1 rounded border border-paper-200 bg-white px-2 py-1 font-mono text-xs"
         />
         {!lectureSeule && (
@@ -175,18 +177,28 @@ export function EditeurTableur({
             <button
               type="button"
               onClick={basculerGras}
-              title="Gras (Ctrl+B)"
+              title={t("Gras (Ctrl+B)", "Bold (Ctrl+B)")}
               className={`rounded px-2.5 py-1 text-xs font-bold ${gras.has(refSelection) ? "bg-navy-950 text-white" : "hover:bg-paper-100"}`}
             >
-              G
+              {t("G", "B")}
             </button>
             <details className="relative text-xs">
-              <summary className="cursor-pointer rounded px-2 py-1 text-paper-muted hover:bg-paper-100">Fonctions</summary>
+              <summary className="cursor-pointer rounded px-2 py-1 text-paper-muted hover:bg-paper-100">{t("Fonctions", "Functions")}</summary>
               <div className="absolute right-0 z-20 mt-1 w-72 rounded-md border border-paper-200 bg-white p-3 text-[11px] leading-relaxed text-paper-muted shadow-lg">
-                <p className="mb-1 font-semibold text-[#1c2029]">Formules (commencer par « = »)</p>
+                <p className="mb-1 font-semibold text-[#1c2029]">{t("Formules (commencer par « = »)", "Formulas (start with \"=\")")}</p>
                 <p>{FONCTIONS_DISPONIBLES.join(", ")}</p>
-                <p className="mt-2">Exemples : =SOMME(B2:B10) · =MOYENNE(C2:C5) · =SI(D2&gt;0;&quot;OK&quot;;&quot;À revoir&quot;) · =ARRONDI(B2*1,1925;0)</p>
-                <p className="mt-2">Opérateurs : + − * / ^ &amp; = &lt;&gt; &lt; &gt;. Noms anglais acceptés (SUM, IF…).</p>
+                <p className="mt-2">
+                  {t(
+                    'Exemples : =SOMME(B2:B10) · =MOYENNE(C2:C5) · =SI(D2>0;"OK";"À revoir") · =ARRONDI(B2*1,1925;0)',
+                    'Examples: =SUM(B2:B10) · =AVERAGE(C2:C5) · =IF(D2>0,"OK","Check") · =ROUND(B2*1.1925,0)'
+                  )}
+                </p>
+                <p className="mt-2">
+                  {t(
+                    "Opérateurs : + − * / ^ & = <> < >. Noms anglais acceptés (SUM, IF…).",
+                    "Operators: + − * / ^ & = <> < >. French names also accepted (SOMME, SI…)."
+                  )}
+                </p>
               </div>
             </details>
           </>
@@ -296,21 +308,21 @@ export function EditeurTableur({
                 setEdition(null);
               }}
               onDoubleClick={() => !lectureSeule && renommerFeuille(i)}
-              title={lectureSeule ? f.nom : "Double-clic pour renommer"}
+              title={lectureSeule ? f.nom : t("Double-clic pour renommer", "Double-click to rename")}
               className={`px-3 py-1 text-xs ${i === active ? "font-semibold text-navy-950" : "text-paper-muted hover:text-[#1c2029]"}`}
             >
               {f.nom}
             </button>
             {!lectureSeule && i === active && feuilles.length > 1 && (
-              <button type="button" onClick={() => supprimerFeuille(i)} title="Supprimer la feuille" className="pr-2 text-xs text-paper-soft hover:text-red-600">
+              <button type="button" onClick={() => supprimerFeuille(i)} title={t("Supprimer la feuille", "Delete sheet")} className="pr-2 text-xs text-paper-soft hover:text-red-600">
                 ×
               </button>
             )}
           </div>
         ))}
         {!lectureSeule && (
-          <button type="button" onClick={ajouterFeuille} className="px-2 py-1 text-xs text-paper-muted hover:text-navy-950" title="Ajouter une feuille">
-            + Feuille
+          <button type="button" onClick={ajouterFeuille} className="px-2 py-1 text-xs text-paper-muted hover:text-navy-950" title={t("Ajouter une feuille", "Add a sheet")}>
+            + {t("Feuille", "Sheet")}
           </button>
         )}
         <button
@@ -318,7 +330,7 @@ export function EditeurTableur({
           onClick={() => setLignesAffichees(nbLignes + 20)}
           className="ml-auto shrink-0 px-2 py-1 text-xs text-paper-muted hover:text-navy-950"
         >
-          + 20 lignes
+          + 20 {t("lignes", "rows")}
         </button>
       </div>
     </div>

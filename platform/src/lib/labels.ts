@@ -7,6 +7,7 @@ import type {
   StatutDocument,
   TypeConversation,
 } from "@/lib/types";
+import type { Langue } from "@/lib/i18n/plateforme";
 
 export const LABEL_ROLE: Record<RoleUtilisateur, string> = {
   lecteur: "Lecteur",
@@ -88,15 +89,17 @@ export const DUREE_CONSERVATION_DEFAUT: Record<NatureDocument, number> = {
   autre: 5,
 };
 
-export function libelleNature(nature: NatureDocument | null | undefined): string {
-  return nature ? LABEL_NATURE[nature] : "Non classé";
+export function libelleNature(nature: NatureDocument | null | undefined, langue: Langue = "fr"): string {
+  const L = libelles(langue);
+  return nature ? L.nature[nature] : L.nonClasse;
 }
 
 // Statut tel qu'affiché : un document archivé reste "publié" en base, mais
 // se présente comme "Archivé".
-export function statutAffiche(doc: Pick<Document, "statut" | "archive_le">): { texte: string; couleur: string } {
-  if (doc.archive_le) return { texte: "Archivé", couleur: "bg-indigo-100 text-indigo-800 border-indigo-300" };
-  return { texte: LABEL_STATUT[doc.statut], couleur: COULEUR_STATUT[doc.statut] };
+export function statutAffiche(doc: Pick<Document, "statut" | "archive_le">, langue: Langue = "fr"): { texte: string; couleur: string } {
+  const L = libelles(langue);
+  if (doc.archive_le) return { texte: L.archive, couleur: "bg-indigo-100 text-indigo-800 border-indigo-300" };
+  return { texte: L.statut[doc.statut], couleur: COULEUR_STATUT[doc.statut] };
 }
 
 export const NOMS_MOIS = [
@@ -150,3 +153,116 @@ export const TYPES_MIME_AUTORISES_PIECE_JOINTE = [
   "image/gif",
   "image/webp",
 ] as const;
+
+// ---------------------------------------------------------------------------
+// Versions anglaises (plateforme bilingue, cf. lib/i18n/plateforme.ts)
+// ---------------------------------------------------------------------------
+
+const LABEL_ROLE_EN: Record<RoleUtilisateur, string> = {
+  lecteur: "Reader",
+  redacteur: "Author",
+  validateur: "Approver",
+  administrateur: "Administrator",
+  auditeur: "Auditor",
+};
+
+const DESCRIPTION_ROLE_EN: Record<RoleUtilisateur, string> = {
+  lecteur: "Reads the documents available to them.",
+  redacteur: "Creates, writes and shares documents, then submits them for approval.",
+  validateur: "Same as an author, and approves or publishes their department's documents.",
+  administrateur: "Manages accounts, templates and the website; approves and publishes everywhere.",
+  auditeur: "Reads every document and the audit log, without producing any.",
+};
+
+const LABEL_CLASSIFICATION_EN: Record<ClassificationDocument, string> = {
+  public_interne: "Internal public",
+  restreint: "Restricted",
+  confidentiel: "Confidential",
+};
+
+const LABEL_STATUT_EN: Record<StatutDocument, string> = {
+  brouillon: "Draft",
+  en_verification: "Under review",
+  valide: "Approved",
+  rejete: "Rejected",
+  publie: "Published",
+};
+
+const LABEL_NATURE_EN: Record<NatureDocument, string> = {
+  note_service: "Internal memo / circular",
+  courrier: "Letter",
+  compte_rendu: "Minutes / official record",
+  rapport: "Report / study",
+  decision: "Decision / order / resolution",
+  contrat: "Contract / agreement",
+  piece_comptable: "Accounting record / invoice",
+  procedure: "Procedure / policy / regulation",
+  ressources_humaines: "Human resources file",
+  presentation: "Presentation / slides",
+  autre: "Other document",
+};
+
+const NOMS_MOIS_EN = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const LABEL_ACTUALITE_EN: Record<StatutActualite, string> = {
+  brouillon: "Draft",
+  publie: "Published",
+};
+
+const LABEL_TYPE_CONVERSATION_EN: Record<TypeConversation, string> = {
+  privee: "Private conversation",
+  groupe: "Working group",
+  canal: "Official channel",
+};
+
+// Tous les libellés d'une langue : const L = libelles(langue); L.role[...]
+export function libelles(langue: Langue) {
+  const en = langue === "en";
+  return {
+    role: en ? LABEL_ROLE_EN : LABEL_ROLE,
+    descriptionRole: en ? DESCRIPTION_ROLE_EN : DESCRIPTION_ROLE,
+    classification: en ? LABEL_CLASSIFICATION_EN : LABEL_CLASSIFICATION,
+    statut: en ? LABEL_STATUT_EN : LABEL_STATUT,
+    nature: en ? LABEL_NATURE_EN : LABEL_NATURE,
+    mois: en ? NOMS_MOIS_EN : NOMS_MOIS,
+    actualite: en ? LABEL_ACTUALITE_EN : LABEL_ACTUALITE,
+    typeConversation: en ? LABEL_TYPE_CONVERSATION_EN : LABEL_TYPE_CONVERSATION,
+    archive: en ? "Archived" : "Archivé",
+    nonClasse: en ? "Unclassified" : "Non classé",
+  };
+}
+
+// Actions du journal d'audit (document ou plateforme).
+const LABEL_ACTION: Record<string, [string, string]> = {
+  transition_statut: ["Changement de statut", "Status change"],
+  partage: ["Partage", "Share"],
+  retrait_partage: ["Retrait d'un partage", "Share removed"],
+  modification_contenu: ["Modification du contenu", "Content edited"],
+  creation_atelier: ["Création dans la plateforme", "Created in the platform"],
+  telechargement: ["Téléchargement", "Download"],
+  archivage: ["Archivage", "Archiving"],
+  archivage_automatique: ["Archivage automatique", "Automatic archiving"],
+  controle_integrite: ["Contrôle d'intégrité", "Integrity check"],
+  nouvelle_version: ["Nouvelle version", "New version"],
+  classement: ["Changement de nature", "Document type changed"],
+  parametres_archivage: ["Réglage de l'archivage", "Archiving settings"],
+  changement_role: ["Changement de rôle", "Role change"],
+};
+
+export function libelleAction(action: string, langue: Langue = "fr"): string {
+  const paire = LABEL_ACTION[action];
+  return paire ? paire[langue === "en" ? 1 : 0] : action;
+}

@@ -2,9 +2,11 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import type { MessageContact, Profil } from "@/lib/types";
 import { ActionsMessage } from "./ActionsMessage";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageMessagesContact() {
   const supabase = await creerClientServeur();
+  const { t, dl } = await traductionServeur();
 
   const {
     data: { user },
@@ -19,7 +21,7 @@ export default async function PageMessagesContact() {
         <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
           <div className="mx-auto max-w-3xl">
             <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Accès réservé au rôle Administrateur.
+              {t("Accès réservé au rôle Administrateur.", "Administrators only.")}
             </p>
           </div>
         </main>
@@ -40,15 +42,18 @@ export default async function PageMessagesContact() {
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-4xl">
-          <h1 className="mb-1 font-serif text-2xl font-semibold">Messages reçus</h1>
+          <h1 className="mb-1 font-serif text-2xl font-semibold">{t("Messages reçus", "Inbox")}</h1>
           <p className="mb-6 text-sm text-paper-muted">
-            Demandes envoyées depuis le formulaire « Nous contacter » du site public
-            {nonTraites > 0 ? ` — ${nonTraites} à traiter.` : "."}
+            {t(
+              "Demandes envoyées depuis le formulaire « Nous contacter » du site public",
+              "Requests sent from the public website's \"Contact us\" form"
+            )}
+            {nonTraites > 0 ? ` — ${nonTraites} ${t("à traiter", "to handle")}.` : "."}
           </p>
 
           {messages.length === 0 ? (
             <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
-              Aucun message pour l&apos;instant.
+              {t("Aucun message pour l'instant.", "No messages yet.")}
             </p>
           ) : (
             <ul className="space-y-4">
@@ -71,9 +76,9 @@ export default async function PageMessagesContact() {
                     </div>
                     <div className="flex shrink-0 items-center gap-2 text-xs text-paper-soft">
                       {!m.traite && (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">À traiter</span>
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">{t("À traiter", "To handle")}</span>
                       )}
-                      {new Date(m.created_at).toLocaleString("fr-FR")}
+                      {new Date(m.created_at).toLocaleString(dl)}
                     </div>
                   </div>
                   <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-[#1c2029]">{m.message}</p>

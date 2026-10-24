@@ -1,13 +1,15 @@
 import { notFound } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { NOM_ORGANISATION } from "@/lib/organisation";
+import { nomOrganisation } from "@/lib/organisation";
+import { langueServeur } from "@/lib/i18n/serveur";
 import type { ModeleDocument, Profil } from "@/lib/types";
 import { EditeurModele } from "./EditeurModele";
 
 export default async function PageEditerModele({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
+  const langue = await langueServeur();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -21,7 +23,7 @@ export default async function PageEditerModele({ params }: { params: Promise<{ i
 
   const { data: profils } = await supabase.from("profiles").select("departement");
   const departements = [...new Set(((profils ?? []) as { departement: string }[]).map((p) => p.departement).filter(Boolean))].sort((a, b) =>
-    a.localeCompare(b, "fr")
+    a.localeCompare(b)
   );
 
   return (
@@ -29,7 +31,7 @@ export default async function PageEditerModele({ params }: { params: Promise<{ i
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-6xl">
-          <EditeurModele modele={modele} departements={departements} organisation={NOM_ORGANISATION} />
+          <EditeurModele modele={modele} departements={departements} organisation={nomOrganisation(langue)} />
         </div>
       </main>
     </div>

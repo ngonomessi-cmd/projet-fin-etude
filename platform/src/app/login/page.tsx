@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { RubanOrganisation } from "@/components/RubanOrganisation";
-import { MENTION_CONNEXION, NOM_ORGANISATION } from "@/lib/organisation";
+import { MENTION_CONNEXION, MENTION_CONNEXION_EN, nomOrganisation } from "@/lib/organisation";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export default function PageConnexion() {
   return (
@@ -17,6 +18,8 @@ export default function PageConnexion() {
 
 function FormulaireConnexion() {
   const router = useRouter();
+  const { t, langue } = useTraduction();
+  const NOM_ORGANISATION = nomOrganisation(langue);
   const searchParams = useSearchParams();
   // Lien profond depuis une alerte e-mail de la messagerie (cf.
   // lib/messagerie/alertes.ts) : .../login?redirect=/messagerie/<id> — on
@@ -25,11 +28,16 @@ function FormulaireConnexion() {
   const [mode, setMode] = useState<"connexion" | "inscription">("connexion");
   const [erreur, setErreur] = useState<string | null>(
     searchParams.get("lien") === "invalide"
-      ? "Ce lien de confirmation a expiré ou a déjà été utilisé. Essayez de vous connecter, ou recréez votre compte."
+      ? t(
+          "Ce lien de confirmation a expiré ou a déjà été utilisé. Essayez de vous connecter, ou recréez votre compte.",
+          "This confirmation link has expired or was already used. Try signing in, or create your account again."
+        )
       : null
   );
   const [info, setInfo] = useState<string | null>(
-    searchParams.get("confirme") ? "Adresse e-mail confirmée. Vous pouvez maintenant vous connecter." : null
+    searchParams.get("confirme")
+      ? t("Adresse e-mail confirmée. Vous pouvez maintenant vous connecter.", "Email address confirmed. You can now sign in.")
+      : null
   );
   const [enCours, setEnCours] = useState(false);
 
@@ -47,7 +55,10 @@ function FormulaireConnexion() {
 
     if (mode === "inscription") {
       setInfo(
-        "Compte créé. Un e-mail de confirmation vient de vous être envoyé — cliquez sur le lien qu'il contient (pensez à vérifier les courriers indésirables), puis connectez-vous."
+        t(
+          "Compte créé. Un e-mail de confirmation vient de vous être envoyé — cliquez sur le lien qu'il contient (pensez à vérifier les courriers indésirables), puis connectez-vous.",
+          "Account created. A confirmation email has just been sent to you — click the link it contains (check your spam folder), then sign in."
+        )
       );
       setMode("connexion");
       return;
@@ -65,22 +76,23 @@ function FormulaireConnexion() {
             <LogoOrganisation taille="lg" />
             <div className="min-w-0">
               <div className="font-serif text-base leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
-              <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+              <div className="text-[11px] tracking-wide text-white/50 uppercase">{t("GED sécurisée", "Secure EDMS")}</div>
             </div>
           </div>
           <RubanOrganisation className="mt-4" />
         </div>
         <div>
           <h1 className="mb-3 font-serif text-3xl leading-tight font-semibold">
-            Gestion électronique des documents, sous contrôle.
+            {t("Gestion électronique des documents, sous contrôle.", "Electronic document management, under control.")}
           </h1>
           <p className="max-w-sm text-sm leading-relaxed text-white/60">
-            Classification, RBAC (contrôle d&apos;accès basé sur les rôles), workflow de validation et
-            journal d&apos;audit immuable — entièrement portés par les policies RLS (Row Level Security)
-            de la base de données.
+            {t(
+              "Classification, RBAC (contrôle d'accès basé sur les rôles), workflow de validation et journal d'audit immuable — entièrement portés par les policies RLS (Row Level Security) de la base de données.",
+              "Classification, RBAC (role-based access control), approval workflow and immutable audit log — entirely enforced by the database's RLS (Row Level Security) policies."
+            )}
           </p>
         </div>
-        <p className="text-xs text-white/35">{MENTION_CONNEXION}</p>
+        <p className="text-xs text-white/35">{langue === "en" ? MENTION_CONNEXION_EN : MENTION_CONNEXION}</p>
       </div>
 
       <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
@@ -89,28 +101,36 @@ function FormulaireConnexion() {
             <LogoOrganisation taille="sm" />
             <div className="min-w-0">
               <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
-              <div className="text-[10px] tracking-wide text-paper-muted uppercase">GED sécurisée</div>
+              <div className="text-[10px] tracking-wide text-paper-muted uppercase">{t("GED sécurisée", "Secure EDMS")}</div>
             </div>
           </div>
 
           <h2 className="mb-1 font-serif text-xl font-semibold">
-            {mode === "connexion" ? "Connexion à l'Espace Agents" : "Créer un compte"}
+            {mode === "connexion" ? t("Connexion à l'Espace Agents", "Staff area sign-in") : t("Créer un compte", "Create an account")}
           </h2>
           <p className="mb-6 text-sm text-paper-muted">
             {mode === "connexion"
-              ? "Accédez à vos documents, à la messagerie interne et au journal d'audit."
-              : "Nouveau compte créé avec le rôle « Lecteur » par défaut, promu ensuite par un administrateur."}
+              ? t("Accédez à vos documents, à la messagerie interne et au journal d'audit.", "Access your documents, internal messaging and the audit log.")
+              : t(
+                  "Nouveau compte créé avec le rôle « Lecteur » par défaut, promu ensuite par un administrateur.",
+                  "New accounts get the \"Reader\" role by default, then an administrator promotes them."
+                )}
           </p>
 
           <form action={soumettre} className="space-y-3 rounded-lg border border-paper-200 bg-white p-5 shadow-sm">
             {mode === "inscription" && (
               <>
-                <Champ nom="nom_complet" libelle="Nom complet" requis />
-                <Champ nom="departement" libelle="Département" requis placeholder="ex. Conformité, Crédit, Audit" />
+                <Champ nom="nom_complet" libelle={t("Nom complet", "Full name")} requis />
+                <Champ
+                  nom="departement"
+                  libelle={t("Département", "Department")}
+                  requis
+                  placeholder={t("ex. Conformité, Crédit, Audit", "e.g. Compliance, Credit, Audit")}
+                />
               </>
             )}
-            <Champ nom="email" libelle="E-mail" type="email" requis />
-            <Champ nom="mot_de_passe" libelle="Mot de passe" type="password" requis />
+            <Champ nom="email" libelle={t("E-mail", "Email")} type="email" requis />
+            <Champ nom="mot_de_passe" libelle={t("Mot de passe", "Password")} type="password" requis />
 
             {erreur && <p className="text-sm text-red-600">{erreur}</p>}
             {info && (
@@ -122,7 +142,7 @@ function FormulaireConnexion() {
               disabled={enCours}
               className="w-full rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900 disabled:opacity-50"
             >
-              {mode === "connexion" ? "Se connecter" : "Créer le compte"}
+              {mode === "connexion" ? t("Se connecter", "Sign in") : t("Créer le compte", "Create the account")}
             </button>
           </form>
 
@@ -134,12 +154,16 @@ function FormulaireConnexion() {
             }}
             className="mt-4 text-sm text-gold-600 hover:underline"
           >
-            {mode === "connexion" ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
+            {mode === "connexion"
+              ? t("Pas encore de compte ? Créer un compte", "No account yet? Create one")
+              : t("Déjà un compte ? Se connecter", "Already have an account? Sign in")}
           </button>
 
           <p className="mt-6 text-xs text-paper-soft">
-            Nouveau compte créé avec le rôle « Lecteur » par défaut (principe du moindre privilège) ; un
-            administrateur doit ensuite vous attribuer le rôle adapté dans « Utilisateurs ».
+            {t(
+              "Nouveau compte créé avec le rôle « Lecteur » par défaut (principe du moindre privilège) ; un administrateur doit ensuite vous attribuer le rôle adapté dans « Utilisateurs ».",
+              "New accounts get the \"Reader\" role by default (least-privilege principle); an administrator then assigns the right role in \"Users\"."
+            )}
           </p>
         </div>
       </div>

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/Badge";
-import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
 import type { TypeConversation } from "@/lib/types";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export type ConversationAffichee = {
   id: string;
@@ -29,14 +30,15 @@ function initiales(nom: string) {
 
 type Filtre = "tout" | "non_lus" | "canaux" | "archivees";
 
-const FILTRES: { cle: Filtre; label: string }[] = [
-  { cle: "tout", label: "Tout" },
-  { cle: "non_lus", label: "Non lus" },
-  { cle: "canaux", label: "Canaux" },
-  { cle: "archivees", label: "Archivées" },
+const FILTRES: { cle: Filtre; label: [string, string] }[] = [
+  { cle: "tout", label: ["Tout", "All"] },
+  { cle: "non_lus", label: ["Non lus", "Unread"] },
+  { cle: "canaux", label: ["Canaux", "Channels"] },
+  { cle: "archivees", label: ["Archivées", "Archived"] },
 ];
 
 function Ligne({ c }: { c: ConversationAffichee }) {
+  const { t, langue } = useTraduction();
   return (
     <Link
       href={`/messagerie/${c.id}`}
@@ -49,7 +51,7 @@ function Ligne({ c }: { c: ConversationAffichee }) {
         <div className="flex items-center gap-2">
           <span className="truncate font-medium text-[#1c2029]">{c.nom}</span>
           {c.type !== "privee" && (
-            <Badge texte={LABEL_TYPE_CONVERSATION[c.type]} classesCouleur="bg-paper-50 text-paper-muted border-paper-200" />
+            <Badge texte={libelles(langue).typeConversation[c.type]} classesCouleur="bg-paper-50 text-paper-muted border-paper-200" />
           )}
           {c.sourdine && (
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-paper-soft)" strokeWidth="2" aria-hidden="true">
@@ -61,7 +63,7 @@ function Ligne({ c }: { c: ConversationAffichee }) {
         </div>
         {c.dernierApercu && (
           <p className="truncate text-sm text-paper-muted">
-            {c.dernierEstMoi ? "Vous : " : ""}
+            {c.dernierEstMoi ? t("Vous : ", "You: ") : ""}
             {c.dernierApercu}
           </p>
         )}
@@ -76,6 +78,7 @@ function Ligne({ c }: { c: ConversationAffichee }) {
 }
 
 export function ListeConversationsInteractive({ conversations }: { conversations: ConversationAffichee[] }) {
+  const { t, langue } = useTraduction();
   const [recherche, setRecherche] = useState("");
   const [filtre, setFiltre] = useState<Filtre>("tout");
   const [canauxOuverts, setCanauxOuverts] = useState(false);
@@ -110,7 +113,7 @@ export function ListeConversationsInteractive({ conversations }: { conversations
           type="text"
           value={recherche}
           onChange={(e) => setRecherche(e.target.value)}
-          placeholder="Rechercher une conversation…"
+          placeholder={t("Rechercher une conversation…", "Search conversations…")}
           className="w-full border-0 text-sm outline-none"
         />
       </div>
@@ -124,14 +127,16 @@ export function ListeConversationsInteractive({ conversations }: { conversations
               filtre === f.cle ? "border-navy-950 bg-navy-950 text-white" : "border-paper-200 bg-white text-paper-muted"
             }`}
           >
-            {f.label}
+            {f.label[langue === "en" ? 1 : 0]}
           </button>
         ))}
       </div>
 
       {filtrees.length === 0 ? (
         <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
-          {recherche ? "Aucune conversation ne correspond à votre recherche." : "Aucune conversation pour l'instant."}
+          {recherche
+            ? t("Aucune conversation ne correspond à votre recherche.", "No conversation matches your search.")
+            : t("Aucune conversation pour l'instant.", "No conversations yet.")}
         </p>
       ) : (
         <div className="flex flex-col gap-4">
@@ -144,7 +149,7 @@ export function ListeConversationsInteractive({ conversations }: { conversations
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0b1220" strokeWidth="2" aria-hidden="true">
                   <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
                 </svg>
-                <span className="flex-1 text-sm font-bold text-[#1c2029]">Canaux officiels</span>
+                <span className="flex-1 text-sm font-bold text-[#1c2029]">{t("Canaux officiels", "Official channels")}</span>
                 <span className="rounded-full bg-paper-200 px-2 py-0.5 text-[11px] font-bold text-paper-muted">{canaux.length}</span>
                 <svg
                   width="16"
@@ -172,7 +177,7 @@ export function ListeConversationsInteractive({ conversations }: { conversations
           {autres.length > 0 && (
             <div>
               {canaux.length > 0 && (
-                <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wide text-paper-soft">Messages privés</p>
+                <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wide text-paper-soft">{t("Messages privés", "Private messages")}</p>
               )}
               <div className="overflow-hidden rounded-lg border border-paper-200 bg-white shadow-sm">
                 {autres.map((c) => (
