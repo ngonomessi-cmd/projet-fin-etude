@@ -1,26 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
 import { creerClientServeur } from "@/lib/supabase/server";
+import { origineDuSite } from "@/lib/site";
 import { SIGLE_ORGANISATION } from "@/lib/organisation";
 import { traductionServeur } from "@/lib/i18n/serveur";
 import type { Traduire } from "@/lib/i18n/plateforme";
-
-// Adresse publique du déploiement qui reçoit la demande. Les deux
-// organisations partagent un seul projet Supabase (donc une seule « Site
-// URL ») : sans adresse de retour explicite, le lien de confirmation
-// renverrait toujours vers le même site, quel que soit celui d'inscription.
-async function origineDuSite(): Promise<string> {
-  const configuree = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
-  if (configuree) return configuree;
-
-  const h = await headers();
-  const origine = h.get("origin");
-  if (origine) return origine;
-  const hote = h.get("x-forwarded-host") ?? h.get("host");
-  const protocole = h.get("x-forwarded-proto") ?? "https";
-  return `${protocole}://${hote}`;
-}
 
 export type ResultatConnexion = { erreur: string | null };
 

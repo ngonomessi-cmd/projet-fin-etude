@@ -5,6 +5,7 @@ import { nomOrganisation } from "@/lib/organisation";
 import { EXTENSION_FORMAT } from "@/lib/atelier/contenus";
 import type { EnTetePdf } from "@/lib/atelier/pdf";
 import { chargerLogo } from "@/lib/atelier/logo";
+import type { SignaturePdf } from "@/lib/signature/bloc";
 
 export type FichierExporte = { tampon: Buffer; nomFichier: string; typeMime: string };
 
@@ -30,13 +31,19 @@ export function nomDeFichier(titre: string, extension: string): string {
 // Fichier Office natif (.docx / .xlsx / .pptx) ou PDF, généré à la volée
 // depuis le contenu édité dans la plateforme : il n'existe jamais de copie
 // stockée qui pourrait diverger du document ou échapper à ses droits d'accès.
-export async function exporterDocument(doc: Document, cible: "natif" | "pdf", langue: Langue = "fr"): Promise<FichierExporte> {
+export async function exporterDocument(
+  doc: Document,
+  cible: "natif" | "pdf",
+  langue: Langue = "fr",
+  signature: SignaturePdf | null = null
+): Promise<FichierExporte> {
   if (!doc.format_atelier) throw new Error("Ce document n'a pas été rédigé dans la plateforme.");
   const entete: EnTetePdf = {
     titre: doc.titre,
     organisation: nomOrganisation(langue),
     classification: libelles(langue).classification[doc.classification],
     logo: await chargerLogo(),
+    signature,
   };
 
   if (cible === "pdf") {
