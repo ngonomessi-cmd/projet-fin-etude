@@ -260,6 +260,7 @@ const LABEL_ACTION: Record<string, [string, string]> = {
   classement: ["Changement de nature", "Document type changed"],
   parametres_archivage: ["Réglage de l'archivage", "Archiving settings"],
   changement_role: ["Changement de rôle", "Role change"],
+  reinitialisation_mfa: ["Réinitialisation de la double authentification", "Two-factor authentication reset"],
 };
 
 export function libelleAction(action: string, langue: Langue = "fr"): string {
