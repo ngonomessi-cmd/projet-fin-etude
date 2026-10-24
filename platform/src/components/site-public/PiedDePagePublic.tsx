@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RubanOrganisation } from "@/components/RubanOrganisation";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
-import { NOM_ORGANISATION, URL_LOGO_ORGANISATION } from "@/lib/organisation";
+import { URL_LOGO_ORGANISATION, nomOrganisation } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
 import { IconeFleche } from "@/components/site-public/IconesSite";
 
@@ -36,7 +36,7 @@ export function PiedDePagePublic() {
           ) : (
             <LogoOrganisation taille="lg" />
           )}
-          <span className="max-w-[15rem] font-serif text-sm font-semibold leading-snug">{NOM_ORGANISATION}</span>
+          <span className="max-w-[15rem] font-serif text-sm font-semibold leading-snug">{nomOrganisation(locale)}</span>
         </Link>
 
         <nav className="flex flex-wrap gap-x-7 gap-y-2 text-sm text-white/85">
@@ -52,7 +52,7 @@ export function PiedDePagePublic() {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <p>
-          © {new Date().getFullYear()} {NOM_ORGANISATION}. {t.footer.copyright}
+          © {new Date().getFullYear()} {nomOrganisation(locale)}. {t.footer.copyright}
           <span className="mx-2 text-white/25">|</span>
           {t.footer.republique}
         </p>
