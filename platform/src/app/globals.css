@@ -27,6 +27,65 @@
   --color-encre-950: #00183d;
   --color-encre-900: #0a2a5e;
   --color-brume: #f8f9fa;
+
+  --animate-apparition: apparition 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-zoom-lent: zoom-lent 9s ease-out both;
+  --animate-progression: progression linear both;
+}
+
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes zoom-lent {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes progression {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Cartes révélées au défilement (composant Apparition). */
+.revele {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.revele[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revele {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-apparition,
+  .animate-zoom-lent,
+  .animate-progression {
+    animation: none;
+  }
 }
 
 body {

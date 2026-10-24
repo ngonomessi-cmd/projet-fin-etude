@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ActualitePublique } from "@/lib/types";
+import { IMAGES_ACTUALITES } from "@/lib/images-actualites";
 import { creerActualiteAction, modifierActualiteAction, supprimerActualiteAction } from "./actions";
 
 export function FormulaireActualite({ actualite }: { actualite?: ActualitePublique }) {
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
+  const [image, setImage] = useState<string>(actualite?.image_url ?? "");
 
   async function soumettre(formData: FormData) {
     setEnCours(true);
@@ -108,6 +110,32 @@ export function FormulaireActualite({ actualite }: { actualite?: ActualitePubliq
             className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm leading-relaxed"
           />
         </label>
+      </div>
+
+      <div className="block text-sm">
+        <label htmlFor="image_url" className="mb-1 block font-medium text-[#1c2029]">
+          Illustration
+        </label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <select
+            id="image_url"
+            name="image_url"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm sm:flex-1"
+          >
+            <option value="">Image par défaut</option>
+            {IMAGES_ACTUALITES.map((i) => (
+              <option key={i.url} value={i.url}>
+                {i.libelle}
+              </option>
+            ))}
+          </select>
+          {image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={image} alt="" className="h-16 w-28 shrink-0 rounded-md object-cover" />
+          )}
+        </div>
       </div>
 
       <label className="block text-sm">

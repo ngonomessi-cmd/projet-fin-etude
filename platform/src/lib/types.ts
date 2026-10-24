@@ -134,6 +134,7 @@ export type ActualitePublique = {
   extrait_en: string | null;
   contenu: string;
   contenu_en: string | null;
+  image_url: string | null;
   statut: StatutActualite;
   auteur_id: string;
   publie_at: string | null;

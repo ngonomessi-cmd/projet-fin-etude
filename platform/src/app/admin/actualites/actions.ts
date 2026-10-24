@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { StatutActualite } from "@/lib/types";
+import { IMAGES_ACTUALITES } from "@/lib/images-actualites";
+
+function lireImage(formData: FormData): string | null {
+  const url = String(formData.get("image_url") ?? "");
+  return IMAGES_ACTUALITES.some((i) => i.url === url) ? url : null;
+}
 
 export type ResultatActualite = { erreur: string | null };
 
@@ -50,6 +56,7 @@ export async function creerActualiteAction(formData: FormData): Promise<Resultat
         extrait_en: extraitEn || null,
         contenu,
         contenu_en: contenuEn || null,
+        image_url: lireImage(formData),
         statut,
       })
       .select("id")
@@ -97,6 +104,7 @@ export async function modifierActualiteAction(id: string, formData: FormData): P
       extrait_en: extraitEn || null,
       contenu,
       contenu_en: contenuEn || null,
+        image_url: lireImage(formData),
       statut,
     })
     .eq("id", id);
