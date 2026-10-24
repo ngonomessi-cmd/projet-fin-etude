@@ -4,6 +4,7 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { SIGLE_ORGANISATION } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
 import type { ActualitePublique } from "@/lib/types";
+import { imageActualite } from "@/lib/images-actualites";
 import {
   IconeCarteCameroun,
   IconeChrono,
@@ -23,9 +24,6 @@ import {
 const ICONES_CHIFFRES = [IconePoigneeMain, IconePieces, IconeCarteCameroun, IconeChrono];
 const ICONES_MISSIONS = [IconeGraphique, IconeImage, IconeDocument, IconePersonnes, IconeMainPieces];
 const ICONES_POURQUOI = [IconeFeuille, IconePersonnes, IconeRepere, IconeCroissance];
-// Illustrations par défaut des actualités (aucune image n'est encore jointe
-// aux articles eux-mêmes) — attribuées à tour de rôle.
-const VIGNETTES_ACTUALITES = ["/images/site/actualite-1.jpg", "/images/site/actualite-2.jpg", "/images/site/actualite-3.jpg"];
 
 export async function AccueilContenu({ locale }: { locale: Locale }) {
   const t = DICTIONNAIRE[locale];
@@ -217,7 +215,7 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
                   >
                     <div className="relative aspect-[16/7] overflow-hidden">
                       <Image
-                        src={VIGNETTES_ACTUALITES[index % VIGNETTES_ACTUALITES.length]}
+                        src={imageActualite(actualite.image_url, index)}
                         alt=""
                         fill
                         sizes="(min-width: 640px) 22vw, 100vw"
