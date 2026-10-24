@@ -10,6 +10,7 @@ const LIENS: Lien[] = [
   { href: "/messagerie", label: "Messagerie", icone: "messagerie" },
   { href: "/audit", label: "Journal d'audit", icone: "audit" },
   { href: "/admin/utilisateurs", label: "Utilisateurs", roles: ["administrateur"], icone: "utilisateurs" },
+  { href: "/admin/modeles", label: "Modèles", roles: ["administrateur"], icone: "modeles" },
   // Gestion du site public : seulement sur un déploiement qui l'active
   // (la barre latérale de la démonstration KHS Bank reste inchangée).
   ...(SITE_PUBLIC_ACTIF

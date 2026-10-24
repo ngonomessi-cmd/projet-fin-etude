@@ -4,6 +4,7 @@ import { NavBar } from "@/components/NavBar";
 import { DocumentsParDepartement, type GroupeDepartement } from "./DocumentsParDepartement";
 import { GenererFichiersFictifsBouton } from "./GenererFichiersFictifsBouton";
 import type { Document, Profil } from "@/lib/types";
+import { ROLES_PRODUCTEURS } from "@/lib/labels";
 
 export default async function PageDocuments() {
   const supabase = await creerClientServeur();
@@ -18,13 +19,16 @@ export default async function PageDocuments() {
   // Aucun filtre ici : la liste visible est entièrement déterminée par la
   // policy RLS "lecture_documents_selon_classification_et_role" côté base —
   // la même requête renvoie un résultat différent selon le rôle connecté.
-  const [{ data: documentsData }, { data: profilsData }] = await Promise.all([
+  const [{ data: documentsData }, { data: profilsData }, { data: partagesData }] = await Promise.all([
     supabase.from("documents").select("*").order("updated_at", { ascending: false }),
     supabase.from("profiles").select("departement"),
+    // Partages qui me concernent (directement ou via une conversation) :
+    // visibles grâce à la policy "partages_lecture_concernes".
+    supabase.from("document_partages").select("document_id, partage_par").neq("partage_par", user!.id),
   ]);
   const documents = (documentsData ?? []) as Document[];
 
-  const peutDeposer = profil.role === "redacteur" || profil.role === "administrateur";
+  const peutDeposer = ROLES_PRODUCTEURS.includes(profil.role);
 
   // Un dossier par département, créé automatiquement — même principe que les
   // canaux de diffusion : tout département connu (via les profils) obtient
@@ -37,12 +41,18 @@ export default async function PageDocuments() {
     if (d.departement?.trim()) departements.add(d.departement.trim());
   }
 
-  const groupes: GroupeDepartement[] = [...departements]
+  const idsPartages = new Set(((partagesData ?? []) as { document_id: string }[]).map((p) => p.document_id));
+  const partagesAvecMoi = documents.filter((d) => idsPartages.has(d.id) && d.owner_id !== user!.id);
+
+  const groupesDepartements: GroupeDepartement[] = [...departements]
     .sort((a, b) => a.localeCompare(b, "fr"))
     .map((departement) => ({
       departement,
       documents: documents.filter((d) => d.departement === departement),
     }));
+  const groupes: GroupeDepartement[] = partagesAvecMoi.length
+    ? [{ departement: "Partagés avec moi", documents: partagesAvecMoi, special: true }, ...groupesDepartements]
+    : groupesDepartements;
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -66,7 +76,7 @@ export default async function PageDocuments() {
                   href="/documents/new"
                   className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-center text-sm font-medium text-white hover:bg-navy-900"
                 >
-                  Déposer un document
+                  Nouveau document
                 </Link>
               )}
             </div>
