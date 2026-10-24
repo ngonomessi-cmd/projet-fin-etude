@@ -2,11 +2,16 @@
 
 import { redirect } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
-import type { ClassificationDocument, FormatAtelier, Profil } from "@/lib/types";
-import { ROLES_PRODUCTEURS } from "@/lib/labels";
+import type { ClassificationDocument, FormatAtelier, NatureDocument, Profil } from "@/lib/types";
+import { NATURES, ROLES_PRODUCTEURS } from "@/lib/labels";
 import { contenuVide } from "@/lib/atelier/contenus";
 
 export type ResultatDepot = { erreur: string | null };
+
+function lireNature(formData: FormData): NatureDocument | null {
+  const nature = String(formData.get("nature") ?? "") as NatureDocument;
+  return NATURES.includes(nature) ? nature : null;
+}
 
 export async function deposerDocumentAction(formData: FormData): Promise<ResultatDepot> {
   const supabase = await creerClientServeur();
@@ -26,8 +31,10 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
   const description = String(formData.get("description") ?? "").trim();
   const classification = String(formData.get("classification") ?? "") as ClassificationDocument;
   const fichier = formData.get("fichier") as File | null;
+  const nature = lireNature(formData);
 
   if (!titre || !classification) return { erreur: "Titre et classification sont obligatoires." };
+  if (!nature) return { erreur: "Choisissez la nature du document." };
   if (!fichier || fichier.size === 0) return { erreur: "Un fichier doit être joint au dépôt." };
 
   // 1. Création de la ligne "documents" à l'état brouillon (policy RLS
@@ -38,6 +45,7 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
       titre,
       description: description || null,
       classification,
+      nature,
       departement: profil.departement,
       owner_id: user.id,
     })
@@ -85,8 +93,10 @@ export async function creerDocumentAtelierAction(formData: FormData): Promise<Re
   const classification = String(formData.get("classification") ?? "") as ClassificationDocument;
   const format = String(formData.get("format") ?? "") as FormatAtelier;
   const modeleId = String(formData.get("modele_id") ?? "");
+  const nature = lireNature(formData);
 
   if (!titre || !classification) return { erreur: "Titre et classification sont obligatoires." };
+  if (!nature) return { erreur: "Choisissez la nature du document." };
   if (!["texte", "tableur", "presentation"].includes(format)) return { erreur: "Choisissez un type de document." };
 
   let contenu: unknown = contenuVide(format);
@@ -103,6 +113,7 @@ export async function creerDocumentAtelierAction(formData: FormData): Promise<Re
       titre,
       description: description || null,
       classification,
+      nature,
       departement: profil.departement,
       owner_id: user.id,
       format_atelier: format,

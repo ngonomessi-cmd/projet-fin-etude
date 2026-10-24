@@ -27,5 +27,13 @@ export async function GET(requete: NextRequest) {
     return NextResponse.json({ erreur: erreurPurge.message }, { status: 500 });
   }
 
-  return NextResponse.json({ messages_purges: nombrePurges });
+  // Même passage nocturne (une seule tâche planifiée sur le plan gratuit) :
+  // archivage automatique des documents publiés depuis plus du délai réglé
+  // par chaque organisation (Admin › Archivage, migration 0024).
+  const { data: nombreArchives, error: erreurArchivage } = await supabase.rpc("archiver_documents_echus");
+  if (erreurArchivage) {
+    return NextResponse.json({ messages_purges: nombrePurges, erreur: erreurArchivage.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ messages_purges: nombrePurges, documents_archives: nombreArchives });
 }

@@ -21,6 +21,7 @@ export function PanneauPartage({
   documentId,
   peutPartager,
   peutJoindrePdf,
+  lectureSeule,
   confidentiel,
   personnes,
   conversations,
@@ -29,6 +30,9 @@ export function PanneauPartage({
   documentId: string;
   peutPartager: boolean;
   peutJoindrePdf: boolean;
+  // Co-édition proposée seulement tant que le document est modifiable
+  // (brouillon ou rejeté) ; jamais pour un document archivé.
+  lectureSeule: boolean;
   confidentiel: boolean;
   personnes: PersonneContactable[];
   conversations: ConversationPubliable[];
@@ -151,9 +155,13 @@ export function PanneauPartage({
               <label className="flex items-center gap-2">
                 <input type="radio" name="droit" value="lecture" defaultChecked /> Lecture
               </label>
-              <label className="flex items-center gap-2">
-                <input type="radio" name="droit" value="edition" /> Lecture et modification (co-édition)
-              </label>
+              {lectureSeule ? (
+                <span className="text-xs text-paper-soft">Document non modifiable : partage en lecture uniquement.</span>
+              ) : (
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="droit" value="edition" /> Lecture et modification (co-édition)
+                </label>
+              )}
             </div>
           </fieldset>
 

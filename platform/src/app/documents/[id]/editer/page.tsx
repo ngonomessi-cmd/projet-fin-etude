@@ -27,6 +27,7 @@ export default async function PageEditerDocument({ params }: { params: Promise<{
             format={doc.format_atelier}
             contenuInitial={doc.contenu}
             peutEditer={Boolean(peutEditer)}
+            archive={Boolean(doc.archive_le)}
             organisation={NOM_ORGANISATION}
           />
         </div>

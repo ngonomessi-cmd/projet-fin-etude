@@ -1,4 +1,12 @@
-import type { ClassificationDocument, RoleUtilisateur, StatutActualite, StatutDocument, TypeConversation } from "@/lib/types";
+import type {
+  ClassificationDocument,
+  Document,
+  NatureDocument,
+  RoleUtilisateur,
+  StatutActualite,
+  StatutDocument,
+  TypeConversation,
+} from "@/lib/types";
 
 export const LABEL_ROLE: Record<RoleUtilisateur, string> = {
   lecteur: "Lecteur",
@@ -47,6 +55,64 @@ export const COULEUR_STATUT: Record<StatutDocument, string> = {
   rejete: "bg-red-100 text-red-800 border-red-300",
   publie: "bg-emerald-100 text-emerald-800 border-emerald-300",
 };
+
+// Nature du document : détermine sa durée de conservation une fois archivé
+// (valeurs par défaut de la migration 0024, ajustables dans Admin › Archivage).
+export const LABEL_NATURE: Record<NatureDocument, string> = {
+  note_service: "Note de service / circulaire",
+  courrier: "Courrier",
+  compte_rendu: "Compte rendu / procès-verbal",
+  rapport: "Rapport / étude",
+  decision: "Décision / arrêté / délibération",
+  contrat: "Contrat / convention",
+  piece_comptable: "Pièce comptable / facture",
+  procedure: "Procédure / politique / règlement",
+  ressources_humaines: "Dossier ressources humaines",
+  presentation: "Présentation / support",
+  autre: "Autre document",
+};
+
+export const NATURES = Object.keys(LABEL_NATURE) as NatureDocument[];
+
+export const DUREE_CONSERVATION_DEFAUT: Record<NatureDocument, number> = {
+  note_service: 5,
+  courrier: 5,
+  compte_rendu: 10,
+  rapport: 10,
+  decision: 0,
+  contrat: 10,
+  piece_comptable: 10,
+  procedure: 10,
+  ressources_humaines: 30,
+  presentation: 3,
+  autre: 5,
+};
+
+export function libelleNature(nature: NatureDocument | null | undefined): string {
+  return nature ? LABEL_NATURE[nature] : "Non classé";
+}
+
+// Statut tel qu'affiché : un document archivé reste "publié" en base, mais
+// se présente comme "Archivé".
+export function statutAffiche(doc: Pick<Document, "statut" | "archive_le">): { texte: string; couleur: string } {
+  if (doc.archive_le) return { texte: "Archivé", couleur: "bg-indigo-100 text-indigo-800 border-indigo-300" };
+  return { texte: LABEL_STATUT[doc.statut], couleur: COULEUR_STATUT[doc.statut] };
+}
+
+export const NOMS_MOIS = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
 
 export const LABEL_ACTUALITE: Record<StatutActualite, string> = {
   brouillon: "Brouillon",

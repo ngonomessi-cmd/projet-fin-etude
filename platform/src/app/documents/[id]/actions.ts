@@ -30,3 +30,46 @@ export async function transitionnerAction(
   revalidatePath("/audit");
   return { erreur: null };
 }
+
+function rafraichir(documentId: string) {
+  revalidatePath(`/documents/${documentId}`);
+  revalidatePath("/documents");
+  revalidatePath("/audit");
+}
+
+// Archivage scellé (migration 0024) : la base vérifie le rôle (validateur du
+// département ou administrateur), le statut (publié) et pose l'empreinte.
+export async function archiverAction(documentId: string, motif: string): Promise<ResultatTransition> {
+  const supabase = await creerClientServeur();
+  const { error } = await supabase.rpc("archiver_document", { p_document_id: documentId, p_motif: motif || null });
+  if (error) return { erreur: error.message };
+  rafraichir(documentId);
+  return { erreur: null };
+}
+
+export async function nouvelleVersionAction(documentId: string): Promise<ResultatTransition & { id?: string }> {
+  const supabase = await creerClientServeur();
+  const { data, error } = await supabase.rpc("nouvelle_version_document", { p_document_id: documentId });
+  if (error || !data) return { erreur: error?.message ?? "Création de la nouvelle version impossible." };
+  rafraichir(documentId);
+  return { erreur: null, id: data as string };
+}
+
+export async function classerAction(documentId: string, nature: string): Promise<ResultatTransition> {
+  const supabase = await creerClientServeur();
+  const { error } = await supabase.rpc("classer_document", { p_document_id: documentId, p_nature: nature });
+  if (error) return { erreur: error.message };
+  rafraichir(documentId);
+  return { erreur: null };
+}
+
+export type ResultatIntegrite = { erreur: string | null; conforme?: boolean; actuelle?: string };
+
+export async function verifierIntegriteAction(documentId: string): Promise<ResultatIntegrite> {
+  const supabase = await creerClientServeur();
+  const { data, error } = await supabase.rpc("verifier_integrite_document", { p_document_id: documentId });
+  if (error) return { erreur: error.message };
+  const resultat = data as { conforme: boolean; empreinte_actuelle: string };
+  revalidatePath(`/documents/${documentId}`);
+  return { erreur: null, conforme: resultat.conforme, actuelle: resultat.empreinte_actuelle };
+}

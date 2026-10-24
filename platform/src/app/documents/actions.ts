@@ -33,7 +33,11 @@ export async function genererFichiersDocumentsFictifsAction(): Promise<ResultatG
   const { data: documentsData, error: erreurLecture } = await supabase
     .from("documents")
     .select("*")
-    .is("storage_path", null);
+    .is("storage_path", null)
+    // Jamais pour un document rédigé dans la plateforme (son fichier est
+    // produit à la demande) ni pour un document archivé (intouchable).
+    .is("format_atelier", null)
+    .is("archive_le", null);
   if (erreurLecture) return { erreur: erreurLecture.message, genere: 0 };
 
   const documents = (documentsData ?? []) as Document[];
