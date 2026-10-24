@@ -1,0 +1,227 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { FormatAtelier } from "@/lib/types";
+import {
+  LABEL_FORMAT_COURT,
+  normaliserPresentation,
+  normaliserTableur,
+  normaliserTexte,
+} from "@/lib/atelier/contenus";
+import { EditeurTexte } from "@/components/atelier/EditeurTexte";
+import { EditeurTableur } from "@/components/atelier/EditeurTableur";
+import { EditeurPresentation } from "@/components/atelier/EditeurPresentation";
+import { enregistrerContenuAction, libererVerrouAction, prendreVerrouAction } from "./actions";
+
+type Statut = "pret" | "modifie" | "enregistrement" | "enregistre" | "erreur";
+
+const DELAI_SAUVEGARDE_MS = 2500;
+const RENOUVELLEMENT_VERROU_MS = 60_000;
+
+export function AtelierDocument({
+  documentId,
+  titreInitial,
+  format,
+  contenuInitial,
+  peutEditer,
+  organisation,
+}: {
+  documentId: string;
+  titreInitial: string;
+  format: FormatAtelier;
+  contenuInitial: unknown;
+  peutEditer: boolean;
+  organisation: string;
+}) {
+  const router = useRouter();
+  const [titre, setTitre] = useState(titreInitial);
+  const [modeEdition, setModeEdition] = useState(false);
+  const [verrouAutre, setVerrouAutre] = useState<string | null>(null);
+  const [statut, setStatut] = useState<Statut>("pret");
+  const [message, setMessage] = useState<string | null>(null);
+  const contenu = useRef<unknown>(contenuInitial);
+  const titreRef = useRef(titreInitial);
+  const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enAttente = useRef(false);
+
+  // Prise du verrou à l'ouverture, renouvelé tant que l'éditeur reste ouvert.
+  useEffect(() => {
+    if (!peutEditer) return;
+    let actif = true;
+    const prendre = async () => {
+      const etat = await prendreVerrouAction(documentId);
+      if (!actif) return;
+      if (etat.ok) {
+        setModeEdition(true);
+        setVerrouAutre(null);
+      } else if (etat.motif === "verrouille") {
+        setModeEdition(false);
+        setVerrouAutre(etat.par ?? "une autre personne");
+      } else {
+        setModeEdition(false);
+      }
+    };
+    prendre();
+    const intervalle = setInterval(prendre, RENOUVELLEMENT_VERROU_MS);
+    return () => {
+      actif = false;
+      clearInterval(intervalle);
+      libererVerrouAction(documentId);
+    };
+  }, [documentId, peutEditer]);
+
+  const enregistrer = useCallback(async () => {
+    if (minuteur.current) clearTimeout(minuteur.current);
+    if (!enAttente.current) return true;
+    enAttente.current = false;
+    setStatut("enregistrement");
+    const r = await enregistrerContenuAction(documentId, contenu.current, titreRef.current);
+    if (r.erreur) {
+      enAttente.current = true;
+      setStatut("erreur");
+      setMessage(r.erreur);
+      return false;
+    }
+    setStatut("enregistre");
+    setMessage(r.enregistreLe ? new Date(r.enregistreLe).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : null);
+    return true;
+  }, [documentId]);
+
+  const signalerModification = useCallback(() => {
+    enAttente.current = true;
+    setStatut("modifie");
+    if (minuteur.current) clearTimeout(minuteur.current);
+    minuteur.current = setTimeout(enregistrer, DELAI_SAUVEGARDE_MS);
+  }, [enregistrer]);
+
+  useEffect(() => {
+    const avantDepart = (e: BeforeUnloadEvent) => {
+      if (enAttente.current) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", avantDepart);
+    return () => window.removeEventListener("beforeunload", avantDepart);
+  }, []);
+
+  async function telecharger(cible: "natif" | "pdf") {
+    if (!(await enregistrer())) return;
+    window.location.href = `/documents/${documentId}/export?format=${cible}`;
+  }
+
+  async function terminer() {
+    if (!(await enregistrer())) return;
+    await libererVerrouAction(documentId);
+    router.push(`/documents/${documentId}`);
+    router.refresh();
+  }
+
+  const lectureSeule = !modeEdition;
+  const libelleStatut: Record<Statut, string> = {
+    pret: modeEdition ? "Prêt" : "Lecture seule",
+    modifie: "Modifications non enregistrées…",
+    enregistrement: "Enregistrement…",
+    enregistre: message ? `Enregistré à ${message}` : "Enregistré",
+    erreur: `Échec de l'enregistrement : ${message ?? ""}`,
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <Link href={`/documents/${documentId}`} className="text-sm text-paper-muted hover:text-gold-600 hover:underline">
+            ← Fiche du document
+          </Link>
+          <input
+            value={titre}
+            readOnly={lectureSeule}
+            onChange={(e) => {
+              setTitre(e.target.value);
+              titreRef.current = e.target.value;
+              signalerModification();
+            }}
+            className="mt-1 block w-full truncate rounded-md border border-transparent bg-transparent px-1 py-0.5 font-serif text-2xl font-semibold hover:border-paper-200 focus:border-paper-200 focus:bg-white focus:outline-none read-only:hover:border-transparent"
+            aria-label="Titre du document"
+          />
+          <p className={`px-1 text-xs ${statut === "erreur" ? "text-red-600" : "text-paper-soft"}`}>{libelleStatut[statut]}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => telecharger("natif")}
+            className="rounded-md border border-paper-200 bg-white px-3 py-2 text-sm font-medium hover:bg-paper-50"
+          >
+            ⬇ {LABEL_FORMAT_COURT[format]}
+          </button>
+          <button
+            type="button"
+            onClick={() => telecharger("pdf")}
+            className="rounded-md border border-paper-200 bg-white px-3 py-2 text-sm font-medium hover:bg-paper-50"
+          >
+            ⬇ PDF
+          </button>
+          {modeEdition && (
+            <button
+              type="button"
+              onClick={terminer}
+              className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
+            >
+              Enregistrer et fermer
+            </button>
+          )}
+        </div>
+      </div>
+
+      {verrouAutre && (
+        <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+          {verrouAutre} est en train de modifier ce document : il s&apos;affiche en lecture seule. Vous pourrez le
+          modifier dès qu&apos;il ou elle l&apos;aura fermé (vérification automatique chaque minute).
+        </p>
+      )}
+      {!peutEditer && (
+        <p className="rounded-md border border-paper-200 bg-paper-50 px-4 py-2.5 text-sm text-paper-muted">
+          Lecture seule : seuls l&apos;auteur et les co-éditeurs peuvent modifier ce document, tant qu&apos;il n&apos;a pas été
+          soumis à validation.
+        </p>
+      )}
+
+      {format === "texte" && (
+        <EditeurTexte
+          key={String(lectureSeule)}
+          contenu={normaliserTexte(contenu.current)}
+          lectureSeule={lectureSeule}
+          onChange={(c) => {
+            contenu.current = c;
+            signalerModification();
+          }}
+        />
+      )}
+      {format === "tableur" && (
+        <EditeurTableur
+          key={String(lectureSeule)}
+          contenu={normaliserTableur(contenu.current)}
+          lectureSeule={lectureSeule}
+          onChange={(c) => {
+            contenu.current = c;
+            signalerModification();
+          }}
+        />
+      )}
+      {format === "presentation" && (
+        <EditeurPresentation
+          key={String(lectureSeule)}
+          contenu={normaliserPresentation(contenu.current)}
+          organisation={organisation}
+          lectureSeule={lectureSeule}
+          onChange={(c) => {
+            contenu.current = c;
+            signalerModification();
+          }}
+        />
+      )}
+    </div>
+  );
+}

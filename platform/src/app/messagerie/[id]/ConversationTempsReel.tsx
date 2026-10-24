@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 import {
@@ -335,7 +336,7 @@ function MessageItem({
               </div>
             </div>
           ) : (
-            <p className="whitespace-pre-wrap">{message.contenu}</p>
+            <p className="whitespace-pre-wrap">{avecLiensDocuments(message.contenu)}</p>
           )}
 
           {message.pieces.length > 0 && !message.supprime_at && (
@@ -459,5 +460,19 @@ function PopoverInfos({ statuts, onFermer }: { statuts: StatutMessage[]; onFerme
         )}
       </div>
     </>
+  );
+}
+
+// Les partages de documents insèrent « /documents/<id> » dans le message :
+// rendu comme un lien interne (l'accès reste contrôlé par la fiche du document).
+function avecLiensDocuments(texte: string) {
+  return texte.split(/(\/documents\/[0-9a-f-]{36})/g).map((morceau, i) =>
+    /^\/documents\/[0-9a-f-]{36}$/.test(morceau) ? (
+      <Link key={i} href={morceau} className="font-medium underline underline-offset-2 hover:opacity-80">
+        Ouvrir le document
+      </Link>
+    ) : (
+      morceau
+    )
   );
 }

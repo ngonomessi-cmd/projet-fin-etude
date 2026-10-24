@@ -1,6 +1,7 @@
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { LABEL_ROLE } from "@/lib/labels";
+import { DESCRIPTION_ROLE, LABEL_ROLE } from "@/lib/labels";
+import type { RoleUtilisateur } from "@/lib/types";
 import type { Profil } from "@/lib/types";
 import { SelecteurRole } from "./SelecteurRole";
 import { ChampTexteModifiable } from "./ChampTexteModifiable";
@@ -77,9 +78,21 @@ export default async function PageUtilisateurs() {
             </table>
           </div>
 
-          <p className="mt-4 text-xs text-paper-soft">
-            Rôles disponibles : {Object.values(LABEL_ROLE).join(", ")}.
-          </p>
+          <section className="mt-6 rounded-lg border border-paper-200 bg-white p-4 shadow-sm">
+            <h2 className="mb-3 font-serif text-base font-semibold">Ce que permet chaque rôle</h2>
+            <dl className="grid gap-x-4 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
+              {(Object.keys(LABEL_ROLE) as RoleUtilisateur[]).map((r) => (
+                <div key={r} className="contents">
+                  <dt className="font-medium text-[#1c2029]">{LABEL_ROLE[r]}</dt>
+                  <dd className="text-paper-muted">{DESCRIPTION_ROLE[r]}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-3 text-xs text-paper-soft">
+              Partage : avec toute personne que l&apos;on peut contacter dans la messagerie ; un document confidentiel reste
+              dans son département. Chaque partage est inscrit au journal d&apos;audit.
+            </p>
+          </section>
         </div>
       </main>
     </div>

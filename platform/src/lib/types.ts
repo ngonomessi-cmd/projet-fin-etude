@@ -33,6 +33,37 @@ export type Document = {
   validated_by: string | null;
   created_at: string;
   updated_at: string;
+  format_atelier?: FormatAtelier | null;
+  contenu?: unknown;
+  verrou_par?: string | null;
+  verrou_jusqua?: string | null;
+};
+
+// --- Ateliers documentaires (migration 0023) -------------------------------
+
+export type FormatAtelier = "texte" | "tableur" | "presentation";
+
+export type ModeleDocument = {
+  id: string;
+  organisation: string | null;
+  departement: string | null;
+  titre: string;
+  description: string | null;
+  format: FormatAtelier;
+  contenu: unknown;
+  actif: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PartageDocument = {
+  id: string;
+  cible: string;
+  type_cible: "personne" | "groupe" | "canal" | "privee";
+  droit: "lecture" | "edition";
+  partage_par: string;
+  created_at: string;
+  retirable: boolean;
 };
 
 export type EntreeAudit = {

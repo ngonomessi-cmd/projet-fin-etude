@@ -8,6 +8,18 @@ export const LABEL_ROLE: Record<RoleUtilisateur, string> = {
   auditeur: "Auditeur",
 };
 
+// Rôles qui produisent des documents (créer, éditer, partager). Le lecteur
+// consulte ; l'auditeur contrôle sans produire (séparation des pouvoirs).
+export const ROLES_PRODUCTEURS: RoleUtilisateur[] = ["redacteur", "validateur", "administrateur"];
+
+export const DESCRIPTION_ROLE: Record<RoleUtilisateur, string> = {
+  lecteur: "Consulte les documents qui lui sont accessibles.",
+  redacteur: "Crée, rédige et partage des documents, puis les soumet à validation.",
+  validateur: "Comme le rédacteur, et valide ou publie les documents de son département.",
+  administrateur: "Gère les comptes, les modèles et le site ; valide et publie partout.",
+  auditeur: "Consulte tous les documents et le journal d'audit, sans en produire.",
+};
+
 export const LABEL_CLASSIFICATION: Record<ClassificationDocument, string> = {
   public_interne: "Public interne",
   restreint: "Restreint",
