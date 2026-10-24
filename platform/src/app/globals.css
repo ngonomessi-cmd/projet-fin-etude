@@ -176,3 +176,37 @@ body {
   color: #1c2029;
   font-family: var(--font-sans);
 }
+
+/* Tableaux de la GED : sur téléphone, chaque ligne devient une carte
+   empilée (en-têtes masqués, libellé de colonne repris via data-label). */
+@media (max-width: 639px) {
+  .tableau-empilable {
+    min-width: 0 !important;
+  }
+  .tableau-empilable thead {
+    display: none;
+  }
+  .tableau-empilable tbody,
+  .tableau-empilable tr {
+    display: block;
+  }
+  .tableau-empilable tr {
+    padding: 0.75rem 1rem;
+  }
+  .tableau-empilable td {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.2rem 0 !important;
+    white-space: normal !important;
+  }
+  .tableau-empilable td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 6.5rem;
+    font-size: 0.75rem;
+    color: var(--color-paper-soft);
+  }
+  .tableau-empilable td > * {
+    min-width: 0;
+  }
+}

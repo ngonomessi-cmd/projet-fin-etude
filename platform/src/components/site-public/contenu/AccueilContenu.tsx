@@ -105,7 +105,7 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
 
       {/* Missions */}
       <section className="bg-white">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)] lg:items-center">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)] lg:items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-600">{t.missionsTeaser.surtitre}</p>
             <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight text-encre-900 sm:text-[2.1rem]">
@@ -186,7 +186,7 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
 
       {/* Actualités */}
       <section className="bg-brume">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:items-start">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-16 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:items-start">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-600">{t.actualitesAccueil.surtitre}</p>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-encre-900">{t.actualitesAccueil.titre}</h2>

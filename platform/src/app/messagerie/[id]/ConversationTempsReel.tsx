@@ -179,8 +179,8 @@ export function ConversationTempsReel({
               onKeyDown={surToucheTextarea}
               className="w-full resize-none border-0 text-sm outline-none"
             />
-            <div className="mt-1.5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-4">
+            <div className="mt-1.5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="flex items-center gap-1.5 text-paper-muted">
                   <input
                     ref={fichierRef}
@@ -192,7 +192,7 @@ export function ConversationTempsReel({
                   <button
                     type="button"
                     onClick={() => fichierRef.current?.click()}
-                    className="flex items-center gap-1.5 rounded border-0 bg-paper-100 px-2 py-1 text-xs font-medium text-[#1c2029] hover:bg-paper-200"
+                    className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded border-0 bg-paper-100 px-2 py-1 text-xs font-medium text-[#1c2029] hover:bg-paper-200"
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.1 17.15a2 2 0 0 1-2.83-2.83l8.49-8.49" />

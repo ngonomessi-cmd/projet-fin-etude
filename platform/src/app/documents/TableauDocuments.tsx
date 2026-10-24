@@ -74,7 +74,7 @@ export function TableauDocuments({
   }
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] text-sm">
+      <table className="tableau-empilable w-full min-w-[640px] text-sm">
         <thead className="bg-paper-50 text-left text-paper-muted">
           <tr>
             <th className="px-4 py-2 font-medium">Document</th>
@@ -119,12 +119,21 @@ export function TableauDocuments({
                   {doc.note && <p className="mt-1 text-xs text-red-700">{doc.note}</p>}
                   {doc.extrait && <Extrait texte={doc.extrait} />}
                 </td>
-                <td className="px-4 py-2.5 text-paper-muted">{libelleNature(doc.nature, langue)}</td>
-                {afficherDepartement && <td className="px-4 py-2.5 text-paper-muted">{dep(doc.departement)}</td>}
-                <td className="px-4 py-2.5">
+                <td data-label={t("Nature", "Type")} className="px-4 py-2.5 text-paper-muted">
+                  {libelleNature(doc.nature, langue)}
+                </td>
+                {afficherDepartement && (
+                  <td data-label={t("Département", "Department")} className="px-4 py-2.5 text-paper-muted">
+                    {dep(doc.departement)}
+                  </td>
+                )}
+                <td data-label={t("Statut", "Status")} className="px-4 py-2.5">
                   <Badge texte={statut.texte} classesCouleur={statut.couleur} />
                 </td>
-                <td className="whitespace-nowrap px-4 py-2.5 text-paper-soft">
+                <td
+                  data-label={colonneDate === "publication" ? t("Publié le", "Published") : t("Mis à jour", "Updated")}
+                  className="whitespace-nowrap px-4 py-2.5 text-paper-soft"
+                >
                   {dateCourte(colonneDate === "publication" ? doc.publie_le : doc.updated_at, langue)}
                 </td>
               </tr>

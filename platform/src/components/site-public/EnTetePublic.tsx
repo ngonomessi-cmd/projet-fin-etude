@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { URL_LOGO_ORGANISATION, nomOrganisation } from "@/lib/organisation";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { DICTIONNAIRE, cheminAutreLocale, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
@@ -21,6 +22,11 @@ export function EnTetePublic() {
   const t = DICTIONNAIRE[locale];
   const p = prefixeLocale(locale);
   const accueil = p || "/";
+  const [menuOuvert, setMenuOuvert] = useState(false);
+
+  useEffect(() => {
+    setMenuOuvert(false);
+  }, [pathname]);
 
   const liens = [
     { href: accueil, label: t.nav.accueil, Icone: IconeMaison, actif: pathname === accueil },
@@ -92,11 +98,24 @@ export function EnTetePublic() {
                 </Link>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => setMenuOuvert((v) => !v)}
+              aria-expanded={menuOuvert}
+              aria-label={menuOuvert ? (locale === "en" ? "Close menu" : "Fermer le menu") : locale === "en" ? "Open menu" : "Ouvrir le menu"}
+              className="flex h-10 w-10 items-center justify-center rounded-md text-encre-900 hover:bg-slate-100 lg:hidden"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                {menuOuvert ? <path d="M18 6 6 18M6 6l12 12" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+              </svg>
+            </button>
           </div>
         </div>
       </div>
 
-      <nav className="flex gap-5 overflow-x-auto border-t border-slate-100 px-4 py-2 sm:px-8 lg:hidden">
+      <nav
+        className={`flex-col border-t border-slate-100 bg-white px-4 py-2 shadow-lg sm:px-8 lg:hidden ${menuOuvert ? "flex" : "hidden"}`}
+      >
         {[
           ...liens,
           { href: `${p}/contact`, label: t.nav.contact, Icone: IconeEnveloppe, actif: pathname.startsWith(`${p}/contact`) },
@@ -104,7 +123,10 @@ export function EnTetePublic() {
           <Link
             key={href}
             href={href}
-            className={`flex shrink-0 items-center gap-1.5 text-sm font-medium ${actif ? "text-gold-600" : "text-encre-900"}`}
+            aria-current={actif ? "page" : undefined}
+            className={`flex items-center gap-3 border-b border-slate-100 py-3.5 text-[15px] font-medium last:border-b-0 ${
+              actif ? "text-gold-600" : "text-encre-900"
+            }`}
           >
             <Icone className="h-4 w-4" />
             {label}

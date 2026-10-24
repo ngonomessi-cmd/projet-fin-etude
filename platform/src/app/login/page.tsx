@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { connecterAction, inscrireAction } from "./actions";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { RubanOrganisation } from "@/components/RubanOrganisation";
-import { MENTION_CONNEXION, MENTION_CONNEXION_EN, nomOrganisation } from "@/lib/organisation";
+import { MENTION_CONNEXION, MENTION_CONNEXION_EN, SITE_PUBLIC_ACTIF, nomOrganisation } from "@/lib/organisation";
+import Link from "next/link";
 import { useTraduction } from "@/components/i18n/Langue";
 
 export default function PageConnexion() {
@@ -165,6 +166,18 @@ function FormulaireConnexion() {
               "New accounts get the \"Reader\" role by default (least-privilege principle); an administrator then assigns the right role in \"Users\"."
             )}
           </p>
+
+          {SITE_PUBLIC_ACTIF && (
+            <Link
+              href={langue === "en" ? "/en" : "/"}
+              className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#1c2029] hover:text-gold-600"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              {t("Retour à l'accueil du site", "Back to the website home page")}
+            </Link>
+          )}
         </div>
       </div>
     </main>

@@ -212,7 +212,10 @@ export function EditeurTableur({
         onKeyDown={surToucheGrille}
         className="max-h-[65vh] overflow-auto outline-none"
       >
-        <table className="border-collapse text-[13px]" style={{ tableLayout: "fixed" }}>
+        <table
+          className="border-collapse text-[13px]"
+          style={{ tableLayout: "fixed", width: 44 + Array.from({ length: nbColonnes }, (_, c) => largeur(c)).reduce((a, b) => a + b, 0) }}
+        >
           <colgroup>
             <col style={{ width: 44 }} />
             {Array.from({ length: nbColonnes }, (_, c) => (

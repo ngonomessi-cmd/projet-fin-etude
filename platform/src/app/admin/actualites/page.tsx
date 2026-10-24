@@ -63,7 +63,7 @@ export default async function PageAdminActualites() {
             </p>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
-              <table className="w-full min-w-[520px] text-sm">
+              <table className="tableau-empilable w-full min-w-[520px] text-sm">
                 <thead className="bg-paper-50 text-left text-paper-muted">
                   <tr>
                     <th className="px-4 py-2.5 font-medium">{t("Titre", "Title")}</th>
@@ -79,10 +79,12 @@ export default async function PageAdminActualites() {
                           {a.titre}
                         </Link>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td data-label={t("Statut", "Status")} className="px-4 py-2.5">
                         <Badge texte={libelles(langue).actualite[a.statut]} classesCouleur={COULEUR_ACTUALITE[a.statut]} />
                       </td>
-                      <td className="px-4 py-2.5 text-paper-soft">{new Date(a.updated_at).toLocaleString(dl)}</td>
+                      <td data-label={t("Mis à jour", "Updated")} className="px-4 py-2.5 text-paper-soft">
+                        {new Date(a.updated_at).toLocaleString(dl)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

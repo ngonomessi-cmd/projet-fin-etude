@@ -38,7 +38,7 @@ export default async function PageAudit() {
             </p>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
-              <table className="w-full min-w-[640px] text-sm">
+              <table className="tableau-empilable w-full min-w-[640px] text-sm">
                 <thead className="bg-paper-50 text-left text-paper-muted">
                   <tr>
                     <th className="px-4 py-2.5 font-medium">Date</th>
@@ -53,8 +53,8 @@ export default async function PageAudit() {
                       <td className="px-4 py-2.5 whitespace-nowrap text-paper-muted">
                         {new Date(entree.created_at).toLocaleString(dl)}
                       </td>
-                      <td className="px-4 py-2.5 font-medium text-[#1c2029]">{langue === "en" ? libelleAction(entree.action, langue) : entree.action}</td>
-                      <td className="px-4 py-2.5">
+                      <td data-label="Action" className="px-4 py-2.5 font-medium text-[#1c2029]">{langue === "en" ? libelleAction(entree.action, langue) : entree.action}</td>
+                      <td data-label="Document" className="px-4 py-2.5">
                         {entree.document_id ? (
                           <Link href={`/documents/${entree.document_id}`} className="text-gold-600 hover:underline">
                             {t("Voir le document", "View document")}
@@ -63,7 +63,9 @@ export default async function PageAudit() {
                           <span className="text-paper-soft">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-2.5 text-paper-muted">{JSON.stringify(entree.details)}</td>
+                      <td data-label={t("Détails", "Details")} className="break-all px-4 py-2.5 text-paper-muted">
+                        {JSON.stringify(entree.details)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

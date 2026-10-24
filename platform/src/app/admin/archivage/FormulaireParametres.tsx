@@ -43,12 +43,12 @@ export function FormulaireParametres({ delai, durees }: { delai: number; durees:
       </label>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[460px] text-sm">
+        <table className="w-full text-sm sm:min-w-[460px]">
           <thead className="bg-paper-50 text-left text-paper-muted">
             <tr>
               <th className="px-3 py-2 font-medium">{t("Nature du document", "Document type")}</th>
               <th className="px-3 py-2 font-medium">{t("Conservation (années)", "Retention (years)")}</th>
-              <th className="px-3 py-2 font-medium">{t("Par défaut", "Default")}</th>
+              <th className="hidden px-3 py-2 font-medium sm:table-cell">{t("Par défaut", "Default")}</th>
             </tr>
           </thead>
           <tbody>
@@ -58,7 +58,7 @@ export function FormulaireParametres({ delai, durees }: { delai: number; durees:
                 <td className="px-3 py-2">
                   <input name={`duree_${n}`} type="number" min={0} max={100} step={1} defaultValue={durees[n]} className={CHAMP} />
                 </td>
-                <td className="px-3 py-2 text-paper-soft">
+                <td className="hidden px-3 py-2 text-paper-soft sm:table-cell">
                   {DUREE_CONSERVATION_DEFAUT[n] === 0 ? t("permanente", "permanent") : `${DUREE_CONSERVATION_DEFAUT[n]} ${t("ans", "years")}`}
                 </td>
               </tr>

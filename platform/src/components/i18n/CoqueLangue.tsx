@@ -9,7 +9,9 @@ export async function CoqueLangue({ children, toujoursVisible = false }: { child
   const departements = langue === "en" ? await chargerNomsDepartementsEn() : {};
   return (
     <FournisseurLangue langue={langue} departements={departements}>
-      <ChoixLangue className={`fixed right-4 top-4 z-30 ${toujoursVisible ? "" : "hidden lg:inline-flex"}`} />
+      <div className={`fixed right-4 top-4 z-30 ${toujoursVisible ? "" : "hidden lg:block"}`}>
+        <ChoixLangue />
+      </div>
       {children}
     </FournisseurLangue>
   );
