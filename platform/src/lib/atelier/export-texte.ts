@@ -5,6 +5,7 @@ import {
   Footer,
   Header,
   HeadingLevel,
+  ImageRun,
   LevelFormat,
   Packer,
   PageNumber,
@@ -20,6 +21,7 @@ import {
 import type { Content, ContentText } from "pdfmake/interfaces";
 import { normaliserTexte, type NoeudTexte } from "@/lib/atelier/contenus";
 import { genererPdf, type EnTetePdf } from "@/lib/atelier/pdf";
+import { ajuster } from "@/lib/atelier/logo";
 
 const MARINE = "1F2A5C";
 
@@ -187,10 +189,21 @@ export async function genererDocx(contenu: unknown, entete: EnTetePdf): Promise<
             children: [
               new Paragraph({
                 children: [
-                  new TextRun({ text: entete.organisation, size: 16, color: "6B7280" }),
+                  ...(entete.logo
+                    ? [
+                        new ImageRun({
+                          type: entete.logo.type,
+                          data: entete.logo.donnees,
+                          transformation: (({ largeur, hauteur }) => ({ width: largeur, height: hauteur }))(ajuster(entete.logo, 96, 56)),
+                        }),
+                        new TextRun({ text: "  " }),
+                      ]
+                    : []),
+                  new TextRun({ text: entete.organisation, size: entete.logo ? 18 : 16, bold: Boolean(entete.logo), color: entete.logo ? MARINE : "6B7280" }),
                   new TextRun({ text: `\t${entete.classification.toUpperCase()}`, size: 16, bold: true, color: "C8962D" }),
                 ],
                 tabStops: [{ type: "right", position: 9026 }],
+                border: entete.logo ? { bottom: { style: BorderStyle.SINGLE, size: 6, color: "C8962D", space: 4 } } : undefined,
               }),
             ],
           }),

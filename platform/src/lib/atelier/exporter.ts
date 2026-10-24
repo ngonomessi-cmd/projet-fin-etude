@@ -3,6 +3,7 @@ import { LABEL_CLASSIFICATION } from "@/lib/labels";
 import { NOM_ORGANISATION } from "@/lib/organisation";
 import { EXTENSION_FORMAT } from "@/lib/atelier/contenus";
 import type { EnTetePdf } from "@/lib/atelier/pdf";
+import { chargerLogo } from "@/lib/atelier/logo";
 
 export type FichierExporte = { tampon: Buffer; nomFichier: string; typeMime: string };
 
@@ -34,6 +35,7 @@ export async function exporterDocument(doc: Document, cible: "natif" | "pdf"): P
     titre: doc.titre,
     organisation: NOM_ORGANISATION,
     classification: LABEL_CLASSIFICATION[doc.classification],
+    logo: await chargerLogo(),
   };
 
   if (cible === "pdf") {

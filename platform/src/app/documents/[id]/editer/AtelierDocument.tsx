@@ -27,6 +27,7 @@ export function AtelierDocument({
   contenuInitial,
   peutEditer,
   archive = false,
+  classification,
   organisation,
 }: {
   documentId: string;
@@ -35,6 +36,7 @@ export function AtelierDocument({
   contenuInitial: unknown;
   peutEditer: boolean;
   archive?: boolean;
+  classification?: string;
   organisation: string;
 }) {
   const router = useRouter();
@@ -200,6 +202,7 @@ export function AtelierDocument({
           key={String(lectureSeule)}
           contenu={normaliserTexte(contenu.current)}
           lectureSeule={lectureSeule}
+          classification={classification}
           onChange={(c) => {
             contenu.current = c;
             signalerModification();
