@@ -145,13 +145,23 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
 
       {/* Pourquoi investir */}
       <section id="pourquoi-investir" className="relative isolate overflow-hidden bg-encre-950 text-white">
-        <div className="relative h-64 w-full sm:h-80 lg:absolute lg:inset-y-0 lg:left-0 lg:h-auto lg:w-[42%] lg:[clip-path:polygon(0_0,100%_0,67%_100%,0_100%)]">
+        <div className="relative aspect-[16/10] w-full lg:absolute lg:aspect-auto lg:inset-y-0 lg:left-0 lg:h-auto lg:w-[42%] lg:[clip-path:polygon(0_0,100%_0,67%_100%,0_100%)]">
+          {/* La photo d'origine porte une bande bleu marine sur sa droite (masquée
+              par la découpe en biais sur grand écran) : version recadrée sans
+              cette bande sur téléphone et tablette. */}
+          <Image
+            src="/images/site/pourquoi-investir-mobile.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover lg:hidden"
+          />
           <Image
             src="/images/site/pourquoi-investir.jpg"
             alt=""
             fill
-            sizes="(min-width: 1024px) 42vw, 100vw"
-            className="object-cover object-left"
+            sizes="42vw"
+            className="hidden object-cover object-left lg:block"
           />
         </div>
 
