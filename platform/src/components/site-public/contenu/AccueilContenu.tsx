@@ -5,6 +5,7 @@ import { SIGLE_ORGANISATION } from "@/lib/organisation";
 import { DICTIONNAIRE, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
 import type { ActualitePublique } from "@/lib/types";
 import { imageActualite } from "@/lib/images-actualites";
+import { DefilementActualites } from "@/components/site-public/DefilementActualites";
 import {
   IconeCarteCameroun,
   IconeChrono,
@@ -36,7 +37,7 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
     .eq("organisation", SIGLE_ORGANISATION)
     .eq("statut", "publie")
     .order("publie_at", { ascending: false })
-    .limit(3);
+    .limit(9);
   const actualites = (data ?? []) as ActualitePublique[];
 
   return (
@@ -204,44 +205,26 @@ export async function AccueilContenu({ locale }: { locale: Locale }) {
               {t.actualitesAccueil.vide}
             </p>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-3">
-              {actualites.map((actualite, index) => {
-                const titre = (locale === "en" && actualite.titre_en) || actualite.titre;
-                return (
-                  <Link
-                    key={actualite.id}
-                    href={`${p}/actualites/${actualite.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_2px_12px_rgba(0,24,61,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,24,61,0.10)]"
-                  >
-                    <div className="relative aspect-[16/7] overflow-hidden">
-                      <Image
-                        src={imageActualite(actualite.image_url, index)}
-                        alt=""
-                        fill
-                        sizes="(min-width: 640px) 22vw, 100vw"
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      {actualite.publie_at && (
-                        <p className="text-xs text-slate-400">
-                          {new Date(actualite.publie_at).toLocaleDateString(t.dateLocale, {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
-                      )}
-                      <h3 className="mt-2 flex-1 text-sm font-medium leading-snug text-encre-900">{titre}</h3>
-                      <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-encre-900 group-hover:text-gold-600">
-                        {t.actualitesAccueil.lireLaSuite}
-                        <IconeFleche className="h-3.5 w-3.5" />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+            <DefilementActualites
+              actualites={actualites.map((actualite, index) => ({
+                id: actualite.id,
+                href: `${p}/actualites/${actualite.slug}`,
+                titre: (locale === "en" && actualite.titre_en) || actualite.titre,
+                date: actualite.publie_at
+                  ? new Date(actualite.publie_at).toLocaleDateString(t.dateLocale, {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : null,
+                image: imageActualite(actualite.image_url, index),
+              }))}
+              libelles={{
+                lire: t.actualitesAccueil.lireLaSuite,
+                precedent: t.actualitesListe.precedent,
+                suivant: t.actualitesListe.suivant,
+              }}
+            />
           )}
         </div>
       </section>
