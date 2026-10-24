@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LABEL_ROLE } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
+import { ChoixLangue, useTraduction } from "@/components/i18n/Langue";
 import type { Profil } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
 import { NavLinks, type Lien } from "@/components/NavLinks";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { RubanOrganisation } from "@/components/RubanOrganisation";
-import { NOM_ORGANISATION } from "@/lib/organisation";
+import { nomOrganisation } from "@/lib/organisation";
 
 function initiales(nomComplet: string) {
   return nomComplet
@@ -28,6 +29,8 @@ function initiales(nomComplet: string) {
 export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; profil: Profil | null }) {
   const [ouvert, setOuvert] = useState(false);
   const pathname = usePathname();
+  const { t, langue } = useTraduction();
+  const NOM_ORGANISATION = nomOrganisation(langue);
 
   useEffect(() => {
     setOuvert(false);
@@ -40,11 +43,11 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
           <LogoOrganisation taille="lg" />
           <div className="min-w-0">
             <div className="font-serif text-sm leading-tight font-semibold break-words">{NOM_ORGANISATION}</div>
-            <div className="text-[11px] tracking-wide text-white/50 uppercase">GED sécurisée</div>
+            <div className="text-[11px] tracking-wide text-white/50 uppercase">{t("GED sécurisée", "Secure EDMS")}</div>
           </div>
           <button
             onClick={() => setOuvert(false)}
-            aria-label="Fermer le menu"
+            aria-label={t("Fermer le menu", "Close menu")}
             className="ml-auto text-white/60 hover:text-white lg:hidden"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -66,7 +69,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
             <div className="min-w-0">
               <div className="truncate text-[13px] font-semibold">{profil.nom_complet}</div>
               <div className="text-[11px] text-white/55">
-                {LABEL_ROLE[profil.role]} · {profil.departement}
+                {libelles(langue).role[profil.role]} · {profil.departement}
               </div>
             </div>
           </div>
@@ -85,15 +88,18 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
           <LogoOrganisation taille="sm" />
           <span className="truncate font-serif text-sm font-semibold">{NOM_ORGANISATION}</span>
         </div>
-        <button
-          onClick={() => setOuvert(true)}
-          aria-label="Ouvrir le menu"
-          className="shrink-0 p-1 text-white/90 hover:text-white"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M3 6h18M3 12h18M3 18h18" />
-          </svg>
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <ChoixLangue sombre />
+          <button
+            onClick={() => setOuvert(true)}
+            aria-label={t("Ouvrir le menu", "Open menu")}
+            className="shrink-0 p-1 text-white/90 hover:text-white"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {ouvert && <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setOuvert(false)} />}

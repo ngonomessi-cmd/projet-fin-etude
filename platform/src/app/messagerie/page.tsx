@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { LABEL_TYPE_CONVERSATION } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
+import { traductionServeur } from "@/lib/i18n/serveur";
 import { ParametresRetention } from "./ParametresRetention";
 import { CreerCanalDepartement } from "./CreerCanalDepartement";
 import { ListeConversationsInteractive, type ConversationAffichee } from "./ListeConversationsInteractive";
@@ -11,6 +12,7 @@ type ParticipantAvecProfil = ParticipantConversation & { profiles: Pick<Profil, 
 
 export default async function PageMessagerie() {
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
 
   const {
     data: { user },
@@ -75,9 +77,9 @@ export default async function PageMessagerie() {
   function nomAffiche(conversation: Conversation) {
     if (conversation.type === "privee") {
       const autre = participants.find((p) => p.conversation_id === conversation.id && p.profil_id !== idUtilisateur);
-      return autre?.profiles?.nom_complet ?? "Conversation privée";
+      return autre?.profiles?.nom_complet ?? libelles(langue).typeConversation.privee;
     }
-    return conversation.titre ?? LABEL_TYPE_CONVERSATION[conversation.type];
+    return conversation.titre ?? libelles(langue).typeConversation[conversation.type];
   }
 
   const conversationsTriees = [...conversations].sort((a, b) => {
@@ -93,7 +95,7 @@ export default async function PageMessagerie() {
       id: c.id,
       type: c.type,
       nom: nomAffiche(c),
-      dernierApercu: dernier ? (dernier.supprime_at ? "Message supprimé par son auteur" : dernier.contenu) : null,
+      dernierApercu: dernier ? (dernier.supprime_at ? t("Message supprimé par son auteur", "Message deleted by its author") : dernier.contenu) : null,
       dernierEstMoi: dernier?.auteur_id === idUtilisateur,
       nonLus: nombreNonLus(c.id),
       archivee: maParticipation?.archivee ?? false,
@@ -108,10 +110,12 @@ export default async function PageMessagerie() {
         <div className="mx-auto max-w-2xl">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="font-serif text-2xl font-semibold">Messagerie</h1>
+              <h1 className="font-serif text-2xl font-semibold">{t("Messagerie", "Messaging")}</h1>
               <p className="text-sm text-paper-muted">
-                Conversations privées, groupes de travail et canaux officiels — visibles uniquement par leurs
-                participants.
+                {t(
+                  "Conversations privées, groupes de travail et canaux officiels — visibles uniquement par leurs participants.",
+                  "Private conversations, working groups and official channels — visible only to their participants."
+                )}
               </p>
             </div>
             <Link
@@ -121,7 +125,7 @@ export default async function PageMessagerie() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M12 5v14M5 12h14" />
               </svg>
-              Nouvelle conversation
+              {t("Nouvelle conversation", "New conversation")}
             </Link>
           </div>
 

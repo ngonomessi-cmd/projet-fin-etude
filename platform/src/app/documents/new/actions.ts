@@ -5,6 +5,8 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import type { ClassificationDocument, FormatAtelier, NatureDocument, Profil } from "@/lib/types";
 import { NATURES, ROLES_PRODUCTEURS } from "@/lib/labels";
 import { contenuVide } from "@/lib/atelier/contenus";
+import { traductionServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 export type ResultatDepot = { erreur: string | null };
 
@@ -15,16 +17,17 @@ function lireNature(formData: FormData): NatureDocument | null {
 
 export async function deposerDocumentAction(formData: FormData): Promise<ResultatDepot> {
   const supabase = await creerClientServeur();
+  const { t, langue } = await traductionServeur();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: t("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const { data: profilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const profil = profilData as Profil | null;
   if (!profil || !ROLES_PRODUCTEURS.includes(profil.role)) {
-    return { erreur: "Votre rôle ne permet pas de créer un document (rédacteur, validateur ou administrateur)." };
+    return { erreur: t("Votre rôle ne permet pas de créer un document (rédacteur, validateur ou administrateur).", "Your role does not allow creating documents (author, approver or administrator).") };
   }
 
   const titre = String(formData.get("titre") ?? "").trim();
@@ -33,9 +36,9 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
   const fichier = formData.get("fichier") as File | null;
   const nature = lireNature(formData);
 
-  if (!titre || !classification) return { erreur: "Titre et classification sont obligatoires." };
-  if (!nature) return { erreur: "Choisissez la nature du document." };
-  if (!fichier || fichier.size === 0) return { erreur: "Un fichier doit être joint au dépôt." };
+  if (!titre || !classification) return { erreur: t("Titre et classification sont obligatoires.", "Title and classification are required.") };
+  if (!nature) return { erreur: t("Choisissez la nature du document.", "Choose the document type.") };
+  if (!fichier || fichier.size === 0) return { erreur: t("Un fichier doit être joint au dépôt.", "A file must be attached.") };
 
   // 1. Création de la ligne "documents" à l'état brouillon (policy RLS
   //    "depot_document_par_redacteur" : owner_id doit être l'utilisateur courant).
@@ -53,7 +56,7 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
     .single();
 
   if (erreurInsertion || !document) {
-    return { erreur: `Échec de la création du document : ${erreurInsertion?.message}` };
+    return { erreur: `${t("Échec de la création du document", "Could not create the document")} : ${traduireErreur(erreurInsertion?.message ?? "", langue)}` };
   }
 
   // 2. Dépôt du fichier dans le stockage Supabase, sous "<document_id>/<nom>"
@@ -64,7 +67,7 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
     .upload(cheminStockage, fichier, { contentType: fichier.type || undefined });
 
   if (erreurUpload) {
-    return { erreur: `Fichier non déposé : ${erreurUpload.message}` };
+    return { erreur: `${t("Fichier non déposé", "File not uploaded")} : ${erreurUpload.message}` };
   }
 
   await supabase.from("documents").update({ storage_path: cheminStockage }).eq("id", document.id);
@@ -76,16 +79,17 @@ export async function deposerDocumentAction(formData: FormData): Promise<Resulta
 // PowerPoint), vierge ou à partir d'un modèle de la bibliothèque.
 export async function creerDocumentAtelierAction(formData: FormData): Promise<ResultatDepot> {
   const supabase = await creerClientServeur();
+  const { t, langue } = await traductionServeur();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { erreur: "Session expirée, veuillez vous reconnecter." };
+  if (!user) return { erreur: t("Session expirée, veuillez vous reconnecter.", "Session expired, please sign in again.") };
 
   const { data: profilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const profil = profilData as Profil | null;
   if (!profil || !ROLES_PRODUCTEURS.includes(profil.role)) {
-    return { erreur: "Votre rôle ne permet pas de créer un document (rédacteur, validateur ou administrateur)." };
+    return { erreur: t("Votre rôle ne permet pas de créer un document (rédacteur, validateur ou administrateur).", "Your role does not allow creating documents (author, approver or administrator).") };
   }
 
   const titre = String(formData.get("titre") ?? "").trim();
@@ -95,15 +99,15 @@ export async function creerDocumentAtelierAction(formData: FormData): Promise<Re
   const modeleId = String(formData.get("modele_id") ?? "");
   const nature = lireNature(formData);
 
-  if (!titre || !classification) return { erreur: "Titre et classification sont obligatoires." };
-  if (!nature) return { erreur: "Choisissez la nature du document." };
-  if (!["texte", "tableur", "presentation"].includes(format)) return { erreur: "Choisissez un type de document." };
+  if (!titre || !classification) return { erreur: t("Titre et classification sont obligatoires.", "Title and classification are required.") };
+  if (!nature) return { erreur: t("Choisissez la nature du document.", "Choose the document type.") };
+  if (!["texte", "tableur", "presentation"].includes(format)) return { erreur: t("Choisissez un type de document.", "Choose a document format.") };
 
   let contenu: unknown = contenuVide(format);
   if (modeleId) {
     // Lecture soumise à RLS : seul un modèle proposé à ce compte est utilisable.
     const { data: modele } = await supabase.from("modeles_documents").select("format, contenu").eq("id", modeleId).maybeSingle();
-    if (!modele || modele.format !== format) return { erreur: "Modèle introuvable." };
+    if (!modele || modele.format !== format) return { erreur: t("Modèle introuvable.", "Template not found.") };
     contenu = modele.contenu;
   }
 
@@ -122,7 +126,7 @@ export async function creerDocumentAtelierAction(formData: FormData): Promise<Re
     .select("id")
     .single();
 
-  if (error || !document) return { erreur: `Échec de la création du document : ${error?.message}` };
+  if (error || !document) return { erreur: `${t("Échec de la création du document", "Could not create the document")} : ${traduireErreur(error?.message ?? "", langue)}` };
 
   await supabase.from("audit_log").insert({
     document_id: document.id,

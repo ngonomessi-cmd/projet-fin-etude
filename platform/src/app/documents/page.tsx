@@ -8,6 +8,8 @@ import { BarreRecherche, type FiltresRecherche } from "./BarreRecherche";
 import { Archives, grouperParDepartement, type Ligne } from "./Archives";
 import type { Profil, ResultatRecherche } from "@/lib/types";
 import { ROLES_PRODUCTEURS } from "@/lib/labels";
+import { traductionServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 // Colonnes utiles aux listes (jamais le contenu rédigé, potentiellement lourd).
 const COLONNES =
@@ -36,6 +38,7 @@ export default async function PageDocuments({
   const lire = (cle: string) => (typeof parametres[cle] === "string" ? (parametres[cle] as string).trim() : "");
 
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -66,7 +69,7 @@ export default async function PageDocuments({
   const documents = (documentsData ?? []) as unknown as Ligne[];
   const profils = (profilsData ?? []) as Pick<Profil, "id" | "nom_complet" | "departement">[];
   const departements = [...new Set(profils.map((p) => p.departement?.trim()).filter(Boolean))].sort((a, b) =>
-    a.localeCompare(b, "fr")
+    a.localeCompare(b, langue)
   );
 
   const peutValider = (d: Ligne) =>
@@ -84,11 +87,11 @@ export default async function PageDocuments({
   const archives = documents.filter((d) => d.archive_le);
 
   const onglets: { cle: Vue; libelle: string; nombre: number; visible: boolean }[] = [
-    { cle: "brouillons", libelle: "Mes brouillons", nombre: mesBrouillons.length + mesRejetes.length, visible: producteur || mesBrouillons.length + mesRejetes.length > 0 },
-    { cle: "partages", libelle: "Partagés avec moi", nombre: partagesAvecMoi.length, visible: true },
-    { cle: "circuit", libelle: "Circuit de validation", nombre: enCircuit.length, visible: producteur || enCircuit.length > 0 },
-    { cle: "vigueur", libelle: "En vigueur", nombre: enVigueur.length, visible: true },
-    { cle: "archives", libelle: "Archives", nombre: archives.length, visible: true },
+    { cle: "brouillons", libelle: t("Mes brouillons", "My drafts"), nombre: mesBrouillons.length + mesRejetes.length, visible: producteur || mesBrouillons.length + mesRejetes.length > 0 },
+    { cle: "partages", libelle: t("Partagés avec moi", "Shared with me"), nombre: partagesAvecMoi.length, visible: true },
+    { cle: "circuit", libelle: t("Circuit de validation", "Approval workflow"), nombre: enCircuit.length, visible: producteur || enCircuit.length > 0 },
+    { cle: "vigueur", libelle: t("En vigueur", "In force"), nombre: enVigueur.length, visible: true },
+    { cle: "archives", libelle: t("Archives", "Archives"), nombre: archives.length, visible: true },
   ];
   const ongletsVisibles = onglets.filter((o) => o.visible);
   const vueDemandee = lire("vue") as Vue;
@@ -109,7 +112,7 @@ export default async function PageDocuments({
       p_limite: 200,
     });
     resultats = (data ?? []) as ResultatRecherche[];
-    erreurRecherche = error?.message ?? null;
+    erreurRecherche = error ? traduireErreur(error.message, langue) : null;
   }
 
   const moisArchive = lire("mois");
@@ -123,7 +126,10 @@ export default async function PageDocuments({
             <div>
               <h1 className="font-serif text-2xl font-semibold">Documents</h1>
               <p className="text-sm text-paper-muted">
-                Vous ne voyez que les documents que votre rôle, votre département et les partages vous autorisent à lire.
+                {t(
+                  "Vous ne voyez que les documents que votre rôle, votre département et les partages vous autorisent à lire.",
+                  "You only see the documents your role, your department and shares allow you to read."
+                )}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -137,7 +143,7 @@ export default async function PageDocuments({
                   href="/documents/new"
                   className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-center text-sm font-medium text-white hover:bg-navy-900"
                 >
-                  Nouveau document
+                  {t("Nouveau document", "New document")}
                 </Link>
               )}
             </div>
@@ -146,14 +152,18 @@ export default async function PageDocuments({
           <BarreRecherche
             filtres={filtres}
             vue={vue}
+            langue={langue}
             departements={departements}
             auteurs={profils.map((p) => ({ id: p.id, nom: p.nom_complet }))}
           />
 
           {enRecherche ? (
             <Section
-              titre={`${resultats.length} résultat${resultats.length > 1 ? "s" : ""}${resultats.length === 200 ? " (les 200 plus pertinents)" : ""}`}
-              aide="Recherche dans la référence, le titre, la description et le texte des documents rédigés dans la plateforme."
+              titre={`${resultats.length} ${t("résultat", "result")}${resultats.length > 1 ? "s" : ""}${resultats.length === 200 ? t(" (les 200 plus pertinents)", " (the 200 most relevant)") : ""}`}
+              aide={t(
+                "Recherche dans la référence, le titre, la description et le texte des documents rédigés dans la plateforme.",
+                "Searches the reference, title, description and text of documents written in the platform."
+              )}
             >
               {erreurRecherche ? (
                 <p className="px-4 py-4 text-sm text-red-600">{erreurRecherche}</p>
@@ -161,13 +171,13 @@ export default async function PageDocuments({
                 <TableauDocuments
                   documents={resultats.map((r) => ({ ...r, auteur: r.auteur, extrait: r.extrait }))}
                   afficherDepartement
-                  vide="Aucun document ne correspond à cette recherche parmi ceux que vous pouvez lire."
+                  vide={t("Aucun document ne correspond à cette recherche parmi ceux que vous pouvez lire.", "No document you can read matches this search.")}
                 />
               )}
             </Section>
           ) : (
             <>
-              <nav className="mb-5 flex gap-1 overflow-x-auto border-b border-paper-200" aria-label="Espaces documentaires">
+              <nav className="mb-5 flex gap-1 overflow-x-auto border-b border-paper-200" aria-label={t("Espaces documentaires", "Document spaces")}>
                 {ongletsVisibles.map((o) => {
                   const actif = o.cle === vue;
                   return (
@@ -197,13 +207,19 @@ export default async function PageDocuments({
               {vue === "brouillons" && (
                 <div className="flex flex-col gap-4">
                   <Section
-                    titre="Brouillons"
-                    aide="Documents créés et pas encore soumis. Ils sont privés : personne d'autre ne les voit, sauf les personnes avec qui vous choisissez de les partager."
+                    titre={t("Brouillons", "Drafts")}
+                    aide={t(
+                      "Documents créés et pas encore soumis. Ils sont privés : personne d'autre ne les voit, sauf les personnes avec qui vous choisissez de les partager.",
+                      "Documents created but not yet submitted. They are private: nobody else sees them, except the people you choose to share them with."
+                    )}
                   >
-                    <TableauDocuments documents={mesBrouillons} vide="Aucun brouillon en cours." />
+                    <TableauDocuments documents={mesBrouillons} vide={t("Aucun brouillon en cours.", "No drafts in progress.")} />
                   </Section>
                   {mesRejetes.length > 0 && (
-                    <Section titre="Rejetés — à corriger" aide="Ouvrez le document pour lire le motif du rejet, corrigez-le puis redéposez-le.">
+                    <Section
+                      titre={t("Rejetés — à corriger", "Rejected — to be corrected")}
+                      aide={t("Ouvrez le document pour lire le motif du rejet, corrigez-le puis redéposez-le.", "Open the document to read why it was rejected, correct it, then resubmit it.")}
+                    >
                       <TableauDocuments documents={mesRejetes} />
                     </Section>
                   )}
@@ -211,25 +227,28 @@ export default async function PageDocuments({
               )}
 
               {vue === "partages" && (
-                <Section titre="Partagés avec moi" aide="Documents qu'un collègue vous a partagés, en lecture ou en co-édition.">
-                  <TableauDocuments documents={partagesAvecMoi} afficherDepartement vide="Aucun document ne vous a été partagé." />
+                <Section
+                  titre={t("Partagés avec moi", "Shared with me")}
+                  aide={t("Documents qu'un collègue vous a partagés, en lecture ou en co-édition.", "Documents a colleague shared with you, read-only or for co-editing.")}
+                >
+                  <TableauDocuments documents={partagesAvecMoi} afficherDepartement vide={t("Aucun document ne vous a été partagé.", "No document has been shared with you.")} />
                 </Section>
               )}
 
               {vue === "circuit" && (
                 <div className="flex flex-col gap-4">
                   {(profil.role === "administrateur" || profil.role === "validateur") && (
-                    <Section titre="À traiter par vous" aide="Documents à vérifier, valider ou publier.">
-                      <TableauDocuments documents={aTraiter} afficherDepartement vide="Rien à traiter pour le moment." />
+                    <Section titre={t("À traiter par vous", "Awaiting your action")} aide={t("Documents à vérifier, valider ou publier.", "Documents to review, approve or publish.")}>
+                      <TableauDocuments documents={aTraiter} afficherDepartement vide={t("Rien à traiter pour le moment.", "Nothing to process for now.")} />
                     </Section>
                   )}
                   {producteur && (
-                    <Section titre="Vos documents en cours de validation">
-                      <TableauDocuments documents={mesEnCours} vide="Aucun de vos documents n'est en cours de validation." />
+                    <Section titre={t("Vos documents en cours de validation", "Your documents awaiting approval")}>
+                      <TableauDocuments documents={mesEnCours} vide={t("Aucun de vos documents n'est en cours de validation.", "None of your documents is awaiting approval.")} />
                     </Section>
                   )}
                   {autresEnCours.length > 0 && (
-                    <Section titre="Autres documents en cours">
+                    <Section titre={t("Autres documents en cours", "Other documents in progress")}>
                       <TableauDocuments documents={autresEnCours} afficherDepartement />
                     </Section>
                   )}
@@ -239,14 +258,16 @@ export default async function PageDocuments({
               {vue === "vigueur" && (
                 <>
                   <p className="mb-3 text-sm text-paper-muted">
-                    Documents validés et publiés, classés par département. Ils passent aux archives sur décision du
-                    validateur ou automatiquement après le délai fixé par l&apos;administrateur.
+                    {t(
+                      "Documents validés et publiés, classés par département. Ils passent aux archives sur décision du validateur ou automatiquement après le délai fixé par l'administrateur.",
+                      "Approved and published documents, by department. They move to the archives when the approver decides, or automatically after the period set by the administrator."
+                    )}
                   </p>
-                  <DocumentsParDepartement groupes={grouperParDepartement(enVigueur, departements)} colonneDate="publication" />
+                  <DocumentsParDepartement groupes={grouperParDepartement(enVigueur, departements, langue)} colonneDate="publication" />
                 </>
               )}
 
-              {vue === "archives" && <Archives archives={archives} mois={moisArchive} />}
+              {vue === "archives" && <Archives archives={archives} mois={moisArchive} langue={langue} />}
             </>
           )}
         </div>

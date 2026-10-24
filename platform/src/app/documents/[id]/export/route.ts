@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { exporterDocument } from "@/lib/atelier/exporter";
 import type { Document } from "@/lib/types";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,7 @@ export async function GET(requete: Request, { params }: { params: Promise<{ id: 
   const cible = new URL(requete.url).searchParams.get("format") === "pdf" ? "pdf" : "natif";
 
   const supabase = await creerClientServeur();
+  const { langue, t } = await traductionServeur();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -19,10 +21,10 @@ export async function GET(requete: Request, { params }: { params: Promise<{ id: 
   // jamais exporté (réponse 404, indistinguable d'un identifiant inexistant).
   const { data } = await supabase.from("documents").select("*").eq("id", id).maybeSingle();
   const doc = data as Document | null;
-  if (!doc) return new NextResponse("Document introuvable.", { status: 404 });
-  if (!doc.format_atelier) return new NextResponse("Ce document n'a pas été rédigé dans la plateforme.", { status: 400 });
+  if (!doc) return new NextResponse(t("Document introuvable.", "Document not found."), { status: 404 });
+  if (!doc.format_atelier) return new NextResponse(t("Ce document n'a pas été rédigé dans la plateforme.", "This document was not written in the platform."), { status: 400 });
 
-  const fichier = await exporterDocument(doc, cible);
+  const fichier = await exporterDocument(doc, cible, langue);
 
   await supabase.from("audit_log").insert({
     document_id: doc.id,

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { RoleUtilisateur } from "@/lib/types";
+import { langueServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 export type ResultatChangementRole = { erreur: string | null };
 
@@ -21,7 +23,7 @@ export async function changerRoleAction(
     p_nouveau_role: nouveauRole,
   });
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
 
   revalidatePath("/admin/utilisateurs");
   return { erreur: null };
@@ -45,7 +47,7 @@ export async function modifierProfilAction(
     p_departement: departement ?? null,
   });
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
 
   revalidatePath("/admin/utilisateurs");
   return { erreur: null };

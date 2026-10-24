@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { changerRoleAction } from "./actions";
 import type { RoleUtilisateur } from "@/lib/types";
-import { LABEL_ROLE } from "@/lib/labels";
+import { libelles } from "@/lib/labels";
+import { useTraduction } from "@/components/i18n/Langue";
 
 const ROLES: RoleUtilisateur[] = ["lecteur", "redacteur", "validateur", "administrateur", "auditeur"];
 
 export function SelecteurRole({ utilisateurId, roleActuel }: { utilisateurId: string; roleActuel: RoleUtilisateur }) {
   const router = useRouter();
+  const { langue } = useTraduction();
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
 
@@ -36,7 +38,7 @@ export function SelecteurRole({ utilisateurId, roleActuel }: { utilisateurId: st
       >
         {ROLES.map((role) => (
           <option key={role} value={role}>
-            {LABEL_ROLE[role]}
+            {libelles(langue).role[role]}
           </option>
         ))}
       </select>

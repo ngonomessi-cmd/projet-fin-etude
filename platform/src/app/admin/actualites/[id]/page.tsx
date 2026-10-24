@@ -4,10 +4,12 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import type { ActualitePublique, Profil } from "@/lib/types";
 import { FormulaireActualite } from "../FormulaireActualite";
+import { traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageEditionActualite({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
+  const { t } = await traductionServeur();
 
   const {
     data: { user },
@@ -22,7 +24,7 @@ export default async function PageEditionActualite({ params }: { params: Promise
         <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
           <div className="mx-auto max-w-3xl">
             <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Accès réservé au rôle Administrateur.
+              {t("Accès réservé au rôle Administrateur.", "Administrators only.")}
             </p>
           </div>
         </main>
@@ -40,14 +42,14 @@ export default async function PageEditionActualite({ params }: { params: Promise
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-3xl">
           <Link href="/admin/actualites" className="mb-4 inline-block text-sm text-paper-muted hover:text-gold-600 hover:underline">
-            ← Retour aux actualités
+            ← {t("Retour aux actualités", "Back to news")}
           </Link>
           <div className="mb-6 flex items-center justify-between gap-3">
-            <h1 className="font-serif text-2xl font-semibold">Modifier l&apos;actualité</h1>
+            <h1 className="font-serif text-2xl font-semibold">{t("Modifier l'actualité", "Edit article")}</h1>
             {actualite.statut === "publie" && (
               <div className="flex shrink-0 gap-3 text-sm">
                 <Link href={`/actualites/${actualite.slug}`} target="_blank" className="text-paper-muted hover:text-gold-600 hover:underline">
-                  Voir (FR) →
+                  {t("Voir (FR)", "View (FR)")} →
                 </Link>
                 <Link href={`/en/actualites/${actualite.slug}`} target="_blank" className="text-paper-muted hover:text-gold-600 hover:underline">
                   View (EN) →

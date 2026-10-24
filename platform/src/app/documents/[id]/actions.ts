@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { StatutDocument } from "@/lib/types";
+import { langueServeur } from "@/lib/i18n/serveur";
+import { traduireErreur } from "@/lib/i18n/erreurs";
 
 export type ResultatTransition = { erreur: string | null };
 
@@ -23,7 +25,7 @@ export async function transitionnerAction(
     p_commentaire: commentaire || null,
   });
 
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
 
   revalidatePath(`/documents/${documentId}`);
   revalidatePath("/documents");
@@ -42,7 +44,7 @@ function rafraichir(documentId: string) {
 export async function archiverAction(documentId: string, motif: string): Promise<ResultatTransition> {
   const supabase = await creerClientServeur();
   const { error } = await supabase.rpc("archiver_document", { p_document_id: documentId, p_motif: motif || null });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
   rafraichir(documentId);
   return { erreur: null };
 }
@@ -50,7 +52,7 @@ export async function archiverAction(documentId: string, motif: string): Promise
 export async function nouvelleVersionAction(documentId: string): Promise<ResultatTransition & { id?: string }> {
   const supabase = await creerClientServeur();
   const { data, error } = await supabase.rpc("nouvelle_version_document", { p_document_id: documentId });
-  if (error || !data) return { erreur: error?.message ?? "Création de la nouvelle version impossible." };
+  if (error || !data) return { erreur: error ? traduireErreur(error.message, await langueServeur()) : (await langueServeur()) === "en" ? "Could not create the new version." : "Création de la nouvelle version impossible." };
   rafraichir(documentId);
   return { erreur: null, id: data as string };
 }
@@ -58,7 +60,7 @@ export async function nouvelleVersionAction(documentId: string): Promise<Resulta
 export async function classerAction(documentId: string, nature: string): Promise<ResultatTransition> {
   const supabase = await creerClientServeur();
   const { error } = await supabase.rpc("classer_document", { p_document_id: documentId, p_nature: nature });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
   rafraichir(documentId);
   return { erreur: null };
 }
@@ -68,7 +70,7 @@ export type ResultatIntegrite = { erreur: string | null; conforme?: boolean; act
 export async function verifierIntegriteAction(documentId: string): Promise<ResultatIntegrite> {
   const supabase = await creerClientServeur();
   const { data, error } = await supabase.rpc("verifier_integrite_document", { p_document_id: documentId });
-  if (error) return { erreur: error.message };
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
   const resultat = data as { conforme: boolean; empreinte_actuelle: string };
   revalidatePath(`/documents/${documentId}`);
   return { erreur: null, conforme: resultat.conforme, actuelle: resultat.empreinte_actuelle };

@@ -1,4 +1,7 @@
-import { LABEL_NATURE, NATURES } from "@/lib/labels";
+"use client";
+
+import { NATURES, libelles } from "@/lib/labels";
+import { useTraduction } from "@/components/i18n/Langue";
 import type { NatureDocument } from "@/lib/types";
 
 // Liste des natures documentaires (plan de classement) : la nature fixe la
@@ -12,14 +15,15 @@ export function ChampNature({
   defaut?: NatureDocument | null;
   nom?: string;
 }) {
+  const { t, langue } = useTraduction();
   return (
     <select name={nom} required defaultValue={defaut ?? ""} className={className}>
       <option value="" disabled>
-        Choisir la nature du document…
+        {t("Choisir la nature du document…", "Choose the document type…")}
       </option>
       {NATURES.map((n) => (
         <option key={n} value={n}>
-          {LABEL_NATURE[n]}
+          {libelles(langue).nature[n]}
         </option>
       ))}
     </select>

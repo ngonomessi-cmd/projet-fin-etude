@@ -94,6 +94,7 @@ export type ModeleDocument = {
   titre: string;
   description: string | null;
   format: FormatAtelier;
+  langue: "fr" | "en";
   contenu: unknown;
   actif: boolean;
   created_at: string;

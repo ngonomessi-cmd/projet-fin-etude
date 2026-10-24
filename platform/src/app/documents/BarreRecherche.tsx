@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LABEL_NATURE, NATURES } from "@/lib/labels";
+import { NATURES, libelles } from "@/lib/labels";
+import { traducteur, type Langue } from "@/lib/i18n/plateforme";
 
 export type FiltresRecherche = {
   q: string;
@@ -19,11 +20,13 @@ const CHAMP = "w-full rounded-md border border-paper-200 bg-white px-3 py-2 text
 export function BarreRecherche({
   filtres,
   vue,
+  langue,
   departements,
   auteurs,
 }: {
   filtres: FiltresRecherche;
   vue: string;
+  langue: Langue;
   departements: string[];
   auteurs: { id: string; nom: string }[];
 }) {
@@ -31,12 +34,14 @@ export function BarreRecherche({
     filtres.departement || filtres.nature || filtres.statut || filtres.auteur || filtres.format || filtres.du || filtres.au
   );
   const actif = filtresAvances || Boolean(filtres.q);
+  const t = traducteur(langue);
+  const L = libelles(langue);
 
   return (
     <form action="/documents" method="get" className="mb-5 rounded-lg border border-paper-200 bg-white p-3 shadow-sm">
       <div className="flex gap-2">
         <label className="relative flex-1">
-          <span className="sr-only">Rechercher un document</span>
+          <span className="sr-only">{t("Rechercher un document", "Search for a document")}</span>
           <svg
             width="16"
             height="16"
@@ -54,24 +59,24 @@ export function BarreRecherche({
             name="q"
             type="search"
             defaultValue={filtres.q}
-            placeholder="Rechercher : titre, référence (ex. API-2026-000012), mot du texte…"
+            placeholder={t("Rechercher : titre, référence (ex. API-2026-000012), mot du texte…", "Search: title, reference (e.g. API-2026-000012), word in the text…")}
             className={`${CHAMP} pl-9`}
           />
         </label>
         <button type="submit" className="shrink-0 rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900">
-          Rechercher
+          {t("Rechercher", "Search")}
         </button>
       </div>
 
       <details open={filtresAvances} className="mt-2">
         <summary className="cursor-pointer select-none text-xs font-medium text-paper-muted hover:text-[#1c2029]">
-          Filtres avancés
+          {t("Filtres avancés", "Advanced filters")}
         </summary>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="text-xs text-paper-muted">
-            Département
+            {t("Département", "Department")}
             <select name="departement" defaultValue={filtres.departement} className={`${CHAMP} mt-1`}>
-              <option value="">Tous</option>
+              <option value="">{t("Tous", "All")}</option>
               {departements.map((d) => (
                 <option key={d} value={d}>
                   {d}
@@ -80,42 +85,42 @@ export function BarreRecherche({
             </select>
           </label>
           <label className="text-xs text-paper-muted">
-            Nature
+            {t("Nature", "Document type")}
             <select name="nature" defaultValue={filtres.nature} className={`${CHAMP} mt-1`}>
-              <option value="">Toutes</option>
+              <option value="">{t("Toutes", "All")}</option>
               {NATURES.map((n) => (
                 <option key={n} value={n}>
-                  {LABEL_NATURE[n]}
+                  {L.nature[n]}
                 </option>
               ))}
             </select>
           </label>
           <label className="text-xs text-paper-muted">
-            Statut
+            {t("Statut", "Status")}
             <select name="statut" defaultValue={filtres.statut} className={`${CHAMP} mt-1`}>
-              <option value="">Tous</option>
-              <option value="brouillon">Brouillon</option>
-              <option value="en_verification">En vérification</option>
-              <option value="valide">Validé</option>
-              <option value="rejete">Rejeté</option>
-              <option value="publie">En vigueur (publié)</option>
-              <option value="archive">Archivé</option>
+              <option value="">{t("Tous", "All")}</option>
+              <option value="brouillon">{L.statut.brouillon}</option>
+              <option value="en_verification">{L.statut.en_verification}</option>
+              <option value="valide">{L.statut.valide}</option>
+              <option value="rejete">{L.statut.rejete}</option>
+              <option value="publie">{t("En vigueur (publié)", "In force (published)")}</option>
+              <option value="archive">{L.archive}</option>
             </select>
           </label>
           <label className="text-xs text-paper-muted">
-            Type
+            {t("Format", "Format")}
             <select name="format" defaultValue={filtres.format} className={`${CHAMP} mt-1`}>
-              <option value="">Tous</option>
-              <option value="texte">Texte (Word)</option>
-              <option value="tableur">Classeur (Excel)</option>
-              <option value="presentation">Présentation (PowerPoint)</option>
-              <option value="fichier">Fichier déposé</option>
+              <option value="">{t("Tous", "All")}</option>
+              <option value="texte">{t("Texte (Word)", "Text (Word)")}</option>
+              <option value="tableur">{t("Classeur (Excel)", "Spreadsheet (Excel)")}</option>
+              <option value="presentation">{t("Présentation (PowerPoint)", "Presentation (PowerPoint)")}</option>
+              <option value="fichier">{t("Fichier déposé", "Uploaded file")}</option>
             </select>
           </label>
           <label className="text-xs text-paper-muted">
-            Auteur
+            {t("Auteur", "Author")}
             <select name="auteur" defaultValue={filtres.auteur} className={`${CHAMP} mt-1`}>
-              <option value="">Tous</option>
+              <option value="">{t("Tous", "All")}</option>
               {auteurs.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.nom}
@@ -124,11 +129,11 @@ export function BarreRecherche({
             </select>
           </label>
           <label className="text-xs text-paper-muted">
-            Publié / créé à partir du
+            {t("Publié / créé à partir du", "Published / created from")}
             <input type="date" name="du" defaultValue={filtres.du} className={`${CHAMP} mt-1`} />
           </label>
           <label className="text-xs text-paper-muted">
-            Jusqu&apos;au
+            {t("Jusqu'au", "Until")}
             <input type="date" name="au" defaultValue={filtres.au} className={`${CHAMP} mt-1`} />
           </label>
         </div>
@@ -137,7 +142,7 @@ export function BarreRecherche({
       {actif && (
         <p className="mt-2 text-xs">
           <Link href={`/documents?vue=${vue}`} className="text-paper-muted hover:text-gold-600 hover:underline">
-            ✕ Effacer la recherche
+            ✕ {t("Effacer la recherche", "Clear search")}
           </Link>
         </p>
       )}

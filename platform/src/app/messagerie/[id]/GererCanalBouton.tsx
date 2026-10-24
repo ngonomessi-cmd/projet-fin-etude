@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { renommerCanalAction, supprimerCanalAction } from "../actions";
+import { useTraduction } from "@/components/i18n/Langue";
 
 export function GererCanalBouton({ conversationId, titreActuel }: { conversationId: string; titreActuel: string }) {
   const router = useRouter();
+  const { t } = useTraduction();
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [enRenommage, setEnRenommage] = useState(false);
   const [nouveauTitre, setNouveauTitre] = useState(titreActuel);
@@ -27,7 +29,14 @@ export function GererCanalBouton({ conversationId, titreActuel }: { conversation
 
   async function supprimer() {
     setMenuOuvert(false);
-    if (!window.confirm(`Supprimer définitivement le canal "${titreActuel}" ? Les messages et pièces jointes qu'il contient seront aussi supprimés. Cette action est irréversible.`)) {
+    if (
+      !window.confirm(
+        t(
+          `Supprimer définitivement le canal "${titreActuel}" ? Les messages et pièces jointes qu'il contient seront aussi supprimés. Cette action est irréversible.`,
+          `Permanently delete the channel "${titreActuel}"? Its messages and attachments will be deleted too. This cannot be undone.`
+        )
+      )
+    ) {
       return;
     }
     setEnCours(true);
@@ -68,7 +77,7 @@ export function GererCanalBouton({ conversationId, titreActuel }: { conversation
           disabled={enCours}
           className="rounded-md border border-paper-200 px-2.5 py-1 text-sm text-paper-muted hover:bg-paper-50"
         >
-          Annuler
+          {t("Annuler", "Cancel")}
         </button>
         {erreur && <span className="text-xs text-red-700">{erreur}</span>}
       </div>
@@ -80,7 +89,7 @@ export function GererCanalBouton({ conversationId, titreActuel }: { conversation
       <button
         onClick={() => setMenuOuvert((v) => !v)}
         disabled={enCours}
-        aria-label="Gérer le canal"
+        aria-label={t("Gérer le canal", "Manage channel")}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-paper-200 text-paper-muted hover:bg-paper-50 disabled:opacity-50"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -101,13 +110,13 @@ export function GererCanalBouton({ conversationId, titreActuel }: { conversation
               }}
               className="block w-full px-3.5 py-2 text-left text-sm font-medium text-paper-muted hover:bg-paper-50"
             >
-              Renommer
+              {t("Renommer", "Rename")}
             </button>
             <button
               onClick={supprimer}
               className="block w-full px-3.5 py-2 text-left text-sm font-medium text-red-700 hover:bg-red-50"
             >
-              Supprimer
+              {t("Supprimer", "Delete")}
             </button>
           </div>
         </>

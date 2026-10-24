@@ -3,40 +3,23 @@ import { notFound } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { Badge } from "@/components/Badge";
-import {
-  COULEUR_CLASSIFICATION,
-  LABEL_CLASSIFICATION,
-  ROLES_PRODUCTEURS,
-  libelleNature,
-  statutAffiche,
-} from "@/lib/labels";
-import { LABEL_FORMAT, LABEL_FORMAT_COURT } from "@/lib/atelier/contenus";
+import { COULEUR_CLASSIFICATION, ROLES_PRODUCTEURS, libelleAction, libelleNature, libelles, statutAffiche } from "@/lib/labels";
+import { LABEL_FORMAT_COURT, libelleFormat } from "@/lib/atelier/contenus";
+import { traductionServeur } from "@/lib/i18n/serveur";
 import type { Document, EntreeAudit, PartageDocument, Profil } from "@/lib/types";
 import { BoutonsTransition } from "./BoutonsTransition";
 import { PanneauPartage, type ConversationPubliable, type PersonneContactable } from "./PanneauPartage";
 import { ActionsCycleVie, ChoixNature, ControleIntegrite } from "./PanneauCycleVie";
 
-const LABEL_ACTION: Record<string, string> = {
-  transition_statut: "Changement de statut",
-  partage: "Partage",
-  retrait_partage: "Retrait d'un partage",
-  modification_contenu: "Modification du contenu",
-  creation_atelier: "Création dans la plateforme",
-  telechargement: "Téléchargement",
-  archivage: "Archivage",
-  archivage_automatique: "Archivage automatique",
-  controle_integrite: "Contrôle d'intégrité",
-  nouvelle_version: "Nouvelle version",
-  classement: "Changement de nature",
-};
-
-function dateLongue(iso: string | null | undefined) {
-  return iso ? new Date(iso).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" }) : "—";
+function dateLongue(iso: string | null | undefined, dl: string) {
+  return iso ? new Date(iso).toLocaleString(dl, { dateStyle: "long", timeStyle: "short" }) : "—";
 }
 
 export default async function PageDetailDocument({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
+  const { langue, t, dl } = await traductionServeur();
+  const L = libelles(langue);
 
   const {
     data: { user },
@@ -72,7 +55,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   const producteur = ROLES_PRODUCTEURS.includes(profil.role);
   const peutPartager = producteur && (estProprietaire || profil.role === "administrateur" || Boolean(coEditeur));
   const archive = Boolean(document.archive_le);
-  const statut = statutAffiche(document);
+  const statut = statutAffiche(document, langue);
   const valideurDuDepartement = profil.role === "administrateur" || (profil.role === "validateur" && meDepartement);
 
   // Mêmes règles que les fonctions classer_document, archiver_document et
@@ -127,9 +110,9 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
         libelle:
           c.type === "canal"
             ? c.canal_general
-              ? "Canal : toute l'organisation"
-              : `Canal : ${c.titre ?? c.departement}`
-            : `Groupe : ${c.titre ?? "sans titre"}`,
+              ? t("Canal : toute l'organisation", "Channel: whole organisation")
+              : `${t("Canal", "Channel")} : ${c.titre ?? c.departement}`
+            : `${t("Groupe", "Group")} : ${c.titre ?? t("sans titre", "untitled")}`,
       }));
   }
 
@@ -138,7 +121,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   let nomVerrou: string | null = null;
   if (verrouActif) {
     const { data } = await supabase.from("profiles").select("nom_complet").eq("id", document.verrou_par!).maybeSingle();
-    nomVerrou = data?.nom_complet ?? "une autre personne";
+    nomVerrou = data?.nom_complet ?? t("une autre personne", "someone else");
   }
 
   return (
@@ -147,7 +130,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-3xl">
           <Link href="/documents" className="mb-4 inline-block text-sm text-paper-muted hover:text-gold-600 hover:underline">
-            ← Retour à la liste
+            ← {t("Retour à la liste", "Back to the list")}
           </Link>
 
           <div className="rounded-lg border border-paper-200 bg-white p-6 shadow-sm">
@@ -160,37 +143,51 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                 <h1 className="font-serif text-xl font-semibold">{document.titre}</h1>
               </div>
               <div className="flex shrink-0 flex-wrap gap-2">
-                <Badge texte={LABEL_CLASSIFICATION[document.classification]} classesCouleur={COULEUR_CLASSIFICATION[document.classification]} />
+                <Badge texte={L.classification[document.classification]} classesCouleur={COULEUR_CLASSIFICATION[document.classification]} />
                 <Badge texte={statut.texte} classesCouleur={statut.couleur} />
               </div>
             </div>
 
             {archive && (
               <p className="mb-4 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-900">
-                Document archivé{document.archive_auto ? " automatiquement" : ""} le {dateLongue(document.archive_le)} : lecture
-                seule définitive. Pour le faire évoluer, créez-en une nouvelle version.
+                {document.archive_auto
+                  ? t("Document archivé automatiquement le ", "Document automatically archived on ")
+                  : t("Document archivé le ", "Document archived on ")}
+                {dateLongue(document.archive_le, dl)}
+                {t(
+                  " : lecture seule définitive. Pour le faire évoluer, créez-en une nouvelle version.",
+                  ": permanently read-only. To change it, create a new version."
+                )}
               </p>
             )}
             {estProprietaire && document.statut === "brouillon" && (
               <p className="mb-4 rounded-md border border-paper-200 bg-paper-50 px-3 py-2 text-sm text-paper-muted">
-                Brouillon privé : vous seul le voyez, ainsi que les personnes avec qui vous le partagez. Il ne sera visible
-                plus largement qu&apos;après validation et publication.
+                {t(
+                  "Brouillon privé : vous seul le voyez, ainsi que les personnes avec qui vous le partagez. Il ne sera visible plus largement qu'après validation et publication.",
+                  "Private draft: only you can see it, plus the people you share it with. It becomes more widely visible only after approval and publication."
+                )}
               </p>
             )}
 
             {document.description && <p className="mb-4 text-sm text-paper-muted">{document.description}</p>}
 
             <dl className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm text-[#1c2029]">
-              <dt className="text-paper-soft">Nature</dt>
-              <dd>{peutClasser ? <ChoixNature documentId={document.id} nature={document.nature} /> : libelleNature(document.nature)}</dd>
-              <dt className="text-paper-soft">Type</dt>
-              <dd>{document.format_atelier ? `${LABEL_FORMAT[document.format_atelier]} — rédigé dans la plateforme` : "Fichier déposé"}</dd>
-              <dt className="text-paper-soft">Département</dt>
+              <dt className="text-paper-soft">{t("Nature", "Document type")}</dt>
+              <dd>
+                {peutClasser ? <ChoixNature documentId={document.id} nature={document.nature} /> : libelleNature(document.nature, langue)}
+              </dd>
+              <dt className="text-paper-soft">Format</dt>
+              <dd>
+                {document.format_atelier
+                  ? `${libelleFormat(document.format_atelier, langue)} — ${t("rédigé dans la plateforme", "written in the platform")}`
+                  : t("Fichier déposé", "Uploaded file")}
+              </dd>
+              <dt className="text-paper-soft">{t("Département", "Department")}</dt>
               <dd>{document.departement}</dd>
-              <dt className="text-paper-soft">Créé le</dt>
-              <dd>{new Date(document.created_at).toLocaleString("fr-FR")}</dd>
-              <dt className="text-paper-soft">Dernière mise à jour</dt>
-              <dd>{new Date(document.updated_at).toLocaleString("fr-FR")}</dd>
+              <dt className="text-paper-soft">{t("Créé le", "Created")}</dt>
+              <dd>{new Date(document.created_at).toLocaleString(dl)}</dd>
+              <dt className="text-paper-soft">{t("Dernière mise à jour", "Last updated")}</dt>
+              <dd>{new Date(document.updated_at).toLocaleString(dl)}</dd>
               {(precedente || suivantes.length > 0 || document.version > 1) && (
                 <>
                   <dt className="text-paper-soft">Versions</dt>
@@ -200,7 +197,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                         ← v{precedente.version} ({precedente.reference})
                       </Link>
                     )}
-                    <span className="font-semibold">v{document.version} (celle-ci)</span>
+                    <span className="font-semibold">v{document.version} ({t("celle-ci", "this one")})</span>
                     {suivantes.map((v) => (
                       <Link key={v.id} href={`/documents/${v.id}`} className="text-gold-600 hover:underline">
                         v{v.version} ({v.reference}) →
@@ -211,26 +208,30 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
               )}
               {document.publie_le && (
                 <>
-                  <dt className="text-paper-soft">Publié le</dt>
-                  <dd>{dateLongue(document.publie_le)}</dd>
+                  <dt className="text-paper-soft">{t("Publié le", "Published")}</dt>
+                  <dd>{dateLongue(document.publie_le, dl)}</dd>
                 </>
               )}
               {archive && (
                 <>
-                  <dt className="text-paper-soft">Archivé le</dt>
+                  <dt className="text-paper-soft">{t("Archivé le", "Archived")}</dt>
                   <dd>
-                    {dateLongue(document.archive_le)}
-                    {document.archive_auto ? " — automatiquement" : archiviste ? ` — par ${archiviste}` : ""}
+                    {dateLongue(document.archive_le, dl)}
+                    {document.archive_auto
+                      ? t(" — automatiquement", " — automatically")
+                      : archiviste
+                        ? ` — ${t("par", "by")} ${archiviste}`
+                        : ""}
                   </dd>
-                  <dt className="text-paper-soft">Conservation</dt>
+                  <dt className="text-paper-soft">{t("Conservation", "Retention")}</dt>
                   <dd>
                     {document.fin_conservation
-                      ? `Jusqu'au ${new Date(document.fin_conservation).toLocaleDateString("fr-FR", { dateStyle: "long" })}`
-                      : "Permanente"}
+                      ? `${t("Jusqu'au", "Until")} ${new Date(document.fin_conservation).toLocaleDateString(dl, { dateStyle: "long" })}`
+                      : t("Permanente", "Permanent")}
                   </dd>
                   {document.empreinte_sha256 && (
                     <>
-                      <dt className="text-paper-soft">Empreinte SHA-256</dt>
+                      <dt className="text-paper-soft">{t("Empreinte SHA-256", "SHA-256 fingerprint")}</dt>
                       <dd>
                         <ControleIntegrite documentId={document.id} empreinte={document.empreinte_sha256} />
                       </dd>
@@ -242,7 +243,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
 
             {verrouActif && (
               <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                En cours de modification par {nomVerrou}.
+                {t("En cours de modification par", "Currently being edited by")} {nomVerrou}.
               </p>
             )}
 
@@ -253,7 +254,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                     href={`/documents/${document.id}/editer`}
                     className="rounded-md bg-navy-950 px-4 py-2 text-sm font-medium text-white hover:bg-navy-900"
                   >
-                    {peutEditer ? "Ouvrir dans l'éditeur" : "Consulter"}
+                    {peutEditer ? t("Ouvrir dans l'éditeur", "Open in the editor") : t("Consulter", "View")}
                   </Link>
                   <a
                     href={`/documents/${document.id}/export?format=natif`}
@@ -276,7 +277,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                   rel="noopener noreferrer"
                   className="rounded-md border border-paper-200 px-4 py-2 text-sm font-medium text-[#1c2029] hover:bg-paper-50"
                 >
-                  Télécharger le fichier (lien signé, valable 5 minutes)
+                  {t("Télécharger le fichier (lien signé, valable 5 minutes)", "Download the file (signed link, valid 5 minutes)")}
                 </a>
               )}
             </div>
@@ -306,16 +307,16 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
           )}
 
           <section className="mt-6">
-            <h2 className="mb-2 font-serif text-base font-semibold">Historique de ce document</h2>
+            <h2 className="mb-2 font-serif text-base font-semibold">{t("Historique de ce document", "Document history")}</h2>
             {audit.length === 0 ? (
-              <p className="text-sm text-paper-soft">Aucune entrée d&apos;audit visible pour votre rôle.</p>
+              <p className="text-sm text-paper-soft">{t("Aucune entrée d'audit visible pour votre rôle.", "No audit entries visible for your role.")}</p>
             ) : (
               <ul className="space-y-1 rounded-lg border border-paper-200 bg-white p-3 text-sm shadow-sm">
                 {audit.map((entree) => (
                   <li key={entree.id} className="text-paper-muted">
-                    <span className="text-paper-soft">{new Date(entree.created_at).toLocaleString("fr-FR")}</span>
+                    <span className="text-paper-soft">{new Date(entree.created_at).toLocaleString(dl)}</span>
                     {" — "}
-                    {LABEL_ACTION[entree.action] ?? entree.action}
+                    {libelleAction(entree.action, langue)}
                     {entree.details && Object.keys(entree.details).length > 0 && (
                       <span className="text-paper-soft"> ({JSON.stringify(entree.details)})</span>
                     )}
