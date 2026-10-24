@@ -81,3 +81,14 @@ export async function enregistrerNomsDepartementsEnAction(formData: FormData): P
   revalidatePath("/", "layout");
   return { erreur: null };
 }
+
+// Réinitialisation de la double authentification d'un agent (téléphone
+// perdu) : il devra reconfigurer Google Authenticator à sa prochaine
+// connexion. Contrôles et journal d'audit dans la fonction de la base.
+export async function reinitialiserMfaAction(utilisateurId: string): Promise<{ erreur: string | null }> {
+  const supabase = await creerClientServeur();
+  const { error } = await supabase.rpc("reinitialiser_mfa_utilisateur", { p_utilisateur_id: utilisateurId });
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
+  revalidatePath("/admin/utilisateurs");
+  return { erreur: null };
+}

@@ -61,6 +61,9 @@ const TRADUCTIONS: [RegExp, string][] = [
   [/^Fichier refusé : JavaScript intégré détecté dans le PDF\.$/, "File rejected: embedded JavaScript detected in the PDF."],
   [/^Fichier refusé : détecté comme infecté par Cloudmersive Virus Scan\.$/, "File rejected: flagged as infected by Cloudmersive Virus Scan."],
   [/^Fichier refusé : (.+) détecté\.$/, "File rejected: $1 detected."],
+  [/^Double authentification requise.*$/, "Two-factor authentication required: enter your Google Authenticator code."],
+  [/^Seul un administrateur peut réinitialiser la double authentification\.$/, "Only an administrator can reset two-factor authentication."],
+  [/^Vous ne pouvez pas réinitialiser votre propre double authentification.*$/, "You cannot reset your own two-factor authentication: ask another administrator."],
   [/^new row violates row-level security policy.*$/, "Action not allowed for your account."],
 ];
 
