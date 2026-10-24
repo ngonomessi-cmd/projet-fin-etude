@@ -7,6 +7,14 @@
 // marque KHS Bank actuelle.
 export const NOM_ORGANISATION = process.env.NEXT_PUBLIC_ORG_NOM?.trim() || "KHS Bank";
 
+// Nom affiché sur la version anglaise du site public ; à défaut, le nom
+// ci-dessus est repris tel quel.
+export const NOM_ORGANISATION_EN = process.env.NEXT_PUBLIC_ORG_NOM_EN?.trim() || NOM_ORGANISATION;
+
+export function nomOrganisation(locale: "fr" | "en"): string {
+  return locale === "en" ? NOM_ORGANISATION_EN : NOM_ORGANISATION;
+}
+
 export const SIGLE_ORGANISATION = process.env.NEXT_PUBLIC_ORG_SIGLE?.trim() || "KHS";
 
 // Lettre affichée dans le logo carré de la barre latérale / page de connexion

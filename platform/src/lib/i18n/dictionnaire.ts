@@ -297,7 +297,7 @@ export const DICTIONNAIRE = {
     },
     hero: {
       surtitre: "Investing in Cameroon means building the future",
-      titre: "The Cameroon Investment Promotion Agency",
+      titre: "The Investment Promotion Agency of Cameroon",
       description:
         "We support national and foreign investors in carrying out their projects in Cameroon, offering a one-stop shop, tailored services and a secure framework.",
       cta1: "Discover our services",
@@ -333,7 +333,7 @@ export const DICTIONNAIRE = {
     missionsBande: {
       surtitre: "The agency, your partner for investing in Cameroon",
       titre: "Together, let's build a future of opportunities",
-      description: "The Cameroon Investment Promotion Agency supports you at every stage of your investment project.",
+      description: "The Investment Promotion Agency of Cameroon supports you at every stage of your investment project.",
       cta: "Discover our services",
       tagline: "Investing in Cameroon means building sustainably",
     },

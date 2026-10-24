@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NOM_ORGANISATION, URL_LOGO_ORGANISATION } from "@/lib/organisation";
+import { URL_LOGO_ORGANISATION, nomOrganisation } from "@/lib/organisation";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { DICTIONNAIRE, cheminAutreLocale, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
 import {
@@ -46,7 +46,7 @@ export function EnTetePublic() {
             <LogoOrganisation taille="lg" />
           )}
           <span className="hidden font-serif text-[15px] font-semibold leading-tight text-encre-900 sm:block">
-            {NOM_ORGANISATION}
+            {nomOrganisation(locale)}
           </span>
         </Link>
 
