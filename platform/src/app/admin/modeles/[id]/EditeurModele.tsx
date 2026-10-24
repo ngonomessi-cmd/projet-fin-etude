@@ -14,7 +14,7 @@ import { useTraduction } from "@/components/i18n/Langue";
 
 export function EditeurModele({ modele, departements, organisation }: { modele: ModeleDocument; departements: string[]; organisation: string }) {
   const router = useRouter();
-  const { t, langue: langueInterface, dl } = useTraduction();
+  const { t, langue: langueInterface, dl, dep } = useTraduction();
   const contenu = useRef<unknown>(modele.contenu);
   const [titre, setTitre] = useState(modele.titre);
   const [description, setDescription] = useState(modele.description ?? "");
@@ -73,7 +73,7 @@ export function EditeurModele({ modele, departements, organisation }: { modele: 
             <option value="">{t("Tous les départements", "All departments")}</option>
             {departements.map((d) => (
               <option key={d} value={d}>
-                {d}
+                {dep(d)}
               </option>
             ))}
           </select>

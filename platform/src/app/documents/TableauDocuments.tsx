@@ -67,7 +67,7 @@ export function TableauDocuments({
   colonneDate?: "maj" | "publication";
   vide?: string;
 }) {
-  const { t, langue } = useTraduction();
+  const { t, langue, dep } = useTraduction();
   const L = libelles(langue);
   if (documents.length === 0) {
     return <p className="px-4 py-4 text-sm text-paper-muted">{vide ?? t("Aucun document.", "No documents.")}</p>;
@@ -120,7 +120,7 @@ export function TableauDocuments({
                   {doc.extrait && <Extrait texte={doc.extrait} />}
                 </td>
                 <td className="px-4 py-2.5 text-paper-muted">{libelleNature(doc.nature, langue)}</td>
-                {afficherDepartement && <td className="px-4 py-2.5 text-paper-muted">{doc.departement}</td>}
+                {afficherDepartement && <td className="px-4 py-2.5 text-paper-muted">{dep(doc.departement)}</td>}
                 <td className="px-4 py-2.5">
                   <Badge texte={statut.texte} classesCouleur={statut.couleur} />
                 </td>

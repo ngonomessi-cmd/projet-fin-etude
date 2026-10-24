@@ -8,7 +8,7 @@ import { BarreRecherche, type FiltresRecherche } from "./BarreRecherche";
 import { Archives, grouperParDepartement, type Ligne } from "./Archives";
 import type { Profil, ResultatRecherche } from "@/lib/types";
 import { ROLES_PRODUCTEURS } from "@/lib/labels";
-import { traductionServeur } from "@/lib/i18n/serveur";
+import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
 import { traduireErreur } from "@/lib/i18n/erreurs";
 
 // Colonnes utiles aux listes (jamais le contenu rédigé, potentiellement lourd).
@@ -39,6 +39,7 @@ export default async function PageDocuments({
 
   const supabase = await creerClientServeur();
   const { langue, t } = await traductionServeur();
+  const dep = await traducteurDepartements();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -153,6 +154,7 @@ export default async function PageDocuments({
             filtres={filtres}
             vue={vue}
             langue={langue}
+            dep={dep}
             departements={departements}
             auteurs={profils.map((p) => ({ id: p.id, nom: p.nom_complet }))}
           />

@@ -16,7 +16,7 @@ export function DocumentsParDepartement({
   toutOuvrir?: boolean;
 }) {
   const [ouverts, setOuverts] = useState<Record<string, boolean>>({});
-  const { t } = useTraduction();
+  const { t, dep } = useTraduction();
 
   function basculer(departement: string) {
     setOuverts((o) => ({ ...o, [departement]: !(o[departement] ?? toutOuvrir) }));
@@ -35,7 +35,7 @@ export function DocumentsParDepartement({
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0b1220" strokeWidth="2" aria-hidden="true">
                 <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
               </svg>
-              <span className="flex-1 truncate text-sm font-bold text-[#1c2029]">{g.departement}</span>
+              <span className="flex-1 truncate text-sm font-bold text-[#1c2029]">{dep(g.departement)}</span>
               <span className="shrink-0 rounded-full bg-paper-200 px-2 py-0.5 text-[11px] font-bold text-paper-muted">
                 {g.documents.length}
               </span>

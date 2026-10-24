@@ -5,7 +5,7 @@ import { NavBar } from "@/components/NavBar";
 import { Badge } from "@/components/Badge";
 import { COULEUR_CLASSIFICATION, ROLES_PRODUCTEURS, libelleAction, libelleNature, libelles, statutAffiche } from "@/lib/labels";
 import { LABEL_FORMAT_COURT, libelleFormat } from "@/lib/atelier/contenus";
-import { traductionServeur } from "@/lib/i18n/serveur";
+import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
 import type { Document, EntreeAudit, PartageDocument, Profil } from "@/lib/types";
 import { BoutonsTransition } from "./BoutonsTransition";
 import { PanneauPartage, type ConversationPubliable, type PersonneContactable } from "./PanneauPartage";
@@ -19,6 +19,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   const { id } = await params;
   const supabase = await creerClientServeur();
   const { langue, t, dl } = await traductionServeur();
+  const dep = await traducteurDepartements();
   const L = libelles(langue);
 
   const {
@@ -111,7 +112,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
           c.type === "canal"
             ? c.canal_general
               ? t("Canal : toute l'organisation", "Channel: whole organisation")
-              : `${t("Canal", "Channel")} : ${c.titre ?? c.departement}`
+              : `${t("Canal", "Channel")} : ${dep(c.titre ?? c.departement)}`
             : `${t("Groupe", "Group")} : ${c.titre ?? t("sans titre", "untitled")}`,
       }));
   }
@@ -183,7 +184,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                   : t("Fichier déposé", "Uploaded file")}
               </dd>
               <dt className="text-paper-soft">{t("Département", "Department")}</dt>
-              <dd>{document.departement}</dd>
+              <dd>{dep(document.departement)}</dd>
               <dt className="text-paper-soft">{t("Créé le", "Created")}</dt>
               <dd>{new Date(document.created_at).toLocaleString(dl)}</dd>
               <dt className="text-paper-soft">{t("Dernière mise à jour", "Last updated")}</dt>

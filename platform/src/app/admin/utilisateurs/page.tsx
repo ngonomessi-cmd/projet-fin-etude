@@ -5,6 +5,9 @@ import type { RoleUtilisateur } from "@/lib/types";
 import type { Profil } from "@/lib/types";
 import { SelecteurRole } from "./SelecteurRole";
 import { ChampTexteModifiable } from "./ChampTexteModifiable";
+import { NomsDepartementsEn } from "./NomsDepartementsEn";
+import { PLATEFORME_BILINGUE } from "@/lib/i18n/plateforme";
+import { chargerNomsDepartementsEn } from "@/lib/i18n/serveur";
 import { traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageUtilisateurs() {
@@ -38,6 +41,10 @@ export default async function PageUtilisateurs() {
 
   const { data } = await supabase.from("profiles").select("*").order("nom_complet");
   const utilisateurs = (data ?? []) as Profil[];
+  const nomsEn = PLATEFORME_BILINGUE ? await chargerNomsDepartementsEn() : {};
+  const lignesDepartements = [...new Set(utilisateurs.map((u) => u.departement?.trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "fr"))
+    .map((d) => ({ departement: d, nomEn: nomsEn[d] ?? "" }));
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -80,6 +87,8 @@ export default async function PageUtilisateurs() {
               </tbody>
             </table>
           </div>
+
+          {PLATEFORME_BILINGUE && <NomsDepartementsEn lignes={lignesDepartements} />}
 
           <section className="mt-6 rounded-lg border border-paper-200 bg-white p-4 shadow-sm">
             <h2 className="mb-3 font-serif text-base font-semibold">{t("Ce que permet chaque rôle", "What each role can do")}</h2>

@@ -21,12 +21,14 @@ export function BarreRecherche({
   filtres,
   vue,
   langue,
+  dep,
   departements,
   auteurs,
 }: {
   filtres: FiltresRecherche;
   vue: string;
   langue: Langue;
+  dep: (nom: string) => string;
   departements: string[];
   auteurs: { id: string; nom: string }[];
 }) {
@@ -79,7 +81,7 @@ export function BarreRecherche({
               <option value="">{t("Tous", "All")}</option>
               {departements.map((d) => (
                 <option key={d} value={d}>
-                  {d}
+                  {dep(d)}
                 </option>
               ))}
             </select>

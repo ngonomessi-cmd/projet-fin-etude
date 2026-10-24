@@ -10,12 +10,13 @@ import { GererCanalBouton } from "./GererCanalBouton";
 import { PanneauDetails } from "./PanneauDetails";
 import { libelles } from "@/lib/labels";
 import type { Conversation, Message, ParticipantConversation, PieceJointeMessage, Profil, StatutMessage } from "@/lib/types";
-import { traductionServeur } from "@/lib/i18n/serveur";
+import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
 
 export default async function PageConversation({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await creerClientServeur();
   const { langue, t } = await traductionServeur();
+  const dep = await traducteurDepartements();
   const LABEL_TYPE_CONVERSATION = libelles(langue).typeConversation;
 
   const {
@@ -101,13 +102,20 @@ export default async function PageConversation({ params }: { params: Promise<{ i
     .filter((c): c is ConversationAllegee => c !== null && c !== undefined)
     .map((c) => ({
       id: c.id,
-      nom: c.type === "privee" ? LABEL_TYPE_CONVERSATION.privee : (c.titre ?? LABEL_TYPE_CONVERSATION[c.type]),
+      nom:
+        c.type === "privee"
+          ? LABEL_TYPE_CONVERSATION.privee
+          : c.type === "canal" && c.titre
+            ? dep(c.titre)
+            : (c.titre ?? LABEL_TYPE_CONVERSATION[c.type]),
     }));
 
   const titre =
     conversation.type === "privee"
       ? (participants.find((p) => p.profil_id !== user.id)?.profiles?.nom_complet ?? LABEL_TYPE_CONVERSATION.privee)
-      : (conversation.titre ?? LABEL_TYPE_CONVERSATION[conversation.type]);
+      : conversation.type === "canal" && conversation.titre
+        ? dep(conversation.titre)
+        : (conversation.titre ?? LABEL_TYPE_CONVERSATION[conversation.type]);
 
   const initiales = titre
     .split(" ")

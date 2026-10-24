@@ -29,7 +29,7 @@ function initiales(nomComplet: string) {
 export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; profil: Profil | null }) {
   const [ouvert, setOuvert] = useState(false);
   const pathname = usePathname();
-  const { t, langue } = useTraduction();
+  const { t, langue, dep } = useTraduction();
   const NOM_ORGANISATION = nomOrganisation(langue);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export function BarreLateraleResponsive({ liens, profil }: { liens: Lien[]; prof
             <div className="min-w-0">
               <div className="truncate text-[13px] font-semibold">{profil.nom_complet}</div>
               <div className="text-[11px] text-white/55">
-                {libelles(langue).role[profil.role]} · {profil.departement}
+                {libelles(langue).role[profil.role]} · {dep(profil.departement)}
               </div>
             </div>
           </div>
