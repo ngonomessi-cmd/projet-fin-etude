@@ -10,6 +10,8 @@ import type { Document, EntreeAudit, PartageDocument, Profil } from "@/lib/types
 import { BoutonsTransition } from "./BoutonsTransition";
 import { PanneauPartage, type ConversationPubliable, type PersonneContactable } from "./PanneauPartage";
 import { ActionsCycleVie, ChoixNature, ControleIntegrite } from "./PanneauCycleVie";
+import { PanneauSignature, type QualiteBat } from "./PanneauSignature";
+import type { QualiteDisponible, Signature } from "@/lib/signature/commun";
 
 function dateLongue(iso: string | null | undefined, dl: string) {
   return iso ? new Date(iso).toLocaleString(dl, { dateStyle: "long", timeStyle: "short" }) : "—";
@@ -116,6 +118,56 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
             : `${t("Groupe", "Group")} : ${c.titre ?? t("sans titre", "untitled")}`,
       }));
   }
+
+  // Signature (migration 0028) : mêmes règles que signer_preparer,
+  // bon_a_signer, original_peut_deposer et signature_revoquer, qui les
+  // revérifient.
+  const [{ data: signaturesData }, { data: qualitesData }, { data: specimenData }, { data: qualitesOrgData }, { data: titulairesData }] =
+    await Promise.all([
+      supabase.from("signatures").select("*").eq("document_id", id).order("cree_le", { ascending: false }),
+      supabase.rpc("qualites_signature_disponibles"),
+      supabase.from("specimens_signature").select("profil_id").eq("profil_id", user!.id).maybeSingle(),
+      supabase.from("qualites_signature").select("code, intitule, intitule_en").order("ordre"),
+      supabase.from("titulaires_signature").select("qualite"),
+    ]);
+  const signatures = (signaturesData ?? []) as Signature[];
+  const qualitesSignataire = (qualitesData ?? []) as QualiteDisponible[];
+  const signatureVivante = signatures.find((s) => ["en_preparation", "attente_original", "valide"].includes(s.statut)) ?? null;
+  const formatSignable = Boolean(document.format_atelier) || /\.pdf$/i.test(document.storage_path ?? "");
+  const finalise = document.statut === "valide" || document.statut === "publie";
+  const qualitesPourvues = new Set(((titulairesData ?? []) as { qualite: string }[]).map((q) => q.qualite));
+  const qualitesBat: QualiteBat[] =
+    qualitesSignataire.length > 0
+      ? qualitesSignataire.map((q) => ({ qualite: q.qualite, intitule: q.intitule, intitule_en: q.intitule_en }))
+      : estProprietaire || profil.role === "administrateur"
+        ? ((qualitesOrgData ?? []) as { code: string; intitule: string; intitule_en: string }[])
+            .filter((q) => qualitesPourvues.has(q.code))
+            .map((q) => ({ qualite: q.code, intitule: q.intitule, intitule_en: q.intitule_en }))
+        : [];
+  const peutSigner = !signatureVivante && finalise && formatSignable && (qualitesSignataire.length > 0 || qualitesBat.length > 0);
+  let raisonNonSignable: string | null = null;
+  if (qualitesSignataire.length > 0 || qualitesBat.length > 0) {
+    if (!finalise) raisonNonSignable = t("Le document pourra être signé une fois validé.", "The document can be signed once approved.");
+    else if (!formatSignable)
+      raisonNonSignable = t(
+        "Seuls les documents rédigés dans la plateforme ou déposés au format PDF peuvent être signés.",
+        "Only documents written in the platform or uploaded as PDF can be signed."
+      );
+  }
+  let peutDeposerOriginal = false;
+  let peutRevoquer = false;
+  if (signatureVivante) {
+    const [{ data: depot }, { data: titulaire }] = await Promise.all([
+      supabase.rpc("original_peut_deposer", { p_signature_id: signatureVivante.id }),
+      supabase.rpc("est_titulaire_signature", { p_qualite: signatureVivante.qualite }),
+    ]);
+    peutDeposerOriginal = depot === true;
+    peutRevoquer =
+      signatureVivante.signataire_id === user!.id ||
+      titulaire === true ||
+      (signatureVivante.statut === "attente_original" && signatureVivante.cree_par === user!.id);
+  }
+  const afficherSignature = signatures.length > 0 || peutSigner || raisonNonSignable !== null;
 
   const verrouActif =
     document.verrou_par && document.verrou_jusqua && new Date(document.verrou_jusqua) > new Date() && document.verrou_par !== user!.id;
@@ -294,6 +346,20 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
             <ActionsCycleVie documentId={document.id} peutArchiver={peutArchiver} peutReviser={peutReviser} archive={archive} />
           </div>
 
+          {afficherSignature && (
+            <PanneauSignature
+              documentId={document.id}
+              signatures={signatures}
+              peutSigner={peutSigner}
+              raisonNonSignable={raisonNonSignable}
+              qualitesSignataire={qualitesSignataire}
+              qualitesBat={qualitesBat}
+              aSpecimen={Boolean(specimenData)}
+              peutDeposerOriginal={peutDeposerOriginal}
+              peutRevoquer={peutRevoquer}
+            />
+          )}
+
           {(peutPartager || partages.length > 0) && (
             <PanneauPartage
               documentId={document.id}
@@ -319,7 +385,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
                     {" — "}
                     {libelleAction(entree.action, langue)}
                     {entree.details && Object.keys(entree.details).length > 0 && (
-                      <span className="text-paper-soft"> ({JSON.stringify(entree.details)})</span>
+                      <span className="break-all text-paper-soft"> ({JSON.stringify(entree.details)})</span>
                     )}
                   </li>
                 ))}

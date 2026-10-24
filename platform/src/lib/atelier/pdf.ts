@@ -2,6 +2,7 @@ import PdfPrinter from "pdfmake";
 import * as polices from "pdfmake/build/vfs_fonts";
 import type { Content, TDocumentDefinitions } from "pdfmake/interfaces";
 import { ajuster, type LogoExport } from "@/lib/atelier/logo";
+import { blocSignaturePdf, type SignaturePdf } from "@/lib/signature/bloc";
 
 const vfs = (polices as unknown as { vfs?: Record<string, string>; default?: Record<string, string> }).vfs ??
   (polices as unknown as { default: Record<string, string> }).default ??
@@ -25,6 +26,10 @@ export type EnTetePdf = {
   classification: string;
   paysage?: boolean;
   logo?: LogoExport | null;
+  // Document signé : bloc de signature à la fin, numéro en pied de chaque page.
+  signature?: SignaturePdf | null;
+  // Présentations : le bloc de signature ouvre une page à lui.
+  sautAvantSignature?: boolean;
 };
 
 // Gabarit commun : logo + organisation + classification en en-tête,
@@ -67,8 +72,11 @@ export function genererPdf(entete: EnTetePdf, contenu: Content[]): Promise<Buffe
     footer: (page, total) => ({
       margin: [48, 16, 48, 0],
       columns: [
-        { text: entete.titre, fontSize: 8, color: "#9ca3af" },
-        { text: `${page} / ${total}`, alignment: "right", fontSize: 8, color: "#9ca3af" },
+        { text: entete.titre, fontSize: 8, color: "#9ca3af", width: "*" },
+        ...(entete.signature
+          ? [{ text: `${entete.signature.langue === "en" ? "No." : "N°"} ${entete.signature.numero}`, fontSize: 8, bold: true, color: "#6b7280", width: "auto", margin: [12, 0, 12, 0] as [number, number, number, number] }]
+          : []),
+        { text: `${page} / ${total}`, alignment: "right", fontSize: 8, color: "#9ca3af", width: "auto" },
       ],
     }),
     styles: {
@@ -78,7 +86,7 @@ export function genererPdf(entete: EnTetePdf, contenu: Content[]): Promise<Buffe
       citation: { italics: true, color: "#4b5563", margin: [14, 2, 0, 6] },
       enteteTableau: { bold: true, color: "white", fillColor: COULEUR_MARINE },
     },
-    content: contenu,
+    content: entete.signature ? [...contenu, blocSignaturePdf(entete.signature, entete.sautAvantSignature)] : contenu,
   };
 
   return new Promise((resoudre, rejeter) => {

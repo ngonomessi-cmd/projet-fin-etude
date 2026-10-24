@@ -10,6 +10,7 @@ import type { Traduire } from "@/lib/i18n/plateforme";
 const liensNavigation = (t: Traduire): Lien[] => [
   { href: "/documents", label: "Documents", icone: "documents" },
   { href: "/messagerie", label: t("Messagerie", "Messaging"), icone: "messagerie" },
+  { href: "/signatures", label: t("Signatures", "Signatures"), roles: ["redacteur", "validateur", "administrateur", "auditeur"], icone: "signatures" },
   { href: "/audit", label: t("Journal d'audit", "Audit log"), icone: "audit" },
   { href: "/admin/utilisateurs", label: t("Utilisateurs", "Users"), roles: ["administrateur"], icone: "utilisateurs" },
   { href: "/admin/modeles", label: t("Modèles", "Templates"), roles: ["administrateur"], icone: "modeles" },

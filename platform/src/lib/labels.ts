@@ -261,6 +261,18 @@ const LABEL_ACTION: Record<string, [string, string]> = {
   parametres_archivage: ["Réglage de l'archivage", "Archiving settings"],
   changement_role: ["Changement de rôle", "Role change"],
   reinitialisation_mfa: ["Réinitialisation de la double authentification", "Two-factor authentication reset"],
+  titulaire_signature: ["Désignation du titulaire d'une qualité de signature", "Signing capacity holder appointed"],
+  delegation_signature: ["Délégation de signature", "Signature delegated"],
+  revocation_delegation_signature: ["Révocation d'une délégation de signature", "Signature delegation revoked"],
+  specimen_signature: ["Enregistrement de l'image de signature", "Signature image recorded"],
+  echec_code_signature: ["Code de signature incorrect", "Incorrect signing code"],
+  signature_electronique: ["Signature électronique", "Electronic signature"],
+  bon_a_signer: ["Bon à signer préparé", "Print-for-signature copy prepared"],
+  signature_abandonnee: ["Signature abandonnée (échec de production)", "Signature abandoned (production failure)"],
+  original_signe_depose: ["Dépôt de l'original signé", "Signed original uploaded"],
+  original_signe_remplace: ["Remplacement de l'original signé", "Signed original replaced"],
+  signature_revoquee: ["Révocation d'une signature", "Signature revoked"],
+  consultation_signature: ["Consultation d'un document signé", "Signed document viewed"],
 };
 
 export function libelleAction(action: string, langue: Langue = "fr"): string {

@@ -142,5 +142,5 @@ export function genererPdfPresentation(contenu: unknown, entete: EnTetePdf): Pro
     return { pageBreak: saut, stack: corps, margin: [10, 10, 10, 0] };
   });
 
-  return genererPdf({ ...entete, paysage: true }, pages);
+  return genererPdf({ ...entete, paysage: true, sautAvantSignature: true }, pages);
 }
