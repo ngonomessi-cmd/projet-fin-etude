@@ -9,7 +9,7 @@ import { useTraduction } from "@/components/i18n/Langue";
 type ProfilAllege = Pick<Profil, "id" | "nom_complet" | "departement" | "role">;
 
 export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAllege[] }) {
-  const { t, langue } = useTraduction();
+  const { t, langue, dep } = useTraduction();
   const roles = libelles(langue).role;
   const [mode, setMode] = useState<"privee" | "groupe">("privee");
   const [erreur, setErreur] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
               </option>
               {profils.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.nom_complet} — {roles[p.role]} · {p.departement}
+                  {p.nom_complet} — {roles[p.role]} · {dep(p.departement)}
                 </option>
               ))}
             </select>
@@ -96,7 +96,7 @@ export function FormulaireNouvelleConversation({ profils }: { profils: ProfilAll
               <label key={p.id} className="flex items-center gap-2.5 border-b border-paper-200 px-3 py-2 text-sm last:border-b-0 hover:bg-paper-50">
                 <input type="checkbox" name="participants" value={p.id} className="rounded border-paper-200 accent-navy-950" />
                 <span className="text-[#1c2029]">{p.nom_complet}</span>
-                <span className="text-paper-soft">— {roles[p.role]} · {p.departement}</span>
+                <span className="text-paper-soft">— {roles[p.role]} · {dep(p.departement)}</span>
               </label>
             ))}
           </fieldset>

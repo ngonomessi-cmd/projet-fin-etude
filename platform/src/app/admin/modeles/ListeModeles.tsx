@@ -18,7 +18,7 @@ const LETTRE: Record<FormatAtelier, string> = { texte: "W", tableur: "X", presen
 
 export function ListeModeles({ modeles }: { modeles: ModeleDocument[] }) {
   const router = useRouter();
-  const { t, langue } = useTraduction();
+  const { t, langue, dep } = useTraduction();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
 
@@ -62,7 +62,7 @@ export function ListeModeles({ modeles }: { modeles: ModeleDocument[] }) {
         <p className="truncate text-xs text-paper-muted">
           {libelleFormat(m.format, langue)}
           {m.departement
-            ? ` · ${t("réservé au département", "restricted to the department")} ${m.departement}`
+            ? ` · ${t("réservé au département", "restricted to the department")} ${dep(m.departement)}`
             : ` · ${t("tous départements", "all departments")}`}
           {m.description ? ` · ${m.description}` : ""}
         </p>

@@ -1,4 +1,4 @@
-import { langueServeur } from "@/lib/i18n/serveur";
+import { chargerNomsDepartementsEn, langueServeur } from "@/lib/i18n/serveur";
 import { ChoixLangue, FournisseurLangue } from "@/components/i18n/Langue";
 
 // Enveloppe de chaque espace connecté (layout.tsx de /documents, /messagerie,
@@ -6,8 +6,9 @@ import { ChoixLangue, FournisseurLangue } from "@/components/i18n/Langue";
 // le sélecteur FR | EN en haut à droite (dans la barre mobile sur petit écran).
 export async function CoqueLangue({ children, toujoursVisible = false }: { children: React.ReactNode; toujoursVisible?: boolean }) {
   const langue = await langueServeur();
+  const departements = langue === "en" ? await chargerNomsDepartementsEn() : {};
   return (
-    <FournisseurLangue langue={langue}>
+    <FournisseurLangue langue={langue} departements={departements}>
       <ChoixLangue className={`fixed right-4 top-4 z-30 ${toujoursVisible ? "" : "hidden lg:inline-flex"}`} />
       {children}
     </FournisseurLangue>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { libelles } from "@/lib/labels";
-import { traductionServeur } from "@/lib/i18n/serveur";
+import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
 import { ParametresRetention } from "./ParametresRetention";
 import { CreerCanalDepartement } from "./CreerCanalDepartement";
 import { ListeConversationsInteractive, type ConversationAffichee } from "./ListeConversationsInteractive";
@@ -13,6 +13,7 @@ type ParticipantAvecProfil = ParticipantConversation & { profiles: Pick<Profil, 
 export default async function PageMessagerie() {
   const supabase = await creerClientServeur();
   const { langue, t } = await traductionServeur();
+  const dep = await traducteurDepartements();
 
   const {
     data: { user },
@@ -79,6 +80,7 @@ export default async function PageMessagerie() {
       const autre = participants.find((p) => p.conversation_id === conversation.id && p.profil_id !== idUtilisateur);
       return autre?.profiles?.nom_complet ?? libelles(langue).typeConversation.privee;
     }
+    if (conversation.type === "canal" && conversation.titre) return dep(conversation.titre);
     return conversation.titre ?? libelles(langue).typeConversation[conversation.type];
   }
 

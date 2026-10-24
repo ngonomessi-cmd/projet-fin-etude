@@ -40,7 +40,7 @@ export function PanneauPartage({
   partages: PartageDocument[];
 }) {
   const router = useRouter();
-  const { t, langue, dl } = useTraduction();
+  const { t, langue, dl, dep } = useTraduction();
   const [ouvert, setOuvert] = useState(false);
   const [recherche, setRecherche] = useState("");
   const [choisis, setChoisis] = useState<Set<string>>(new Set());
@@ -50,8 +50,10 @@ export function PanneauPartage({
 
   const filtrees = useMemo(() => {
     const q = recherche.trim().toLowerCase();
-    return personnes.filter((p) => !q || p.nom_complet.toLowerCase().includes(q) || p.departement.toLowerCase().includes(q));
-  }, [personnes, recherche]);
+    return personnes.filter(
+      (p) => !q || p.nom_complet.toLowerCase().includes(q) || p.departement.toLowerCase().includes(q) || dep(p.departement).toLowerCase().includes(q)
+    );
+  }, [personnes, recherche, dep]);
 
   async function soumettre(formData: FormData) {
     setEnCours(true);
@@ -132,7 +134,7 @@ export function PanneauPartage({
                     />
                     <span className="flex-1">{p.nom_complet}</span>
                     <span className="text-xs text-paper-soft">
-                      {p.departement} · {libelles(langue).role[p.role]}
+                      {dep(p.departement)} · {libelles(langue).role[p.role]}
                     </span>
                   </label>
                 ))

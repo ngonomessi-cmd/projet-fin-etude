@@ -52,3 +52,32 @@ export async function modifierProfilAction(
   revalidatePath("/admin/utilisateurs");
   return { erreur: null };
 }
+
+// Noms anglais des départements (migration 0026). La table est protégée par
+// RLS : seul un administrateur écrit, et seulement pour son organisation.
+export async function enregistrerNomsDepartementsEnAction(formData: FormData): Promise<{ erreur: string | null }> {
+  const supabase = await creerClientServeur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { erreur: (await langueServeur()) === "en" ? "Session expired, please sign in again." : "Session expirée, veuillez vous reconnecter." };
+  const { data: profil } = await supabase.from("profiles").select("organisation").eq("id", user.id).single();
+  if (!profil) return { erreur: (await langueServeur()) === "en" ? "Profile not found." : "Profil introuvable." };
+
+  const departements = formData.getAll("departement").map(String);
+  const nomsEn = formData.getAll("nom_en").map((v) => String(v).trim().slice(0, 120));
+  const aEnregistrer = departements.map((d, i) => ({ organisation: profil.organisation, departement: d, nom_en: nomsEn[i] ?? "" }));
+
+  const remplis = aEnregistrer.filter((l) => l.nom_en);
+  const vides = aEnregistrer.filter((l) => !l.nom_en).map((l) => l.departement);
+  if (remplis.length) {
+    const { error } = await supabase.from("departements_noms_en").upsert(remplis, { onConflict: "organisation,departement" });
+    if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
+  }
+  if (vides.length) {
+    const { error } = await supabase.from("departements_noms_en").delete().in("departement", vides);
+    if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
+  }
+  revalidatePath("/", "layout");
+  return { erreur: null };
+}
