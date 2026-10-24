@@ -37,7 +37,51 @@ export type Document = {
   contenu?: unknown;
   verrou_par?: string | null;
   verrou_jusqua?: string | null;
+  // Classement et archivage (migration 0024)
+  reference: string;
+  nature: NatureDocument | null;
+  version: number;
+  version_precedente_id: string | null;
+  publie_le: string | null;
+  archive_le: string | null;
+  archive_par?: string | null;
+  archive_auto?: boolean;
+  empreinte_sha256?: string | null;
+  fin_conservation?: string | null;
 };
+
+export type NatureDocument =
+  | "note_service"
+  | "courrier"
+  | "compte_rendu"
+  | "rapport"
+  | "decision"
+  | "contrat"
+  | "piece_comptable"
+  | "procedure"
+  | "ressources_humaines"
+  | "presentation"
+  | "autre";
+
+// Ligne renvoyée par la fonction rechercher_documents (migration 0024).
+export type ResultatRecherche = Pick<
+  Document,
+  | "id"
+  | "reference"
+  | "titre"
+  | "description"
+  | "classification"
+  | "statut"
+  | "departement"
+  | "nature"
+  | "format_atelier"
+  | "owner_id"
+  | "version"
+  | "created_at"
+  | "updated_at"
+  | "publie_le"
+  | "archive_le"
+> & { auteur: string | null; rang: number; extrait: string | null };
 
 // --- Ateliers documentaires (migration 0023) -------------------------------
 

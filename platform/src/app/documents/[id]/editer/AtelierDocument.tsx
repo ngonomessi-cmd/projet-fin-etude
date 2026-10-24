@@ -26,6 +26,7 @@ export function AtelierDocument({
   format,
   contenuInitial,
   peutEditer,
+  archive = false,
   organisation,
 }: {
   documentId: string;
@@ -33,6 +34,7 @@ export function AtelierDocument({
   format: FormatAtelier;
   contenuInitial: unknown;
   peutEditer: boolean;
+  archive?: boolean;
   organisation: string;
 }) {
   const router = useRouter();
@@ -182,9 +184,14 @@ export function AtelierDocument({
         </p>
       )}
       {!peutEditer && (
-        <p className="rounded-md border border-paper-200 bg-paper-50 px-4 py-2.5 text-sm text-paper-muted">
-          Lecture seule : seuls l&apos;auteur et les co-éditeurs peuvent modifier ce document, tant qu&apos;il n&apos;a pas été
-          soumis à validation.
+        <p
+          className={`rounded-md border px-4 py-2.5 text-sm ${
+            archive ? "border-indigo-200 bg-indigo-50 text-indigo-900" : "border-paper-200 bg-paper-50 text-paper-muted"
+          }`}
+        >
+          {archive
+            ? "Document archivé : lecture seule définitive. Pour le faire évoluer, créez une nouvelle version depuis sa fiche."
+            : "Lecture seule : seuls l'auteur et les co-éditeurs peuvent modifier ce document, tant qu'il n'a pas été soumis à validation."}
         </p>
       )}
 

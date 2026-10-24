@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deposerDocumentAction } from "./actions";
+import { ChampNature } from "@/components/ChampNature";
 
 export function FormulaireDepot() {
   const [erreur, setErreur] = useState<string | null>(null);
@@ -37,6 +38,12 @@ export function FormulaireDepot() {
           <option value="restreint">Restreint</option>
           <option value="confidentiel">Confidentiel</option>
         </select>
+      </label>
+
+      <label className="block text-sm">
+        <span className="mb-1 block font-medium text-[#1c2029]">Nature</span>
+        <ChampNature className="w-full rounded-md border border-paper-200 px-3 py-2 text-sm" />
+        <span className="mt-1 block text-xs text-paper-soft">Détermine la durée de conservation une fois le document archivé.</span>
       </label>
 
       <label className="block text-sm">

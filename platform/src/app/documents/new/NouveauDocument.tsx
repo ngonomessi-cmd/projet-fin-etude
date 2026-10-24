@@ -5,6 +5,7 @@ import type { FormatAtelier, ModeleDocument } from "@/lib/types";
 import { LABEL_FORMAT } from "@/lib/atelier/contenus";
 import { creerDocumentAtelierAction } from "./actions";
 import { FormulaireDepot } from "./FormulaireDepot";
+import { ChampNature } from "@/components/ChampNature";
 
 const FORMATS: { format: FormatAtelier; icone: string; teinte: string; detail: string }[] = [
   { format: "texte", icone: "W", teinte: "bg-[#2b579a]", detail: "Notes, courriers, rapports, procédures" },
@@ -138,6 +139,12 @@ export function NouveauDocument({ modeles }: { modeles: ModeleDocument[] }) {
               <option value="restreint">Restreint (mon département)</option>
               <option value="confidentiel">Confidentiel</option>
             </select>
+          </label>
+
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-[#1c2029]">Nature</span>
+            <ChampNature className={CHAMP} />
+            <span className="mt-1 block text-xs text-paper-soft">Détermine la durée de conservation une fois le document archivé.</span>
           </label>
 
           <label className="block text-sm">
