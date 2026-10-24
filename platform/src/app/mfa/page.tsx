@@ -23,6 +23,15 @@ function destinationSure(valeur: string | null): string {
   return valeur && valeur.startsWith("/") && !valeur.startsWith("//") ? valeur : "/documents";
 }
 
+// Évite un bouton « Vérification… » bloqué indéfiniment si le serveur
+// d'authentification ne répond pas (réseau lent, coupure).
+function avecDelai<T>(promesse: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promesse,
+    new Promise<T>((_, rejeter) => setTimeout(() => rejeter(new Error("delai")), ms)),
+  ]);
+}
+
 // Double authentification obligatoire (Google Authenticator, TOTP) :
 // configuration à la première connexion, puis code à 6 chiffres à chaque
 // connexion. La session ne passe au niveau « aal2 » — seul niveau accepté
@@ -102,7 +111,20 @@ function DoubleAuthentification() {
     }
     setEnCours(true);
     setErreur(null);
-    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: facteurId, code });
+    let error: unknown = null;
+    try {
+      ({ error } = await avecDelai(supabase.auth.mfa.challengeAndVerify({ factorId: facteurId, code }), 20000));
+    } catch {
+      setEnCours(false);
+      setErreur(
+        t(
+          "Le serveur n'a pas répondu à temps. Vérifiez votre connexion puis réessayez avec le nouveau code.",
+          "The server did not respond in time. Check your connection, then try again with the new code."
+        )
+      );
+      setCode("");
+      return;
+    }
     if (error) {
       setEnCours(false);
       setCode("");
@@ -114,8 +136,10 @@ function DoubleAuthentification() {
       );
       return;
     }
-    router.replace(destination);
-    router.refresh();
+    // Navigation complète (et non router.replace + router.refresh, qui
+    // pouvaient se gêner et laisser la page sur « Vérification… ») : le
+    // serveur reçoit directement les cookies de la session « aal2 ».
+    window.location.replace(destination);
   }
 
   async function seDeconnecter() {
