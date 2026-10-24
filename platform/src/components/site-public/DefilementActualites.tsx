@@ -103,6 +103,7 @@ export function DefilementActualites({
 
   return (
     <div
+      className="min-w-0"
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
       onFocus={() => setPause(true)}

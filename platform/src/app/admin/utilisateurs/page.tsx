@@ -60,7 +60,7 @@ export default async function PageUtilisateurs() {
           </p>
 
           <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
-            <table className="w-full min-w-[640px] text-sm">
+            <table className="tableau-empilable w-full min-w-[640px] text-sm">
               <thead className="bg-paper-50 text-left text-paper-muted">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">{t("Nom", "Name")}</th>
@@ -75,11 +75,13 @@ export default async function PageUtilisateurs() {
                     <td className="px-2 py-1 font-medium text-[#1c2029]">
                       <ChampTexteModifiable utilisateurId={u.id} champ="nom_complet" valeurInitiale={u.nom_complet} />
                     </td>
-                    <td className="px-4 py-2 text-paper-muted">{u.email ?? "—"}</td>
-                    <td className="px-2 py-1 text-paper-muted">
+                    <td data-label={t("E-mail", "Email")} className="px-4 py-2 text-paper-muted break-all">
+                      {u.email ?? "—"}
+                    </td>
+                    <td data-label={t("Département", "Department")} className="px-2 py-1 text-paper-muted">
                       <ChampTexteModifiable utilisateurId={u.id} champ="departement" valeurInitiale={u.departement} />
                     </td>
-                    <td className="px-4 py-2">
+                    <td data-label={t("Rôle", "Role")} className="px-4 py-2">
                       <SelecteurRole utilisateurId={u.id} roleActuel={u.role} />
                     </td>
                   </tr>

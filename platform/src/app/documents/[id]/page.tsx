@@ -172,7 +172,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
 
             {document.description && <p className="mb-4 text-sm text-paper-muted">{document.description}</p>}
 
-            <dl className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm text-[#1c2029]">
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-0.5 text-sm text-[#1c2029] sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] sm:gap-y-2 [&>dd]:mb-2 sm:[&>dd]:mb-0 [&>dt]:text-xs sm:[&>dt]:text-sm">
               <dt className="text-paper-soft">{t("Nature", "Document type")}</dt>
               <dd>
                 {peutClasser ? <ChoixNature documentId={document.id} nature={document.nature} /> : libelleNature(document.nature, langue)}

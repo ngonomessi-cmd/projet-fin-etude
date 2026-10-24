@@ -179,7 +179,7 @@ export default async function PageDocuments({
             </Section>
           ) : (
             <>
-              <nav className="mb-5 flex gap-1 overflow-x-auto border-b border-paper-200" aria-label={t("Espaces documentaires", "Document spaces")}>
+              <nav className="mb-5 flex flex-wrap gap-x-1 border-b border-paper-200 sm:flex-nowrap sm:overflow-x-auto" aria-label={t("Espaces documentaires", "Document spaces")}>
                 {ongletsVisibles.map((o) => {
                   const actif = o.cle === vue;
                   return (

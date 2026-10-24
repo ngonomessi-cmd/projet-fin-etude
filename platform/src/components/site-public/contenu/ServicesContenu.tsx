@@ -156,17 +156,17 @@ export function ServicesContenu({ locale }: { locale: Locale }) {
 
       {/* Vous avez un projet ? */}
       <section className="bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-8 md:flex-row md:items-center md:gap-10">
-          <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-lg md:w-72">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-8 lg:flex-row lg:items-center lg:gap-10">
+          <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-lg sm:h-40 lg:h-24 lg:w-72">
             <Image src="/images/site/projet-contact.jpg" alt="" fill sizes="288px" className="object-cover" />
           </div>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <h2 className="font-serif text-2xl font-semibold text-encre-900">{t.projet.titre}</h2>
             <p className="mt-1.5 text-[15px] text-slate-500">{t.projet.description}</p>
           </div>
           <Link
             href={`${p}/contact`}
-            className="inline-flex shrink-0 items-center gap-2.5 self-start rounded-md border border-encre-900 px-8 py-3.5 text-sm font-semibold text-encre-900 transition-colors hover:bg-encre-900 hover:text-white md:self-auto"
+            className="inline-flex shrink-0 items-center gap-2.5 self-start rounded-md border border-encre-900 px-8 py-3.5 text-sm font-semibold text-encre-900 transition-colors hover:bg-encre-900 hover:text-white lg:self-auto"
           >
             {t.projet.cta}
             <IconeFleche className="h-4 w-4" />
