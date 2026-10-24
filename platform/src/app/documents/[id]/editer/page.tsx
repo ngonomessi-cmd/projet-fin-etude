@@ -4,6 +4,7 @@ import { NavBar } from "@/components/NavBar";
 import { NOM_ORGANISATION } from "@/lib/organisation";
 import type { Document } from "@/lib/types";
 import { AtelierDocument } from "./AtelierDocument";
+import { LABEL_CLASSIFICATION } from "@/lib/labels";
 
 export default async function PageEditerDocument({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,6 +29,7 @@ export default async function PageEditerDocument({ params }: { params: Promise<{
             contenuInitial={doc.contenu}
             peutEditer={Boolean(peutEditer)}
             archive={Boolean(doc.archive_le)}
+            classification={LABEL_CLASSIFICATION[doc.classification]}
             organisation={NOM_ORGANISATION}
           />
         </div>

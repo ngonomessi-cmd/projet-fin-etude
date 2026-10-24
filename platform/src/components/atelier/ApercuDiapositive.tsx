@@ -1,4 +1,5 @@
 import type { Diapositive } from "@/lib/atelier/contenus";
+import { URL_LOGO_ORGANISATION } from "@/lib/organisation";
 
 const puces = (lignes: string[] | undefined) => (lignes ?? []).map((l) => l.trim()).filter(Boolean);
 
@@ -15,6 +16,10 @@ export function ApercuDiapositive({ diapositive, organisation, numero }: { diapo
           <span className="mt-[2cqw] block h-[0.6cqw] w-[10cqw] bg-[#c8962d]" />
           {d.sousTitre && <p className="mt-[2.4cqw] text-[2.6cqw] text-white/85">{d.sousTitre}</p>}
         </div>
+        {URL_LOGO_ORGANISATION && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={URL_LOGO_ORGANISATION} alt="" className="absolute left-[6%] top-[8%] h-[13%] w-auto rounded-[0.6cqw] bg-white p-[0.8cqw]" />
+        )}
         <p className="absolute bottom-[6%] left-[6%] text-[1.5cqw] text-white/60">{organisation}</p>
         <span className="absolute inset-x-0 bottom-0 h-[4%] bg-[#c8962d]" />
       </div>
@@ -23,7 +28,11 @@ export function ApercuDiapositive({ diapositive, organisation, numero }: { diapo
   return (
     <div className="@container relative aspect-video w-full overflow-hidden rounded-md border border-paper-200 bg-white text-[#1c2029] shadow">
       <span className="absolute inset-x-0 top-0 h-[1.9%] bg-[#1f2a5c]" />
-      <p className="absolute left-[6%] right-[6%] top-[6%] truncate font-serif text-[3.9cqw] font-bold text-[#1f2a5c]">{d.titre || " "}</p>
+      {URL_LOGO_ORGANISATION && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={URL_LOGO_ORGANISATION} alt="" className="absolute right-[3.7%] top-[4%] h-[8.5%] w-auto" />
+      )}
+      <p className={`absolute left-[6%] top-[6%] truncate font-serif ${URL_LOGO_ORGANISATION ? "right-[16%]" : "right-[6%]"} text-[3.9cqw] font-bold text-[#1f2a5c]`}>{d.titre || " "}</p>
       <span className="absolute left-[6%] top-[17.6%] h-[0.8%] w-[8.3%] bg-[#c8962d]" />
       {d.disposition === "deux_colonnes" ? (
         <div className="absolute inset-x-[6%] top-[22%] grid grid-cols-2 gap-[4cqw]">

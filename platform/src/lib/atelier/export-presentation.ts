@@ -2,6 +2,7 @@ import PptxGenJS from "pptxgenjs";
 import type { Content } from "pdfmake/interfaces";
 import { normaliserPresentation, type Colonne } from "@/lib/atelier/contenus";
 import { genererPdf, type EnTetePdf } from "@/lib/atelier/pdf";
+import { ajuster } from "@/lib/atelier/logo";
 
 const MARINE = "1F2A5C";
 const OR = "C8962D";
@@ -16,12 +17,26 @@ export async function genererPptx(contenu: unknown, entete: EnTetePdf): Promise<
   pptx.author = entete.organisation;
   pptx.title = entete.titre;
 
+  // Logo : sur un cartouche blanc en haut à gauche de la diapositive de titre
+  // (fond marine), en haut à droite des diapositives de contenu.
+  const logo = entete.logo;
+  const imageLogo = logo ? `image/${logo.type === "png" ? "png" : "jpeg"};base64,${logo.donnees.toString("base64")}` : null;
+  const tailleTitre = logo ? ajuster(logo, 150, 90) : null;
+  const tailleContenu = logo ? ajuster(logo, 100, 60) : null;
+  const pouces = (px: number) => px / 96;
+
   pptx.defineSlideMaster({
     title: "TITRE",
     background: { color: MARINE },
     objects: [
       { rect: { x: 0, y: 7.2, w: "100%", h: 0.3, fill: { color: OR } } },
       { text: { text: entete.organisation, options: { x: 0.8, y: 6.6, w: 9, h: 0.4, fontSize: 12, color: "C7CCE0" } } },
+      ...(imageLogo && tailleTitre
+        ? [
+            { rect: { x: 0.65, y: 0.5, w: pouces(tailleTitre.largeur) + 0.3, h: pouces(tailleTitre.hauteur) + 0.3, fill: { color: "FFFFFF" }, rectRadius: 0.08 } },
+            { image: { data: imageLogo, x: 0.8, y: 0.65, w: pouces(tailleTitre.largeur), h: pouces(tailleTitre.hauteur) } },
+          ]
+        : []),
     ],
   });
   pptx.defineSlideMaster({
@@ -31,6 +46,9 @@ export async function genererPptx(contenu: unknown, entete: EnTetePdf): Promise<
       { rect: { x: 0, y: 0, w: "100%", h: 0.14, fill: { color: MARINE } } },
       { rect: { x: 0.8, y: 1.32, w: 1.1, h: 0.06, fill: { color: OR } } },
       { text: { text: entete.organisation, options: { x: 0.8, y: 6.95, w: 9, h: 0.35, fontSize: 10, color: "9CA3AF" } } },
+      ...(imageLogo && tailleContenu
+        ? [{ image: { data: imageLogo, x: 13.33 - 0.5 - pouces(tailleContenu.largeur), y: 0.3, w: pouces(tailleContenu.largeur), h: pouces(tailleContenu.hauteur) } }]
+        : []),
     ],
     slideNumber: { x: 12.2, y: 6.95, w: 0.8, h: 0.35, fontSize: 10, color: "9CA3AF" },
   });
@@ -49,7 +67,7 @@ export async function genererPptx(contenu: unknown, entete: EnTetePdf): Promise<
     }
 
     const s = pptx.addSlide({ masterName: "CONTENU" });
-    s.addText(d.titre || " ", { x: 0.8, y: 0.45, w: 11.7, h: 0.85, fontSize: 30, bold: true, color: MARINE, fontFace: "Georgia" });
+    s.addText(d.titre || " ", { x: 0.8, y: 0.45, w: logo ? 10.6 : 11.7, h: 0.85, fontSize: 30, bold: true, color: MARINE, fontFace: "Georgia" });
 
     if (d.disposition === "deux_colonnes") {
       const colonnes: [Colonne | undefined, number][] = [

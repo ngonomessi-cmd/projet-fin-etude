@@ -6,6 +6,7 @@ import { TableKit } from "@tiptap/extension-table";
 import TextAlign from "@tiptap/extension-text-align";
 import { useEffect } from "react";
 import type { ContenuTexte } from "@/lib/atelier/contenus";
+import { EnTeteDocument } from "@/components/atelier/EnTeteDocument";
 
 type Bouton = {
   libelle: string;
@@ -58,10 +59,12 @@ const GROUPES: Bouton[][] = [
 export function EditeurTexte({
   contenu,
   lectureSeule = false,
+  classification,
   onChange,
 }: {
   contenu: ContenuTexte;
   lectureSeule?: boolean;
+  classification?: string;
   onChange?: (contenu: ContenuTexte) => void;
 }) {
   const editeur = useEditor({
@@ -111,6 +114,7 @@ export function EditeurTexte({
       )}
       <div className={`overflow-x-auto bg-paper-100 px-2 py-6 sm:px-6 ${lectureSeule ? "rounded-lg" : "rounded-b-lg border border-t-0 border-paper-200"}`}>
         <div className="mx-auto min-h-[60vh] w-full max-w-[816px] bg-white px-8 py-10 shadow-md sm:px-16 sm:py-14">
+          <EnTeteDocument classification={classification} />
           <EditorContent editor={editeur} />
         </div>
       </div>
