@@ -73,9 +73,17 @@ export const IconePieces = (p: Props) => (
   </Svg>
 );
 
+// Contour réel du Cameroun (Natural Earth 1:50m, domaine public), simplifié
+// pour un pictogramme ; le point marque Yaoundé.
 export const IconeCarteCameroun = (p: Props) => (
   <Svg {...p}>
-    <path d="M14.5 2 15.5 5l-1.2 2 2 2.2-1 2 2.2 2.2 1 3.2-1 2.6.8 2.8H9.3L6 20.4l-.8-3.1 2.1-2.2 2.4-2.1 1.6-1.4.4-3 .2-3.2Z" />
+    <path
+      d="M4.4 17.3L5.3 14.9L6.8 13.2L7.6 12.8L8.2 13.0L8.5 12.6L9.8 13.9L11.0 12.5L10.8 12.2L11.8 10.2L12.1 9.5L12.8 9.1L13.0 8.1L13.7 7.6L14.4 5.5L15.1 4.4L16.4 3.7L16.5 2.4L15.7 1.9L15.4 0.5L16.2 0.6L17.0 1.7L17.5 3.0L17.6 5.4L18.6 6.7L15.8 6.8L15.2 7.3L17.5 9.6L18.4 11.2L17.4 13.2L16.8 14.2L16.2 14.6L16.5 15.1L16.4 16.2L16.8 17.6L17.4 18.2L17.6 19.2L19.4 21.0L19.7 22.3L19.4 23.5L18.8 23.0L17.1 22.8L16.5 22.4L10.4 22.2L10.0 22.2L9.9 22.5L7.2 22.5L6.9 22.2L7.1 20.3L6.4 19.2L6.7 19.1L6.6 18.7L6.2 18.7L6.1 19.0L5.3 18.6L5.1 17.7L4.6 17.5L4.4 17.7Z"
+      fill="currentColor"
+      fillOpacity="0.15"
+      strokeWidth="1.2"
+    />
+    <circle cx="10.3" cy="19.1" r="1.1" fill="currentColor" stroke="none" />
   </Svg>
 );
 
