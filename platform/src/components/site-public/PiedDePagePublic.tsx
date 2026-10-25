@@ -51,11 +51,20 @@ export function PiedDePagePublic() {
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-        <p>
-          © {new Date().getFullYear()} {nomOrganisation(locale)}. {t.footer.copyright}
-          <span className="mx-2 text-white/25">|</span>
-          {t.footer.republique}
-        </p>
+        <div className="space-y-1">
+          <p>
+            © {new Date().getFullYear()} {nomOrganisation(locale)}. {t.footer.copyright}
+            <span className="mx-2 text-white/25">|</span>
+            {t.footer.republique}
+          </p>
+          <p>
+            {locale === "en" ? "Design & development: RECERT" : "Conception & développement : RECERT"} (
+            <a href="https://my-recert.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">
+              my-recert.com
+            </a>
+            )
+          </p>
+        </div>
         <Link href="/login" className="inline-flex items-center gap-1.5 text-white/75 hover:text-gold-500">
           {t.footer.espaceGed}
           <IconeFleche className="h-3.5 w-3.5" />
