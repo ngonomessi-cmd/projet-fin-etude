@@ -1,211 +1,183 @@
-# GED sécurisée — KHS Bank (démonstration du Lot F)
+# GED sécurisée — Agence de Promotion des Investissements du Cameroun
 
-Application de démonstration exécutable du **Lot F — Audit de sécurité et GED sécurisée**
-(Gestion Électronique de Documents sécurisée) du dossier de mise en situation. Elle reproduit,
-avec des outils open-source (Next.js + Supabase/PostgreSQL) déployables gratuitement, les
-mécanismes de sécurité décrits dans le Lot F :
+Plateforme de **Gestion Électronique de Documents** (GED) et de **site public bilingue**
+(français / anglais) de l'Agence de Promotion des Investissements du Cameroun (API).
 
-| Lot F (dossier papier, SharePoint/Purview) | Cette démonstration (Supabase/PostgreSQL) |
+Elle réunit, dans une seule application :
+
+- le **site public** de l'Agence : accueil, missions, services, actualités, contact ;
+- l'**Espace Agents**, protégé par double authentification : documents, messagerie interne,
+  signatures, archivage, journal d'audit.
+
+La plateforme repose sur des outils libres (**Next.js**, **Supabase / PostgreSQL**) et s'héberge sur
+**Vercel**. Elle partage son code et sa base de données avec le déploiement de démonstration
+« KHS Bank » : chaque organisation est cloisonnée par la base elle-même (voir le guide
+[`docs/guide-multi-organisation.md`](docs/guide-multi-organisation.md)).
+
+Version PDF : [`docs/README-API.pdf`](docs/README-API.pdf) · Version de démonstration KHS Bank : [`README-KHS.md`](README-KHS.md)
+
+---
+
+## 1. Ce que la plateforme apporte à l'Agence
+
+| Besoin de l'Agence | Réponse de la plateforme |
 |---|---|
-| Classification public interne / restreint / confidentiel | Colonne `classification` + policies RLS |
-| RBAC (rédacteur, validateur, administrateur, auditeur) | Colonne `role` + policies RLS par rôle |
-| Workflow dépôt → vérification → validation → publication | Fonction `transition_statut_document` (transactionnelle) |
-| Journal d'audit immuable (Microsoft Purview Audit) | Table `audit_log` + déclencheur PostgreSQL interdisant toute modification/suppression |
-| DLP, étiquettes de sensibilité automatiques, Entra PIM | **Non reproduits** — spécifiques à Microsoft 365/Purview, hors périmètre d'une démonstration de code |
+| Présenter l'Agence aux investisseurs, en français et en anglais | Site public bilingue : missions, services, actualités, formulaire de contact |
+| Ne pas laisser circuler des documents sensibles | Classification *public interne / restreint / confidentiel*, appliquée par la base de données |
+| Savoir qui a fait quoi, sans pouvoir effacer les traces | Journal d'audit immuable (aucune modification ni suppression possible) |
+| Produire et valider des documents officiels | Éditeurs Word, Excel et PowerPoint en ligne, export PDF, circuit *dépôt → vérification → validation → publication* |
+| Authentifier les actes du Directeur Général | Signature numérique du DG : spécimen, cachet, QR code, page de vérification publique |
+| Conserver les archives selon des règles | Archivage scellé (empreinte SHA-256), lecture seule définitive, durées de conservation par nature de document |
+| Échanger en interne sans messagerie externe | Messagerie interne : conversations, groupes, canaux par département, pièces jointes contrôlées |
+| Protéger les comptes des agents | Double authentification obligatoire (Google Authenticator) |
 
-RLS = *Row Level Security* (sécurité au niveau ligne) : chaque requête SQL est automatiquement
-filtrée par PostgreSQL selon des règles ("policies") attachées à la table, qu'elle soit émise par
-l'application ou par n'importe quel autre client — c'est la base de données elle-même qui porte la
-sécurité, pas seulement le code de l'application.
+---
 
-## Pile technique
+## 2. Les rôles
 
-- **Next.js** (framework React, App Router) + TypeScript — hébergé sur **Vercel**.
-- **Supabase** : base **PostgreSQL** managée, **Supabase Auth** (authentification), **Supabase
-  Storage** (fichiers), toutes sécurisées par RLS.
-- **Tailwind CSS** pour la mise en forme.
+Tout nouvel agent reçoit le rôle `lecteur` (principe du moindre privilège). Seul un administrateur
+de l'Agence peut le modifier.
 
-Aucun accès direct à Vercel ou Supabase n'étant disponible depuis l'environnement ayant généré ce
-code, la création des ressources cloud ci-dessous est **à faire manuellement**, une seule fois.
+| Rôle | Ce qu'il peut faire |
+|---|---|
+| `lecteur` | Consulter les documents publiés auxquels il a droit |
+| `redacteur` | Déposer, rédiger et faire évoluer des documents de son département |
+| `validateur` | Vérifier, valider, publier et archiver les documents de son département |
+| `administrateur` | Gérer les agents et leurs rôles, le site public, les modèles, l'archivage, les signatures |
+| `auditeur` | Consulter le journal d'audit et vérifier les documents, sans jamais les modifier |
 
-## 1. Créer le projet Supabase
+Les rôles, les départements et l'organisation de chaque agent sont **appliqués par PostgreSQL**
+(*Row Level Security*) : même un accès direct à l'API de la base resterait soumis aux mêmes règles.
+Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
-1. Créer un compte sur [supabase.com](https://supabase.com) puis un nouveau projet (région Europe
-   recommandée pour la conformité RGPD).
-2. Dans **Project Settings → API**, récupérer `Project URL` et la clé `anon public`.
-3. Dans **SQL Editor**, exécuter dans l'ordre tous les fichiers de
-   [`supabase/migrations/`](supabase/migrations/) (`0001_init.sql` puis les suivants, jusqu'à
-   `0008_messagerie_interne.sql`). Chacun crée ses tables, ses `GRANT` explicites et ses policies RLS ;
-   `0001_init.sql` pose les bases (documents, audit, rôles) et `0008_messagerie_interne.sql` ajoute la
-   messagerie interne (§6 ci-dessous).
-4. (Optionnel, pour simplifier la démonstration) Dans **Authentication → Providers → Email**,
-   désactiver « Confirm email » pour pouvoir se connecter immédiatement après l'inscription, sans
-   boîte mail à vérifier.
+---
 
-### Créer le premier compte Administrateur
+## 3. Fonctionnalités de l'Espace Agents
 
-Tout nouveau compte est créé avec le rôle `lecteur` par défaut (principe du moindre privilège), et
-seul un administrateur peut promouvoir un autre utilisateur (fonction `changer_role_utilisateur`).
-Pour amorcer le tout premier compte administrateur :
+### 3.1 Documents et ateliers documentaires
+- Référence unique attribuée par la base (ex. `API-2026-000123`), jamais saisie ni modifiable.
+- Chaque document porte une **nature** (note de service, courrier, contrat…) qui fixe sa durée de
+  conservation.
+- Un **brouillon** est privé : seuls son auteur et les personnes avec qui il l'a partagé le voient.
+- Éditeurs **Word, Excel, PowerPoint** dans le navigateur, modèles bilingues, export en PDF.
+- **Nouvelle version** (v2, v3…) pour corriger un document publié ou archivé.
+- **Recherche plein texte** (titre, référence, description, contenu) limitée à ce que l'agent a le
+  droit de lire.
 
-1. Créer un compte normalement depuis la page `/login` de l'application (bouton « Créer un
-   compte »).
-2. Dans Supabase, **Table Editor → profiles**, repérer la ligne correspondante et modifier
-   manuellement `role` en `administrateur` (ou, en **SQL Editor** :
-   `update public.profiles set role = 'administrateur' where id = '<uuid_de_l_utilisateur>';`).
-3. Se reconnecter : ce compte peut désormais attribuer tous les rôles depuis la page
-   « Utilisateurs » de l'application.
+### 3.2 Signature du Directeur Général
+- Spécimen de signature et cachet enregistrés une fois, protégés.
+- Le PDF signé porte un **bloc de signature** et un **QR code** unique.
+- Page publique **/verifier** : toute personne (partenaire, investisseur, administration) peut
+  contrôler l'authenticité d'un document en saisissant le code ou en déposant le fichier.
+- Qualités, titulaires et délégations de signature gérés par l'administrateur ; registre complet.
+- La signature exige une seconde authentification récente.
 
-## 2. Lancer en local
+### 3.3 Archivage réglementé
+- Archivage d'un document publié par le validateur ou l'administrateur, ou automatique après
+  *N* mois (12 par défaut, réglable).
+- Un document archivé est en **lecture seule définitive**, même pour l'administrateur ; son
+  empreinte SHA-256 est scellée à l'archivage.
 
+### 3.4 Messagerie interne
+- Conversations privées, groupes de travail, canaux officiels et canaux par département.
+- Accusés de lecture, présence, transfert, sourdine, recherche.
+- Analyse antivirus des pièces jointes ; alertes par e-mail ; rétention de 3 ans.
+
+### 3.5 Site public et communication
+- Pages **Accueil, Missions, Services, Actualités, Contact**, en français et en anglais.
+- L'administrateur publie les actualités (avec image) et lit les messages reçus par le formulaire de
+  contact, depuis l'Espace Agents.
+
+---
+
+## 4. Sécurité — les points à retenir
+
+- **Aucune logique d'autorisation dans le code de l'application** : c'est PostgreSQL qui filtre les
+  résultats selon le rôle, le département et l'organisation.
+- **Double authentification obligatoire** (TOTP) : sans code à 6 chiffres, un agent ne peut rien lire
+  ni modifier, même en appelant directement l'API.
+- **Journal d'audit immuable** : un déclencheur refuse toute modification ou suppression, y compris
+  avec la clé de service.
+- **Fichiers** : chaque téléchargement passe par une URL signée valable 5 minutes, jamais par un lien
+  public permanent.
+- **Cloisonnement par organisation** : la valeur est posée par la base, jamais par le navigateur.
+- **Droits minimaux** : chaque table déclare ses `GRANT` explicites (jamais de `DELETE` sur les
+  documents ni sur le journal d'audit).
+
+---
+
+## 5. Mise en service
+
+### 5.1 Supabase (projet partagé)
+1. Dans le projet Supabase existant, ouvrir **SQL Editor** et exécuter dans l'ordre les fichiers de
+   `supabase/migrations/` (`0001` à `0028`). Ne rejouer que ceux qui manquent.
+2. **Authentication → URL Configuration → Redirect URLs** : ajouter l'adresse du site de l'Agence
+   (`https://api-cameroun-ged.vercel.app/**`) à côté de celle des autres organisations.
+3. **Authentication → Multi-Factor** : « TOTP (App Authenticator) » activé.
+
+### 5.2 Premier administrateur de l'Agence
+1. Créer un compte depuis la page `/login` du site de l'Agence (le profil reçoit automatiquement
+   l'organisation `API`).
+2. Le promouvoir une seule fois dans **SQL Editor** :
+   ```sql
+   update public.profiles set role = 'administrateur'
+   where id = (select id from auth.users where email = 'adresse@exemple.cm');
+   ```
+3. Il gère ensuite lui-même les rôles des agents, depuis la page *Utilisateurs*.
+
+### 5.3 Vercel (projet de l'Agence)
+Importer le dépôt GitHub, définir `Root Directory` sur `platform`, puis renseigner :
+
+| Variable | Valeur pour l'Agence |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | celles du projet Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | clé secrète du projet Supabase (jamais exposée au navigateur) |
+| `CRON_SECRET` | valeur aléatoire longue (purge nocturne) |
+| `NEXT_PUBLIC_SITE_URL` | `https://api-cameroun-ged.vercel.app` |
+| `NEXT_PUBLIC_ORG_SIGLE` | `API` |
+| `NEXT_PUBLIC_ORG_NOM` / `NEXT_PUBLIC_ORG_NOM_EN` | nom de l'Agence en français / en anglais |
+| `NEXT_PUBLIC_ORG_LOGO_URL` | `/logos/logo-agence-investissement-cameroun.png` |
+| `NEXT_PUBLIC_ORG_COULEUR_PRIMAIRE` / `_ACCENT` | bleu et jaune du logo |
+| `NEXT_PUBLIC_ORG_COULEUR_RUBAN` | vert, rouge, jaune (couleurs du drapeau) |
+| `NEXT_PUBLIC_ORG_SITE_PUBLIC` | `true` |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | optionnel : alertes par e-mail |
+| `CLOUDMERSIVE_API_KEY` | optionnel : seconde couche antivirus |
+
+> Les variables `NEXT_PUBLIC_*` sont figées à la construction : après modification, **redéployer**.
+
+### 5.4 Lancer en local
 ```bash
 cd platform
 npm install
-cp .env.local.example .env.local   # puis renseigner NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY
-npm run dev
+cp .env.local.example .env.local   # renseigner les variables ci-dessus
+npm run dev                        # http://localhost:3000
 ```
 
-L'application est alors disponible sur http://localhost:3000.
+---
 
-## 3. Déployer sur Vercel
+## 6. Parcours de recette conseillé
 
-```bash
-npm install -g vercel   # si la CLI (interface en ligne de commande) n'est pas déjà installée
-cd platform
-vercel link
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-vercel --prod
-```
+1. Créer un rédacteur et un validateur dans le même département, un rédacteur dans un autre, un
+   auditeur ; se promouvoir administrateur.
+2. Le rédacteur dépose un document **confidentiel** : seuls lui, le validateur de son département,
+   l'administrateur et l'auditeur le voient.
+3. Le rédacteur le soumet ; le validateur le **valide** puis le **publie**.
+4. L'administrateur fait **signer** le document par le Directeur Général ; vérifier le QR code sur
+   la page publique `/verifier`.
+5. Le validateur **archive** le document ; constater qu'aucune modification n'est plus possible.
+6. Consulter le **journal d'audit** : chaque étape y figure, sans possibilité de l'effacer.
+7. Avec un compte d'une autre organisation, vérifier qu'aucune donnée de l'Agence n'est visible.
 
-Ou, de façon équivalente sans CLI : importer le dépôt GitHub dans le tableau de bord Vercel, définir
-`Root Directory` sur `platform`, puis renseigner les deux mêmes variables d'environnement dans
-**Project Settings → Environment Variables** avant de déployer.
+---
 
-## 4. Scénario de démonstration (parcours de test)
+## 7. Limites assumées
 
-1. Créer deux rédacteurs dans des départements différents (ex. « Conformité » et « Crédit »), un
-   validateur dans « Conformité », un auditeur, et promouvoir soi-même en administrateur (§1).
-2. Rédacteur « Conformité » dépose un document classé **confidentiel** → visible uniquement par
-   lui-même, le validateur de son département, l'administrateur et l'auditeur (vérifiable en se
-   connectant avec le rédacteur « Crédit », qui ne doit rien voir).
-3. Rédacteur soumet le document (« Déposer pour vérification ») → statut `en_verification`.
-4. Validateur « Conformité » le voit apparaître, le **valide**, puis le **publie**.
-5. Une fois publié, un document **restreint** devient visible à tout le département « Conformité »
-   (mais pas « Crédit ») ; un document **public interne** devient visible à tous les départements.
-6. Le **journal d'audit** (`/audit`) trace chaque dépôt, validation, rejet et publication, et
-   l'administrateur ne peut ni le modifier ni le supprimer (à tester directement en SQL Editor : une
-   tentative d'`UPDATE`/`DELETE` sur `audit_log` échoue toujours, même avec la clé `service_role`).
-
-## 5. Points de sécurité à souligner lors de la soutenance
-
-- **Aucune logique d'autorisation dans le code applicatif** : la liste de documents (`/documents`)
-  exécute toujours la même requête `select * from documents`, et c'est PostgreSQL qui renvoie un
-  résultat différent selon le rôle connecté — même un accès direct à l'API Supabase (hors de
-  l'application) resterait soumis aux mêmes règles.
-- **GRANT explicites** : conformément au changement Supabase du 30 octobre (plus d'exposition
-  automatique des tables à l'API de données), chaque table du schéma `public` déclare ses propres
-  `GRANT`, au minimum nécessaire (jamais de `DELETE` sur `documents`/`audit_log`, par exemple).
-- **Défense en profondeur** sur le workflow : les transitions de statut passent par la fonction
-  `transition_statut_document`, qui vérifie la légalité métier de la transition, mais reste exécutée
-  avec les droits de l'utilisateur appelant (`SECURITY INVOKER`) — les policies RLS s'appliquent donc
-  aussi à elle, pas seulement au code applicatif.
-- **Immuabilité du journal d'audit** garantie par un déclencheur PostgreSQL `BEFORE UPDATE OR DELETE`
-  qui refuse systématiquement, y compris pour une clé de service qui contournerait RLS.
-- **Fichiers** : chaque téléchargement passe par une URL signée à durée de vie limitée (5 minutes),
-  jamais par une URL publique permanente.
-
-## 6. Messagerie interne
-
-Fonctionnalité ajoutée (`/messagerie`), construite en deux passes à partir de deux notes
-d'inspiration différentes :
-
-1. **`0008_messagerie_interne.sql`** — d'après la note « La messagerie interne » de l'Espace Agents
-   de la Cour suprême du Cameroun : conversations privées, groupes de travail (60 agents au plus),
-   canaux officiels, mention « Urgent », correction des messages pendant 15 minutes, archivage,
-   confidentialité stricte.
-2. **`0010_messagerie_fonctionnalites_avancees.sql`** — d'après une note décrivant la messagerie
-   d'un autre site (équipe interne séparée des visiteurs via une table `equipe_membres`, pages
-   `/equipe/...`) : accusés de lecture façon WhatsApp, présence, transfert, sourdine, recherche et
-   filtres, analyse antivirus des pièces jointes, alertes e-mail en quasi temps réel, rétention à 3
-   ans, panneau Détails.
-
-Dans les deux cas, la hiérarchie d'autorisation et l'architecture des comptes sont **adaptées** au
-RBAC plat de KHS Bank plutôt que recopiées telles quelles — KHS Bank n'a pas de table de membres
-d'équipe séparée (tous les comptes `profiles` sont déjà des agents internes) ni de pages `/equipe/...`
-(on reste sur `/messagerie` et `/admin/utilisateurs`). Correspondance retenue pour la hiérarchie à 4
-niveaux de la seconde note :
-
-| Niveau de la note source | Rôle KHS Bank |
-|---|---|
-| 1 Direction | `administrateur` (écrit à tous) |
-| 2 Responsable de service | `validateur` (écrit à tous) |
-| 3 Collaborateur | `redacteur` (tous sauf `administrateur`) |
-| 4 Stagiaire | `lecteur` (son département, hors `administrateur`) |
-| — | `auditeur` : propre au RBAC documentaire KHS Bank (Lot F), reste à part — jamais initiateur, répond seulement aux conversations où il est invité |
-
-Le détail de chaque adaptation est commenté en tête des fichiers de migration correspondants.
-
-### Mise en service
-
-1. Exécuter dans l'ordre `0008_messagerie_interne.sql`,
-   `0009_correctif_recursion_participants.sql` (corrige une récursion RLS infinie sur
-   `conversation_participants`, constatée à l'usage réel) puis
-   `0010_messagerie_fonctionnalites_avancees.sql`. La première crée les tables, le bucket de
-   stockage `messagerie-pieces-jointes`, le canal « Toute la banque » et un canal par département
-   (peuplés automatiquement selon le `departement`/`role` de chaque profil — aucune liste à tenir à
-   jour) ; la troisième ajoute la hiérarchie à 4 niveaux, les accusés de lecture, la présence, le
-   transfert, la sourdine et porte la rétention par défaut à 3 ans.
-2. Pour le **temps réel** (nouveaux messages et accusés de lecture affichés sans recharger la
-   page), vérifier dans **Database → Replication** que les tables `messages` et `message_statuts`
-   sont bien dans la publication `supabase_realtime` (les migrations le font déjà via
-   `alter publication`, cette étape sert juste à le confirmer visuellement si besoin).
-3. Pour la **purge automatique** (nuit à 3h30, cf. `vercel.json`) et les **alertes par courriel**
-   (envoyées à l'envoi de chaque message, cf. ci-dessous), renseigner dans Vercel
-   `SUPABASE_SERVICE_ROLE_KEY` — seule façon de lire l'adresse e-mail d'un destinataire
-   (`auth.admin.getUserById`) — et `CRON_SECRET` pour la route de purge (cf. `.env.local.example`).
-4. Les alertes par courriel elles-mêmes nécessitent en plus `RESEND_API_KEY`, `RESEND_FROM_EMAIL` et
-   `NEXT_PUBLIC_SITE_URL` (compte gratuit sur [resend.com](https://resend.com)) : **aucun
-   fournisseur de courriel n'est branché par défaut** dans cet environnement de démonstration — sans
-   ces variables, l'envoi de messages continue de fonctionner mais aucun courriel n'est réellement
-   envoyé. Limitation assumée, à annoncer en soutenance comme les autres simplifications du projet.
-5. Optionnel : `CLOUDMERSIVE_API_KEY` (offre gratuite, 800 analyses/mois sur
-   [cloudmersive.com](https://cloudmersive.com)) ajoute une seconde couche d'analyse antivirus des
-   pièces jointes, en plus des contrôles intégrés (toujours actifs, cf. ci-dessous).
-
-### Accusés de lecture, présence et antivirus — comment ça marche concrètement
-
-- **Coches façon WhatsApp** (✓ envoyé, ✓✓ grises = reçu, ✓✓ bleues = lu) : une ligne
-  `message_statuts` par (message, destinataire) est semée automatiquement à l'envoi (déclencheur
-  PostgreSQL). « Reçu » est marqué par une écoute Supabase Realtime **globale**, montée une seule
-  fois pour toute la session (`PresenceMessagerie.tsx`, dans `NavBar`) — pas seulement dans la
-  conversation ouverte ; RLS s'applique au flux Realtime exactement comme à une requête normale,
-  cet abonnement sans filtre ne reçoit donc que les messages des conversations dont l'agent est déjà
-  participant. « Lu » est marqué quand la conversation est affichée et l'onglet visible
-  (`document.visibilityState === "visible"`). Une relecture de secours toutes les 4 secondes
-  complète l'abonnement Realtime dans le fil de discussion, au cas où un évènement serait manqué.
-- **Présence** : le même composant signale toutes les 30 secondes (`profiles.derniere_activite_at`)
-  tant que l'onglet est visible — sert à la fois au statut « reçu » (approché) et à la règle
-  « hors ligne depuis plus de 2 minutes » des alertes e-mail.
-- **Antivirus** (`lib/messagerie/antivirus.ts`) : contrôles intégrés toujours actifs (type réel du
-  fichier comparé au type déclaré via les octets de signature, exécutables cachés même sous une
-  extension trompeuse, macro Office détectée dans un fichier `.docx`/`.xlsx`/`.pptx`, JavaScript
-  détecté dans un PDF), puis Cloudmersive Virus Scan API en complément si la clé est configurée.
-  Ce ne sont pas des signatures virales complètes : les contrôles intégrés sont ciblés, pas un
-  moteur antivirus généraliste.
-
-### Simplifications assumées (à annoncer en soutenance)
-
-- **Hiérarchie à 4 niveaux sans équivalent exact pour `lecteur`/`redacteur`** : la note source
-  distingue Collaborateur/Stagiaire par fonction réelle dans l'entreprise, KHS Bank les distingue
-  par rôle RBAC documentaire (Lot F) — rapprochement raisonnable mais pas une correspondance
-  métier garantie à 100 %.
-- **Transfert de message limité au texte** : les pièces jointes ne sont pas reprises (aurait
-  demandé de dupliquer l'objet dans Supabase Storage vers un nouveau chemin, hors scope de cette
-  version).
-- **Ajout de participants à un groupe uniquement à sa création**, pas d'ajout a posteriori.
-- **Présence approchée par heartbeat** (30 s), pas une vraie détection de déconnexion instantanée
-  (WebSocket `presence` de Supabase Realtime aurait été plus précis, mais plus complexe à mettre en
-  cohérence avec la règle simple « hors ligne depuis plus de 2 minutes »).
-- **Recherche de conversations côté client** (texte déjà chargé), pas une recherche plein texte
-  côté base — suffisant au volume d'une démonstration, pas forcément au-delà.
+- **Pas de filtrage DLP automatique** (étiquettes de sensibilité automatiques, Microsoft Purview) :
+  la classification est posée par l'agent et appliquée par la base.
+- **Antivirus ciblé** : les contrôles intégrés (type réel du fichier, exécutables cachés, macros,
+  JavaScript dans un PDF) complètent Cloudmersive mais ne remplacent pas un moteur généraliste.
+- **Transfert de message limité au texte** ; **ajout de participants à un groupe uniquement à la
+  création**.
+- **Une adresse e-mail = un compte** : l'authentification est partagée entre organisations.
+- **Hébergement** : actuellement sur Vercel et Supabase (cloud). Le rapatriement au Cameroun fait
+  l'objet des propositions d'architecture A, B et C présentées à l'Agence.
