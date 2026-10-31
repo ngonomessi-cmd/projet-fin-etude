@@ -47,7 +47,8 @@ export function ChampTexteModifiable({
         onChange={(e) => setValeur(e.target.value)}
         onBlur={enregistrerSiModifie}
         disabled={enCours}
-        className="w-full rounded-md border border-transparent px-2 py-1 text-sm hover:border-slate-300 focus:border-slate-400 focus:bg-white focus:outline-none disabled:opacity-50"
+        title={valeur}
+        className="min-w-full max-w-none [field-sizing:content] rounded-md border border-transparent px-2 py-1 text-sm hover:border-slate-300 focus:border-slate-400 focus:bg-white focus:outline-none disabled:opacity-50"
       />
       {erreur && <p className="mt-0.5 text-xs text-red-600">{erreur}</p>}
     </div>
