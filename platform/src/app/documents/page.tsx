@@ -2,7 +2,6 @@ import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { DocumentsParDepartement } from "./DocumentsParDepartement";
-import { GenererFichiersFictifsBouton } from "./GenererFichiersFictifsBouton";
 import { TableauDocuments } from "./TableauDocuments";
 import { BarreRecherche, type FiltresRecherche } from "./BarreRecherche";
 import { Archives, grouperParDepartement, type Ligne } from "./Archives";
@@ -134,11 +133,6 @@ export default async function PageDocuments({
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {profil.role === "administrateur" && (
-                <GenererFichiersFictifsBouton
-                  nombreSansFichier={documents.filter((d) => !d.storage_path && !d.format_atelier && !d.archive_le).length}
-                />
-              )}
               {producteur && (
                 <Link
                   href="/documents/new"
