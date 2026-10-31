@@ -37,6 +37,25 @@ function IconeCourriel() {
   );
 }
 
+function IconeBouclier() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-7 w-7 text-gold-500" aria-hidden="true" {...trait}>
+      <path d="M12 3 5 5.8v5.6c0 4.4 2.9 8.2 7 9.6 4.1-1.4 7-5.2 7-9.6V5.8L12 3Z" />
+      <rect x="9.2" y="10.8" width="5.6" height="4.2" rx="0.8" />
+      <path d="M10.4 10.8V9.6a1.6 1.6 0 0 1 3.2 0v1.2" />
+    </svg>
+  );
+}
+
+function EtoileDrapeau({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round">
+      <polygon points="50,4 61.8,36.6 96.5,37.8 69,59 78.8,92.2 50,72.8 21.2,92.2 31,59 3.5,37.8 38.2,36.6" />
+      <polygon points="50,20 56,38 75,38.7 60,50 65.4,68.4 50,57.6 34.6,68.4 40,50 25,38.7 44,38" opacity="0.5" />
+    </svg>
+  );
+}
+
 export function PiedDePagePublic() {
   const pathname = usePathname();
   const locale: Locale = pathname.startsWith("/en") ? "en" : "fr";
@@ -50,21 +69,20 @@ export function PiedDePagePublic() {
       liens: [
         { href: p || "/", label: t.nav.accueil },
         { href: `${p}/missions`, label: t.nav.missions },
-        { href: `${p}/actualites`, label: t.nav.actualites },
       ],
     },
     {
       titre: t.footer.investirTitre,
       liens: [
         { href: `${p}/services`, label: t.nav.services },
-        { href: `${p}/contact`, label: t.footer.ecrire },
+        { href: `${p}/actualites`, label: t.nav.actualites },
       ],
     },
     {
       titre: t.footer.pratiqueTitre,
       liens: [
         { href: "/verifier", label: t.footer.verifier },
-        { href: "/login", label: t.footer.espaceGed },
+        { href: `${p}/contact`, label: t.footer.ecrire },
       ],
     },
   ];
@@ -137,7 +155,33 @@ export function PiedDePagePublic() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <Link
+          href="/login"
+          className="group relative block overflow-hidden rounded-lg border border-white/15 bg-gradient-to-r from-white/[0.09] via-white/[0.04] to-white/[0.02] transition hover:border-gold-500/60"
+        >
+          <RubanOrganisation className="h-1! rounded-none!" />
+          <EtoileDrapeau className="pointer-events-none absolute right-40 top-1/2 hidden h-64 w-64 -translate-y-1/2 text-gold-500/15 transition group-hover:text-gold-500/25 sm:block" />
+          <div className="relative flex flex-col gap-6 px-6 py-7 sm:px-9 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-5">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-gold-500/50 bg-encre-950/60">
+                <IconeBouclier />
+              </span>
+              <div>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-gold-500">{t.footer.gedSurtitre}</p>
+                <h2 className="mt-1.5 font-serif text-2xl font-medium text-white">{t.footer.espaceGed}</h2>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/70">{t.footer.gedDescription}</p>
+              </div>
+            </div>
+            <span className="relative inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-sm bg-gold-500 px-6 py-3 text-sm font-semibold text-encre-950 transition group-hover:bg-gold-600 md:self-center">
+              {t.footer.gedCta}
+              <IconeFleche className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </span>
+          </div>
+        </Link>
+      </div>
+
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <div className="space-y-1">
           <p>
             © {new Date().getFullYear()} {nomOrganisation(locale)}. {t.footer.copyright}
@@ -152,10 +196,6 @@ export function PiedDePagePublic() {
             )
           </p>
         </div>
-        <Link href="/login" className="inline-flex items-center gap-1.5 text-white/75 hover:text-gold-500">
-          {t.footer.espaceGed}
-          <IconeFleche className="h-3.5 w-3.5" />
-        </Link>
       </div>
     </footer>
   );
