@@ -23,7 +23,7 @@ export function NomsDepartementsEn({ lignes }: { lignes: { departement: string; 
   }
 
   return (
-    <section className="mt-6 rounded-lg border border-paper-200 bg-white p-4 shadow-sm">
+    <section className="mt-6 max-w-3xl rounded-lg border border-paper-200 bg-white p-4 shadow-sm">
       <h2 className="mb-1 font-serif text-base font-semibold">{t("Départements en anglais", "Departments in English")}</h2>
       <p className="mb-3 text-xs text-paper-muted">
         {t(
