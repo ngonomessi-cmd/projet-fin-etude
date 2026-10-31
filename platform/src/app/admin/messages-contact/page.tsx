@@ -42,7 +42,7 @@ export default async function PageMessagesContact() {
       <NavBar />
       <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
         <div className="mx-auto max-w-4xl">
-          <h1 className="mb-1 font-serif text-2xl font-semibold">{t("Demandes du site", "Website requests")}</h1>
+          <h1 className="mb-1 font-serif text-2xl font-semibold">{t("Sollicitations", "Enquiries")}</h1>
           <p className="mb-6 text-sm text-paper-muted">
             {t(
               "Demandes envoyées depuis le formulaire « Nous contacter » du site public",
@@ -53,7 +53,7 @@ export default async function PageMessagesContact() {
 
           {messages.length === 0 ? (
             <p className="rounded-lg border border-paper-200 bg-white p-6 text-sm text-paper-muted">
-              {t("Aucune demande pour l'instant.", "No requests yet.")}
+              {t("Aucune sollicitation pour l'instant.", "No enquiries yet.")}
             </p>
           ) : (
             <ul className="space-y-4">
