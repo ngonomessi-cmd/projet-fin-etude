@@ -61,3 +61,16 @@ export const MENTION_CONNEXION_EN =
 // par défaut : la démonstration académique KHS Bank garde son comportement
 // actuel (/ → /documents) sans aucun changement.
 export const SITE_PUBLIC_ACTIF = process.env.NEXT_PUBLIC_ORG_SITE_PUBLIC === "true";
+
+// Coordonnées affichées dans le pied de page du site public. Chaque champ est
+// facultatif : une ligne vide n'est pas affichée. Par défaut, seul le siège
+// (Yaoundé) et les horaires usuels de l'administration apparaissent — à
+// remplacer par les coordonnées réelles via les variables d'environnement.
+export const CONTACT_ORGANISATION = {
+  adresse: process.env.NEXT_PUBLIC_ORG_ADRESSE?.trim() ?? "Yaoundé, Cameroun",
+  telephone: process.env.NEXT_PUBLIC_ORG_TELEPHONE?.trim() ?? "",
+  email: process.env.NEXT_PUBLIC_ORG_EMAIL?.trim() ?? "",
+  jours: process.env.NEXT_PUBLIC_ORG_JOURS?.trim() || "Lundi au vendredi",
+  joursEn: process.env.NEXT_PUBLIC_ORG_JOURS_EN?.trim() || "Monday to Friday",
+  heures: process.env.NEXT_PUBLIC_ORG_HEURES?.trim() || "7h30 – 15h30",
+};
