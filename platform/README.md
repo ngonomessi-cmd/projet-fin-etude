@@ -85,7 +85,7 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
 ### 3.5 Site public et communication
 - Pages **Accueil, Missions, Services, Actualités, Contact**, en français et en anglais.
-- L'administrateur publie les actualités (avec image) et lit les messages reçus par le formulaire de
+- L'administrateur publie les actualités (avec image) et lit le courrier du public reçu par le formulaire de
   contact, depuis l'Espace Agents.
 
 ---

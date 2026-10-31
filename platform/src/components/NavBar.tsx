@@ -20,7 +20,7 @@ const liensNavigation = (t: Traduire): Lien[] => [
   ...(SITE_PUBLIC_ACTIF
     ? ([
         { href: "/admin/actualites", label: t("Actualités", "News"), roles: ["administrateur"], icone: "actualites" },
-        { href: "/admin/messages-contact", label: t("Messages reçus", "Inbox"), roles: ["administrateur"], icone: "contact" },
+        { href: "/admin/messages-contact", label: t("Courrier du public", "Public correspondence"), roles: ["administrateur"], icone: "contact" },
       ] satisfies Lien[])
     : []),
 ];
