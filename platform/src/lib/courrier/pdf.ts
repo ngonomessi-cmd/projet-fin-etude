@@ -59,8 +59,8 @@ export async function genererRecepisse(d: DonneesRecepisse, langue: Langue): Pro
     tableInfo(lignes),
     {
       text: t(
-        "Ce récépissé atteste l'enregistrement du courrier. Il n'engage pas l'Agence sur son contenu, que le service du courrier n'a pas ouvert. Conservez-le pour tout suivi auprès du service du courrier, en rappelant le numéro d'ordre et le code de suivi.",
-        "This receipt certifies that the mail was registered. It does not commit the Agency on its content, which the mail service has not opened. Keep it for any follow-up with the mail service, quoting the sequence number and tracking code."
+        "Ce récépissé atteste l'enregistrement du courrier. Il n'engage pas l'organisation sur son contenu, que le service du courrier n'a pas ouvert. Conservez-le pour tout suivi auprès du service du courrier, en rappelant le numéro d'ordre et le code de suivi.",
+        "This receipt certifies that the mail was registered. It does not commit the organisation on its content, which the mail service has not opened. Keep it for any follow-up with the mail service, quoting the sequence number and tracking code."
       ),
       fontSize: 9, color: GRIS, margin: [0, 22, 0, 0],
     },

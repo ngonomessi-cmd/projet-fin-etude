@@ -6,7 +6,9 @@ de l'Agence de Promotion des Investissements du Cameroun (organisation `API`). I
 qui partent, et la durée pendant laquelle on les conserve.
 
 Il est **désactivé par défaut** : seul un déploiement qui définit `NEXT_PUBLIC_ORG_COURRIER=true`
-affiche le menu « Courrier ». Le déploiement KHS Bank reste inchangé.
+affiche le menu « Courrier ». Il fonctionne pour l'**API** et pour **KHS Bank** : les deux organisations
+partagent le code et la base, mais chacune a ses propres registres, sa numérotation, ses rôles de courrier
+et ses catégories de conservation, sans rien voir de l'autre.
 
 ## 1. Les rôles
 
@@ -66,18 +68,25 @@ dans la table `categories_conservation` sans toucher au code) :
 ## 4. Mise en service
 
 1. Dans Supabase (**SQL Editor**), exécuter **une seule fois, dans l'ordre**, après la migration 0028 :
-   `0029_courrier_arrivee.sql`, `0030_courrier_depart.sql`, `0031_courrier_conservation.sql`.
-2. Dans le projet Vercel de l'Agence : `NEXT_PUBLIC_ORG_COURRIER=true`, puis redéployer.
+   `0029_courrier_arrivee.sql`, `0030_courrier_depart.sql`, `0031_courrier_conservation.sql`
+   et `0032_courrier_categories_khs.sql` (catégories de conservation de KHS Bank).
+2. Dans le projet Vercel de chaque organisation qui l'utilise (API, KHS Bank) :
+   `NEXT_PUBLIC_ORG_COURRIER=true`, puis redéployer.
 3. **Utilisateurs** : donner « Agent du courrier » aux agents du service, « Chef du courrier » à son responsable.
 4. Essayer avec deux comptes : enregistrer un pli pour un département, numériser, déclarer la remise,
    accuser réception avec le validateur du département, exporter le registre.
 
-Pour une autre organisation : ajouter ses catégories dans `categories_conservation` (une ligne par
-catégorie, avec son sigle).
+Catégories de départ de KHS Bank (propositions, à faire valider par la conformité) : correspondance courante
+(5 ans, destruction), contrats et décisions (10 ans, versement), dossiers de clients et de crédit (10 ans,
+versement), pièces confidentielles (durée fixée pièce par pièce).
+
+Pour une troisième organisation : ajouter ses catégories dans `categories_conservation` (une ligne par
+catégorie, avec son sigle), comme le fait la migration 0032.
 
 ## 5. Tests réalisés
 
-- **Base de données** : 147 contrôles sur un PostgreSQL jetable (désignation, numérotation, cloisonnement
+- **Base de données** : 147 contrôles pour l'API et 15 pour KHS (numérotation indépendante, cloisonnement,
+  catégories propres) sur un PostgreSQL jetable (désignation, numérotation, cloisonnement
   entre organisations, plis personnels, archive, imputation, correction, annulation, registres, départ,
   conservation, gel, destruction, double authentification).
 - **Navigateur** : parcours complet en 33 vérifications (enregistrement, numérisation, remise, accusé,

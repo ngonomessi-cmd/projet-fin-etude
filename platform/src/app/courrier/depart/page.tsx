@@ -75,8 +75,8 @@ export default async function Departs({ searchParams }: Props) {
         <p className="max-w-3xl text-sm text-paper-muted">
           {service
             ? t(
-                "Les lettres qui partent de l'Agence : demandes d'expédition à traiter, départs à expédier, accusés de réception à obtenir.",
-                "Letters leaving the Agency: dispatch requests to process, mail to send, acknowledgements of receipt to obtain."
+                "Les lettres qui partent de l'organisation : demandes d'expédition à traiter, départs à expédier, accusés de réception à obtenir.",
+                "Letters leaving the organisation: dispatch requests to process, mail to send, acknowledgements of receipt to obtain."
               )
             : t(
                 "Les lettres que vous avez fait expédier, ou celles de votre département. Pour faire expédier un document, ouvrez-le (il doit être validé) puis cliquez sur « Transmettre au service du courrier ».",
