@@ -74,3 +74,7 @@ export const CONTACT_ORGANISATION = {
   joursEn: process.env.NEXT_PUBLIC_ORG_JOURS_EN?.trim() || "Monday to Friday",
   heures: process.env.NEXT_PUBLIC_ORG_HEURES?.trim() || "7h30 – 15h30",
 };
+
+// Active le service du courrier (arrivée, départ, conservation) : menu, pages
+// et pastille. Désactivé par défaut — le déploiement KHS Bank reste inchangé.
+export const COURRIER_ACTIF = process.env.NEXT_PUBLIC_ORG_COURRIER === "true";

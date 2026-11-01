@@ -8,6 +8,8 @@ import { ChampTexteModifiable } from "./ChampTexteModifiable";
 import { NomsDepartementsEn } from "./NomsDepartementsEn";
 import { EtatMfa } from "./EtatMfa";
 import { PLATEFORME_BILINGUE } from "@/lib/i18n/plateforme";
+import { COURRIER_ACTIF } from "@/lib/organisation";
+import { SelecteurRoleCourrier } from "./SelecteurRoleCourrier";
 import { chargerNomsDepartementsEn } from "@/lib/i18n/serveur";
 import { traductionServeur } from "@/lib/i18n/serveur";
 
@@ -63,13 +65,14 @@ export default async function PageUtilisateurs() {
           </p>
 
           <div className="overflow-x-auto rounded-lg border border-paper-200 bg-white shadow-sm">
-            <table className="tableau-empilable w-full min-w-[860px] text-sm">
+            <table className="tableau-empilable w-full min-w-[980px] text-sm">
               <thead className="bg-paper-50 text-left text-paper-muted">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">{t("Nom", "Name")}</th>
                   <th className="px-4 py-2.5 font-medium">{t("E-mail", "Email")}</th>
                   <th className="px-4 py-2.5 font-medium">{t("Département", "Department")}</th>
                   <th className="px-4 py-2.5 font-medium">{t("Rôle", "Role")}</th>
+                  {COURRIER_ACTIF && <th className="px-4 py-2.5 font-medium">{t("Service du courrier", "Mail service")}</th>}
                   <th className="px-4 py-2.5 font-medium">{t("Double authentification", "Two-factor auth.")}</th>
                 </tr>
               </thead>
@@ -88,6 +91,11 @@ export default async function PageUtilisateurs() {
                     <td data-label={t("Rôle", "Role")} className="px-4 py-2">
                       <SelecteurRole utilisateurId={u.id} roleActuel={u.role} />
                     </td>
+                    {COURRIER_ACTIF && (
+                      <td data-label={t("Service du courrier", "Mail service")} className="px-4 py-2">
+                        <SelecteurRoleCourrier utilisateurId={u.id} roleActuel={u.role_courrier ?? null} estMoi={u.id === user!.id} />
+                      </td>
+                    )}
                     <td data-label={t("Double authentification", "Two-factor auth.")} className="px-4 py-2">
                       <EtatMfa utilisateurId={u.id} nom={u.nom_complet} actif={mfaActif.get(u.id) ?? false} estMoi={u.id === user!.id} />
                     </td>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/Badge";
 import { COULEUR_CLASSIFICATION, ROLES_PRODUCTEURS, libelleAction, libelleNature, libelles, statutAffiche } from "@/lib/labels";
 import { LABEL_FORMAT_COURT, libelleFormat } from "@/lib/atelier/contenus";
 import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
+import { COURRIER_ACTIF } from "@/lib/organisation";
 import type { Document, EntreeAudit, PartageDocument, Profil } from "@/lib/types";
 import { BoutonsTransition } from "./BoutonsTransition";
 import { PanneauPartage, type ConversationPubliable, type PersonneContactable } from "./PanneauPartage";
@@ -344,6 +345,15 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
             />
 
             <ActionsCycleVie documentId={document.id} peutArchiver={peutArchiver} peutReviser={peutReviser} archive={archive} />
+
+            {COURRIER_ACTIF && finalise && !archive && (
+              <Link
+                href={`/courrier/depart/nouveau?document=${document.id}`}
+                className="inline-flex rounded-md border border-paper-200 px-4 py-2 text-sm font-medium text-[#1c2029] hover:bg-paper-50"
+              >
+                {t("Transmettre au service du courrier", "Pass to the mail service")}
+              </Link>
+            )}
           </div>
 
           {afficherSignature && (

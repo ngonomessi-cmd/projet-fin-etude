@@ -8,11 +8,18 @@ type Lien = {
   href: string;
   label: string;
   roles?: RoleUtilisateur[];
-  icone: "documents" | "messagerie" | "audit" | "utilisateurs" | "actualites" | "contact" | "modeles" | "archives" | "signatures";
+  icone: "documents" | "messagerie" | "audit" | "utilisateurs" | "actualites" | "contact" | "modeles" | "archives" | "signatures" | "courrier";
   badge?: number;
 };
 
 const ICONES: Record<Lien["icone"], React.ReactNode> = {
+  courrier: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3.5 7 8.5 6 8.5-6" />
+      <path d="M15 16h3" />
+    </svg>
+  ),
   signatures: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
       <path d="M3 17c2.5-4 4.5-9 6-9s-1 8 1 8 3-5 4.5-5S15 15 17 15s2-2 4-2" />

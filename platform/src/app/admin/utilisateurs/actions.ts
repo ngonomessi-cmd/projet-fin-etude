@@ -29,6 +29,17 @@ export async function changerRoleAction(
   return { erreur: null };
 }
 
+// Service du courrier (migration 0029) : « agent », « chef » ou aucun rôle. La fonction
+// definir_role_courrier revérifie que l'appelant est administrateur de la même organisation
+// et qu'il ne se désigne pas lui-même.
+export async function definirRoleCourrierAction(utilisateurId: string, role: "agent" | "chef" | null): Promise<{ erreur: string | null }> {
+  const supabase = await creerClientServeur();
+  const { error } = await supabase.rpc("definir_role_courrier", { p_profil: utilisateurId, p_role: role });
+  if (error) return { erreur: traduireErreur(error.message, await langueServeur()) };
+  revalidatePath("/admin/utilisateurs");
+  return { erreur: null };
+}
+
 export type ResultatModificationProfil = { erreur: string | null };
 
 // Appelle modifier_profil_utilisateur (SECURITY DEFINER), qui revérifie

@@ -3,7 +3,7 @@ import type { Profil } from "@/lib/types";
 import { type Lien } from "@/components/NavLinks";
 import { PresenceMessagerie } from "@/components/PresenceMessagerie";
 import { BarreLateraleResponsive } from "@/components/BarreLateraleResponsive";
-import { SITE_PUBLIC_ACTIF } from "@/lib/organisation";
+import { COURRIER_ACTIF, SITE_PUBLIC_ACTIF } from "@/lib/organisation";
 import { traductionServeur } from "@/lib/i18n/serveur";
 import type { Traduire } from "@/lib/i18n/plateforme";
 
@@ -11,6 +11,8 @@ const liensNavigation = (t: Traduire): Lien[] => [
   { href: "/documents", label: "Documents", icone: "documents" },
   { href: "/messagerie", label: t("Messagerie", "Messaging"), icone: "messagerie" },
   { href: "/signatures", label: t("Signatures", "Signatures"), roles: ["redacteur", "validateur", "administrateur", "auditeur"], icone: "signatures" },
+  // Service du courrier : seulement sur un déploiement qui l'active (KHS Bank inchangé).
+  ...(COURRIER_ACTIF ? ([{ href: "/courrier", label: t("Courrier", "Mail"), icone: "courrier" }] satisfies Lien[]) : []),
   { href: "/audit", label: t("Journal d'audit", "Audit log"), icone: "audit" },
   { href: "/admin/utilisateurs", label: t("Utilisateurs", "Users"), roles: ["administrateur"], icone: "utilisateurs" },
   { href: "/admin/modeles", label: t("Modèles", "Templates"), roles: ["administrateur"], icone: "modeles" },
@@ -33,15 +35,22 @@ export async function NavBar() {
 
   let profil: Profil | null = null;
   let messagesNonLus = 0;
+  let pastilleCourrier = 0;
   if (user) {
     const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
     profil = data as Profil | null;
     const { data: compteur } = await supabase.rpc("compter_messages_non_lus");
     messagesNonLus = compteur ?? 0;
+    if (COURRIER_ACTIF) {
+      const { data: courrier } = await supabase.rpc("pastilles_courrier");
+      pastilleCourrier = typeof courrier === "number" ? courrier : 0;
+    }
   }
 
   const { t } = await traductionServeur();
-  const liens = liensNavigation(t).map((lien) => (lien.href === "/messagerie" ? { ...lien, badge: messagesNonLus } : lien));
+  const liens = liensNavigation(t).map((lien) =>
+    lien.href === "/messagerie" ? { ...lien, badge: messagesNonLus } : lien.href === "/courrier" ? { ...lien, badge: pastilleCourrier } : lien
+  );
 
   return (
     <>

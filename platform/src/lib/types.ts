@@ -18,6 +18,8 @@ export type Profil = {
   created_at: string;
   derniere_activite_at?: string | null;
   email?: string | null;
+  /** Service du courrier : « agent » ou « chef » (migration 0029), sinon null. */
+  role_courrier?: "agent" | "chef" | null;
 };
 
 export type Document = {

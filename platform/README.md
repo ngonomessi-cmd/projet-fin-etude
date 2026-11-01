@@ -30,6 +30,7 @@ Version PDF : [`docs/README-API.pdf`](docs/README-API.pdf) · Version de démons
 | Conserver les archives selon des règles | Archivage scellé (empreinte SHA-256), lecture seule définitive, durées de conservation par nature de document |
 | Échanger en interne sans messagerie externe | Messagerie interne : conversations, groupes, canaux par département, pièces jointes contrôlées |
 | Protéger les comptes des agents | Double authentification obligatoire (Google Authenticator) |
+| Suivre le courrier physique arrivée et départ | Service du courrier : registres numérotés, numérisation, remise avec accusé, bordereaux, conservation (voir [`docs/service-du-courrier.md`](docs/service-du-courrier.md)) |
 
 ---
 
@@ -83,7 +84,13 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 - Accusés de lecture, présence, transfert, sourdine, recherche.
 - Analyse antivirus des pièces jointes ; alertes par e-mail ; rétention de 3 ans.
 
-### 3.5 Site public et communication
+### 3.5 Service du courrier
+- **Arrivée** : enregistrement sans ouvrir le pli (`ARR-2026-000123`), récépissé PDF, numérisation (scanner ou photos de téléphone), remise, accusé de réception, imputation.
+- **Départ** : demande d'expédition depuis un document validé (la lettre signée est jointe), numéro `DEP-…`, bordereau d'envoi, accusés de réception, relances.
+- **Conservation** : catégories et durées, gel, propositions de destruction validées par le chef du courrier. Aucune destruction automatique.
+- Registres exportables en PDF et en Excel ; menu « Courrier » avec pastille du courrier à traiter.
+
+### 3.6 Site public et communication
 - Pages **Accueil, Missions, Services, Actualités, Contact**, en français et en anglais.
 - L'administrateur publie les actualités (avec image) et lit le courrier du public reçu par le formulaire de
   contact, depuis l'Espace Agents.
@@ -110,7 +117,7 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
 ### 5.1 Supabase (projet partagé)
 1. Dans le projet Supabase existant, ouvrir **SQL Editor** et exécuter dans l'ordre les fichiers de
-   `supabase/migrations/` (`0001` à `0028`). Ne rejouer que ceux qui manquent.
+   `supabase/migrations/` (`0001` à `0031`). Ne rejouer que ceux qui manquent.
 2. **Authentication → URL Configuration → Redirect URLs** : ajouter l'adresse du site de l'Agence
    (`https://api-cameroun-ged.vercel.app/**`) à côté de celle des autres organisations.
 3. **Authentication → Multi-Factor** : « TOTP (App Authenticator) » activé.
@@ -140,6 +147,7 @@ Importer le dépôt GitHub, définir `Root Directory` sur `platform`, puis rense
 | `NEXT_PUBLIC_ORG_COULEUR_PRIMAIRE` / `_ACCENT` | bleu et jaune du logo |
 | `NEXT_PUBLIC_ORG_COULEUR_RUBAN` | vert, rouge, jaune (couleurs du drapeau) |
 | `NEXT_PUBLIC_ORG_SITE_PUBLIC` | `true` |
+| `NEXT_PUBLIC_ORG_COURRIER` | `true` (service du courrier, migrations 0029 à 0031) |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | optionnel : alertes par e-mail |
 | `CLOUDMERSIVE_API_KEY` | optionnel : seconde couche antivirus |
 
