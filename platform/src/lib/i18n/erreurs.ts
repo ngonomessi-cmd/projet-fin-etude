@@ -88,6 +88,14 @@ const TRADUCTIONS: [RegExp, string][] = [
   [/^Cette demande n'est plus en attente$/, "This request is no longer pending."],
   [/^Élément introuvable.*$/, "Item not found, frozen or already processed."],
   [/^Cet élément n'est pas arrivé à échéance, ou il est gelé$/, "This item has not reached its deadline, or it is frozen."],
+  // Décharge d'un départ (migration 0033)
+  [/^La date de remise doit se situer entre l'expédition et maintenant$/, "The delivery date must fall between dispatch and now."],
+  [/^Indiquez le nom de la personne qui a signé la décharge$/, "Enter the name of the person who signed the receipt."],
+  [/^Mode de remise inconnu$/, "Unknown delivery method."],
+  [/^Destinataire introuvable ou accusé déjà enregistré$/, "Recipient not found, or acknowledgement already recorded."],
+  [/^Ce départ n'est pas expédié$/, "This outgoing mail has not been sent yet."],
+  [/^Le motif doit compter au moins 10 caractères$/, "The reason must be at least 10 characters long."],
+  [/^Un accusé de réception se dépose avec la décharge du destinataire$/, "An acknowledgement of receipt is filed with the recipient's signed receipt."],
   // Signatures (migration 0028)
   [/^Seul un administrateur désigne le titulaire d'une qualité de signature\.$/, "Only an administrator can appoint the holder of a signing capacity."],
   [/^Qualité de signature inconnue\.$/, "Unknown signing capacity."],

@@ -51,12 +51,12 @@ export async function GET(requete: Request) {
     organisation: nomOrganisation(langue),
     titre,
     feuille: t("Départs", "Outgoing"),
-    entetes: [t("Numéro", "Number"), t("Enregistré le", "Registered"), t("Expédié le", "Sent"), t("Destinataire(s)", "Recipient(s)"), t("Ampliations", "Copies"), t("Objet", "Subject"), t("Département", "Department"), t("Demandeur", "Requester"), t("Mode d'envoi", "Method"), t("Pièces", "Items"), t("Urgent", "Urgent"), t("Statut", "Status"), t("AR demandé", "Ack. requested"), t("Accusés", "Acks"), t("En réponse à", "In reply to"), t("Signature", "Signature")],
-    largeurs: [18, 12, 12, 34, 28, 36, 26, 24, 16, 8, 8, 14, 10, 10, 18, 22],
+    entetes: [t("Numéro", "Number"), t("Enregistré le", "Registered"), t("Expédié le", "Sent"), t("Destinataire(s)", "Recipient(s)"), t("Ampliations", "Copies"), t("Objet", "Subject"), t("Département", "Department"), t("Demandeur", "Requester"), t("Mode d'envoi", "Method"), t("Pièces", "Items"), t("Urgent", "Urgent"), t("Statut", "Status"), t("AR demandé", "Ack. requested"), t("Accusés", "Acks"), t("En réponse à", "In reply to"), t("Signature", "Signature"), t("Preuves de réception", "Proof of receipt")],
+    largeurs: [18, 12, 12, 34, 28, 36, 26, 24, 16, 8, 8, 14, 10, 10, 18, 22, 30],
     lignes: lignes.map((l) => [
       l.numero, formaterDate(l.enregistre_le, langue), formaterDate(l.expedie_le, langue), sur(l.destinataires), sur(l.ampliations), sur(l.objet), sur(dep(l.departement)), sur(l.demandeur),
       en(MODES_ENVOI[l.mode_envoi] ?? [l.mode_envoi, l.mode_envoi], langue), String(l.nb_pieces), l.urgent ? t("oui", "yes") : "", en(STATUTS_DEPART[l.statut]?.libelle ?? [l.statut, l.statut], langue),
-      l.ar_demande ? t("oui", "yes") : "", l.ar_demande ? (l.accuses ?? "") : "", l.reponse_a ?? "", l.signature_numero ?? "",
+      l.ar_demande ? t("oui", "yes") : "", l.ar_demande ? (l.accuses ?? "") : "", l.reponse_a ?? "", l.signature_numero ?? "", l.preuves ?? "",
     ]),
   });
   return new Response(new Uint8Array(classeur), {

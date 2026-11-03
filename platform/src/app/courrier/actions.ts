@@ -51,7 +51,8 @@ export async function enregistrerCourrier(donnees: FormData) {
 // Le navigateur dépose le PDF directement dans l'archive privée (avec la session de l'agent) ;
 // le serveur relit le fichier, le contrôle, calcule son empreinte réelle puis l'enregistre.
 
-export type EntreePiece = { id: string; chemin: string; nom: string; nature: string };
+/** `extra` : champs du formulaire (décharge d'un départ : destinataire, date de remise, signataire, mode). */
+export type EntreePiece = { id: string; chemin: string; nom: string; nature: string; extra?: Record<string, string> };
 
 export async function enregistrerPiece(entree: EntreePiece): Promise<{ erreur?: string }> {
   const { id, chemin } = entree;

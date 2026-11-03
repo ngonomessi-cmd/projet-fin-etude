@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { PDFDocument } from "pdf-lib";
 import { boutonDiscret, boutonPrincipal, carte } from "@/components/courrier/Alerte";
 import { useTraduction } from "@/components/i18n/Langue";
@@ -64,15 +64,26 @@ type Props = {
   natures: [Nature] | [Nature, Nature];
   titre: string;
   aide: string;
+  /** Champs supplémentaires (inputs avec un attribut name) : leurs valeurs sont transmises dans `extra`. */
+  champs?: ReactNode;
+  /** Contrôle des champs avant l'envoi : renvoie une clé de message d'erreur, ou null si tout va bien. */
+  validerChamps?: (extra: Record<string, string>) => string | null;
+  /** Message affiché après un enregistrement réussi. */
+  messageSucces?: string;
+  /** Section sans titre de niveau 2 ni grande marge (quand le composant est inclus dans un autre bloc). */
+  compact?: boolean;
 };
 
-export function NumerisationCourrier({ id, numero, enregistrer, natures, titre, aide }: Props) {
+export function NumerisationCourrier({ id, numero, enregistrer, natures, titre, aide, champs, validerChamps, messageSucces, compact = false }: Props) {
   const routeur = useRouter();
   const { t, langue } = useTraduction();
   const [pages, setPages] = useState<Page[]>([]);
   const [message, setMessage] = useState<{ type: "ok" | "erreur"; texte: string } | null>(null);
   const [enCours, setEnCours] = useState(false);
   const entreePdf = useRef<HTMLInputElement>(null);
+  // Identifiants uniques : plusieurs formulaires peuvent coexister sur une page (un par destinataire).
+  const uid = useId().replace(/:/g, "");
+  const zoneChamps = useRef<HTMLDivElement>(null);
 
   const ajouterImages = (liste: FileList | null) => {
     if (!liste) return;
@@ -91,30 +102,36 @@ export function NumerisationCourrier({ id, numero, enregistrer, natures, titre, 
       return suite;
     });
 
-  const deposer = async (nom: string, blob: Blob, nature: string) => {
+  const deposer = async (nom: string, blob: Blob, nature: string, extra: Record<string, string>) => {
     if (blob.size > TAILLE_MAX_SCAN) throw new Error("fichier_gros");
     const chemin = `${id}/${crypto.randomUUID()}-${nomSur(nom) || "scan.pdf"}`;
     const { error } = await creerClientNavigateur().storage.from("courrier").upload(chemin, blob, { contentType: "application/pdf", upsert: false });
     if (error) throw new Error("depot");
-    const resultat = await enregistrer({ id, chemin, nom, nature });
+    const resultat = await enregistrer({ id, chemin, nom, nature, ...(champs ? { extra } : {}) });
     if (resultat.erreur) throw new Error(resultat.erreur);
   };
 
   const envoyer = async (nature: string) => {
     const pdfs = [...(entreePdf.current?.files ?? [])].filter((f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf"));
     if (pdfs.length === 0 && pages.length === 0) return setMessage({ type: "erreur", texte: en(MESSAGES_COURRIER_ERREUR.fichier_vide, langue) });
+    const extra: Record<string, string> = {};
+    zoneChamps.current?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]").forEach((c) => { extra[c.name] = c.value; });
+    const probleme = validerChamps?.(extra);
+    if (probleme) return setMessage({ type: "erreur", texte: en(MESSAGES_COURRIER_ERREUR[probleme] ?? MESSAGES_COURRIER_ERREUR.generique, langue) });
+    // Une décharge = un seul fichier : plusieurs fichiers, ou une photo et un PDF, sont refusés (l'accusé n'est enregistré qu'une fois).
+    if (champs && pdfs.length + (pages.length > 0 ? 1 : 0) > 1) return setMessage({ type: "erreur", texte: en(MESSAGES_COURRIER_ERREUR.fichier_unique, langue) });
     setEnCours(true);
     setMessage(null);
     try {
-      for (const f of pdfs) await deposer(f.name, f, nature);
+      for (const f of pdfs) await deposer(f.name, f, nature, extra);
       if (pages.length > 0) {
         const octets = await assembler(pages);
-        await deposer(`${numero}-${nature}.pdf`, new Blob([octets as BlobPart], { type: "application/pdf" }), nature);
+        await deposer(`${numero}-${nature}.pdf`, new Blob([octets as BlobPart], { type: "application/pdf" }), nature, extra);
       }
       pages.forEach((p) => URL.revokeObjectURL(p.apercu));
       setPages([]);
       if (entreePdf.current) entreePdf.current.value = "";
-      setMessage({ type: "ok", texte: t("Le scan est archivé avec son empreinte numérique.", "The scan is archived with its digital fingerprint.") });
+      setMessage({ type: "ok", texte: messageSucces ?? t("Le scan est archivé avec son empreinte numérique.", "The scan is archived with its digital fingerprint.") });
       routeur.refresh();
     } catch (e) {
       const cle = e instanceof Error ? e.message : "generique";
@@ -125,23 +142,25 @@ export function NumerisationCourrier({ id, numero, enregistrer, natures, titre, 
   };
 
   return (
-    <section className={`${carte} mt-6 p-5`} aria-labelledby="titre-numerisation">
-      <h2 id="titre-numerisation" className="font-serif text-base font-semibold">{titre}</h2>
+    <section className={compact ? "mt-3 rounded-md border border-paper-200 bg-white p-4" : `${carte} mt-6 p-5`} aria-labelledby={`${uid}-titre-numerisation`}>
+      <h3 id={`${uid}-titre-numerisation`} className="font-serif text-base font-semibold">{titre}</h3>
       <p className="mt-1 text-sm text-paper-muted">{aide}</p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor={`fichier-pdf-${id}`} className="mb-1.5 block text-sm font-medium">{t("Fichier du scanner (PDF)", "Scanner file (PDF)")}</label>
-          <input ref={entreePdf} id={`fichier-pdf-${id}`} type="file" accept="application/pdf" multiple className="block w-full text-sm" />
+          <label htmlFor={`${uid}-fichier-pdf`} className="mb-1.5 block text-sm font-medium">{t("Fichier du scanner (PDF)", "Scanner file (PDF)")}</label>
+          <input ref={entreePdf} id={`${uid}-fichier-pdf`} type="file" accept="application/pdf" multiple={!champs} className="block w-full text-sm" />
         </div>
         <div>
           <span className="mb-1.5 block text-sm font-medium">{t("Photos avec le téléphone", "Photos with a phone")}</span>
-          <label htmlFor={`photo-${id}`} className={`${boutonDiscret} cursor-pointer`}>{t("Photographier une page", "Photograph a page")}</label>
-          <input id={`photo-${id}`} type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => { ajouterImages(e.target.files); e.target.value = ""; }} />
-          <label htmlFor={`galerie-${id}`} className="ml-2 cursor-pointer text-sm text-navy-900 underline underline-offset-4">{t("ou choisir des images", "or choose images")}</label>
-          <input id={`galerie-${id}`} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { ajouterImages(e.target.files); e.target.value = ""; }} />
+          <label htmlFor={`${uid}-photo`} className={`${boutonDiscret} cursor-pointer`}>{t("Photographier une page", "Photograph a page")}</label>
+          <input id={`${uid}-photo`} type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => { ajouterImages(e.target.files); e.target.value = ""; }} />
+          <label htmlFor={`${uid}-galerie`} className="ml-2 cursor-pointer text-sm text-navy-900 underline underline-offset-4">{t("ou choisir des images", "or choose images")}</label>
+          <input id={`${uid}-galerie`} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { ajouterImages(e.target.files); e.target.value = ""; }} />
         </div>
       </div>
+
+      {champs && <div ref={zoneChamps} className="mt-4">{champs}</div>}
 
       {pages.length > 0 && (
         <ol className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label={t("Pages à assembler", "Pages to assemble")}>

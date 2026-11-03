@@ -10,6 +10,11 @@ export function cleErreur(erreur: ErreurBase): string {
   const m = erreur?.message ?? "";
   if (m.includes("expéditeur")) return "expediteur";
   if (m.includes("pli personnel")) return "personnel";
+  if (m.includes("date de remise")) return "decharge_date";
+  if (m.includes("personne qui a signé")) return "decharge_nom";
+  if (m.includes("Mode de remise")) return "decharge_mode";
+  if (m.includes("accusé déjà enregistré")) return "decharge_deja";
+  if (m.includes("au moins 10 caractères")) return "motif_decharge";
   if (m.includes("motif")) return "motif";
   if (/Département (destinataire|émetteur) inconnu/.test(m)) return "departement";
   if (/Indiquez de 1 à 20 destinataires|au moins un destinataire|doit avoir un nom/.test(m)) return "destinataire";

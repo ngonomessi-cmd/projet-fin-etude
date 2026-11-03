@@ -170,12 +170,13 @@ export async function expedier(d: FormData) {
   if (!id) redirect("/courrier/depart");
   return appeler(id, "expedier_depart", {}, "expedie");
 }
-export async function accuserDestinataire(d: FormData) {
+// Accusé de réception sans décharge : exception réservée au chef du courrier (la base le vérifie), motif obligatoire.
+export async function accuserSansDecharge(d: FormData) {
   const id = uuid(d, "id");
   const destinataire = uuid(d, "destinataire");
   if (!id) redirect("/courrier/depart");
   if (!destinataire) aller(id, "erreur", "invalide");
-  return appeler(id, "accuser_destinataire_depart", { p_destinataire: destinataire }, "accuse");
+  return appeler(id, "accuser_sans_decharge_depart", { p_destinataire: destinataire, p_motif: texte(d, "motif", 500) }, "accuse_sans_decharge");
 }
 export async function annulerDepart(d: FormData) {
   const id = uuid(d, "id");
@@ -191,7 +192,8 @@ export async function enregistrerPieceDepart(entree: EntreePiece): Promise<{ err
   const { id, chemin } = entree;
   if (!UUID.test(id) || typeof chemin !== "string") return { erreur: "generique" };
   if (!chemin.startsWith(`${id}/`) || chemin.length > 300 || chemin.includes("..") || !chemin.toLowerCase().endsWith(".pdf")) return { erreur: "refus" };
-  const nature = ["lettre", "lettre_signee", "accuse", "annexe"].includes(entree.nature) ? entree.nature : "annexe";
+  // « accuse » n'est plus déposable ici : un accusé ne se prouve que par la décharge d'un destinataire (enregistrerDecharge).
+  const nature = ["lettre", "lettre_signee", "annexe"].includes(entree.nature) ? entree.nature : "annexe";
   const nom = String(entree.nom ?? "").split(/[\\/]/).pop()!.trim().slice(0, 200) || "scan.pdf";
 
   const supabase = await creerClientServeur();
@@ -206,5 +208,57 @@ export async function enregistrerPieceDepart(entree: EntreePiece): Promise<{ err
   });
   if (error) return { erreur: cleErreur(error) === "generique" ? "depot" : "refus" };
   revalidatePath(`/courrier/depart/${id}`);
+  return {};
+}
+
+// --- Décharge d'un destinataire --------------------------------------------------------------------------------
+// Le navigateur dépose le PDF (scanner, ou photos assemblées) dans l'archive privée ; ici le serveur le relit, le
+// contrôle et calcule l'empreinte réelle, puis la base enregistre en une seule opération le fichier, l'accusé du
+// destinataire, la date de remise, le signataire et le mode de remise.
+
+const MODES_REMISE = ["main", "coursier", "huissier", "poste", "autre"];
+
+/** « 2026-11-03T14:05 » (heure de Douala, UTC+1 toute l'année) → instant ISO ; null si la valeur n'a pas cette forme. */
+function remiseEnInstant(valeur: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(valeur)) return null;
+  const instant = new Date(`${valeur}:00+01:00`);
+  return Number.isNaN(instant.getTime()) ? null : instant.toISOString();
+}
+
+export async function enregistrerDecharge(entree: EntreePiece): Promise<{ erreur?: string }> {
+  const { id, chemin } = entree;
+  if (!UUID.test(id) || typeof chemin !== "string") return { erreur: "generique" };
+  if (!chemin.startsWith(`${id}/`) || chemin.length > 300 || chemin.includes("..") || !chemin.toLowerCase().endsWith(".pdf")) return { erreur: "refus" };
+  const extra = entree.extra ?? {};
+  const destinataire = String(extra.destinataire ?? "");
+  const remisLe = remiseEnInstant(String(extra.remis_le ?? ""));
+  const recuPar = String(extra.recu_par ?? "").trim().slice(0, 200);
+  const qualite = String(extra.recu_qualite ?? "").trim().slice(0, 200);
+  const mode = String(extra.mode ?? "");
+  if (!UUID.test(destinataire)) return { erreur: "invalide" };
+  if (!remisLe) return { erreur: "decharge_date" };
+  if (!recuPar) return { erreur: "decharge_nom" };
+  if (!MODES_REMISE.includes(mode)) return { erreur: "decharge_mode" };
+  const nom = String(entree.nom ?? "").split(/[\\/]/).pop()!.trim().slice(0, 200) || "decharge.pdf";
+
+  const supabase = await creerClientServeur();
+  const { data: fichier, error: erreurLecture } = await supabase.storage.from("courrier").download(chemin);
+  if (erreurLecture || !fichier) return { erreur: "depot" };
+  const octets = await fichier.arrayBuffer();
+  const probleme = await problemePdf(octets, nom);
+  if (probleme) return { erreur: probleme };
+
+  const { error } = await supabase.rpc("enregistrer_decharge_depart", {
+    p_depart: id, p_destinataire: destinataire, p_chemin: chemin, p_nom: nom, p_taille: fichier.size, p_empreinte: await empreinteSha256(octets),
+    p_remis_le: remisLe, p_recu_par: recuPar, p_qualite: qualite || null, p_mode: mode,
+  });
+  if (error) {
+    // Dépôt refusé : on tente de ne pas laisser d'orphelin dans l'archive (la règle de suppression du stockage peut s'y opposer).
+    await supabase.storage.from("courrier").remove([chemin]);
+    const cle = cleErreur(error);
+    return { erreur: cle === "generique" ? "depot" : cle };
+  }
+  revalidatePath(`/courrier/depart/${id}`);
+  revalidatePath("/courrier/depart");
   return {};
 }
