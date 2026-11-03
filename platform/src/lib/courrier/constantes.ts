@@ -96,6 +96,17 @@ export const MESSAGES_COURRIER_ERREUR: Record<string, Paire> = {
   fichier_vide: ["Choisissez au moins un fichier ou une photo.", "Choose at least one file or photo."],
   fichier_gros: ["Le fichier dépasse la taille maximale de 25 Mo.", "The file exceeds the maximum size of 25 MB."],
   fichier_type: ["Seuls les fichiers PDF et les photos sont acceptés.", "Only PDF files and photos are accepted."],
+  decharge_date: [
+    "La date de remise doit se situer entre l'expédition et maintenant.",
+    "The delivery date must fall between dispatch and now.",
+  ],
+  decharge_nom: ["Indiquez le nom de la personne qui a signé la décharge.", "Enter the name of the person who signed the receipt."],
+  decharge_mode: ["Choisissez le mode de remise.", "Choose how it was delivered."],
+  decharge_deja: ["Ce destinataire a déjà un accusé de réception.", "This recipient already has an acknowledgement of receipt."],
+  fichier_unique: [
+    "Une décharge se dépose en un seul fichier : un PDF, ou une série de photos assemblées (pas les deux).",
+    "A receipt is a single file: one PDF, or a set of photos assembled together (not both).",
+  ],
   fichier_suspect: [
     "Le fichier contient des éléments actifs (script, lancement) : il est refusé.",
     "The file contains active elements (script, launch action): it is rejected.",
@@ -131,7 +142,7 @@ export const MOUVEMENTS_DEPART: Record<string, Paire> = {
   refuse: ["Demande renvoyée", "Request returned"],
   expedie: ["Expédié", "Sent"],
   accuse: ["Accusé de réception enregistré", "Acknowledgement of receipt recorded"],
-  accuse_scanne: ["Accusé de réception numérisé", "Acknowledgement of receipt scanned"],
+  accuse_scanne: ["Décharge numérisée", "Receipt scanned"],
   piece: ["Pièce jointe", "Attachment"],
   annule: ["Annulé", "Cancelled"],
 };
@@ -150,6 +161,8 @@ export const MESSAGES_DEPART_OK: Record<string, Paire> = {
   refuse: ["La demande est renvoyée au demandeur avec votre motif.", "The request has been returned to the requester with your reason."],
   expedie: ["Départ marqué comme expédié.", "Outgoing mail marked as sent."],
   accuse: ["Accusé de réception enregistré.", "Acknowledgement of receipt recorded."],
+  accuse_decharge: ["Décharge enregistrée : le destinataire est accusé.", "Receipt recorded: the recipient is acknowledged."],
+  accuse_sans_decharge: ["Accusé enregistré sans décharge, avec votre motif.", "Acknowledgement recorded without a receipt, with your reason."],
   annule: ["Le départ est annulé (il reste visible dans le registre).", "The outgoing mail is cancelled (it stays visible in the register)."],
   piece: ["Le fichier est archivé avec son empreinte numérique.", "The file is archived with its digital fingerprint."],
 };
@@ -163,6 +176,7 @@ export const MESSAGES_DEPART_ERREUR: Record<string, Paire> = {
   document: ["Choisissez un document validé auquel vous avez accès.", "Choose a validated document you have access to."],
   departement: ["Choisissez le département émetteur.", "Choose the sending department."],
   motif: MESSAGES_COURRIER_ERREUR.motif,
+  motif_decharge: ["Le motif doit compter au moins 10 caractères.", "The reason must be at least 10 characters long."],
   invalide: MESSAGES_COURRIER_ERREUR.invalide,
   refus: ["Action non autorisée, ou le départ n'est plus dans l'état attendu.", "Action not allowed, or the outgoing mail is no longer in the expected state."],
   generique: MESSAGES_COURRIER_ERREUR.generique,

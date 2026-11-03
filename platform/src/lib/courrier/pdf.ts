@@ -107,7 +107,7 @@ export async function genererRegistrePdf(lignes: LigneRegistre[], titre: string,
 export type DonneesRecepisseDepart = {
   numero: string | null; objet: string; departement: string; demandeur: string; mode: string; nbPieces: number; urgent: boolean;
   demandeLe: string; enregistreLe: string | null; expedieLe: string | null; statut: string; signature: string | null; reponseA: string | null;
-  destinataires: { nom: string; adresse: string | null; role: string; statut: string; accuseLe: string | null }[];
+  destinataires: { nom: string; adresse: string | null; role: string; statut: string; accuseLe: string | null; remisLe?: string | null; preuve?: string | null }[];
 };
 
 export async function genererRecepisseDepart(d: DonneesRecepisseDepart, langue: Langue, dep: (n: string) => string): Promise<Buffer> {
@@ -128,14 +128,19 @@ export async function genererRecepisseDepart(d: DonneesRecepisseDepart, langue: 
   ];
   const destinataires: Content = {
     table: {
-      headerRows: 1, widths: ["*", "*", 70, 80],
+      headerRows: 1, widths: ["*", "*", 65, 100],
       body: [
         [t("Destinataire", "Recipient"), t("Adresse", "Address"), t("Rôle", "Role"), t("Accusé de réception", "Acknowledgement")].map((x): TableCell => ({ text: x, bold: true, fontSize: 9, fillColor: FOND_ENTETE })),
         ...d.destinataires.map((x): TableCell[] => [
           { text: x.nom, fontSize: 9.5 },
           { text: x.adresse ?? "—", fontSize: 9 },
           { text: x.role === "ampliation" ? t("Ampliation", "Copy") : t("Destinataire", "Recipient"), fontSize: 9 },
-          { text: x.accuseLe ? formaterDate(x.accuseLe, langue) : x.role === "ampliation" ? "—" : t("En attente", "Pending"), fontSize: 9 },
+          {
+            text: x.accuseLe
+              ? `${formaterDate(x.remisLe ?? x.accuseLe, langue)}${x.preuve === "decharge" ? `\n${t("Décharge signée", "Signed receipt")}` : x.preuve === "sans_decharge" ? `\n${t("Sans décharge", "No receipt")}` : ""}`
+              : x.role === "ampliation" ? "—" : t("En attente", "Pending"),
+            fontSize: 9,
+          },
         ]),
       ],
     },
@@ -189,7 +194,7 @@ export async function genererBordereau(lignes: LigneBordereau[], titre: string, 
 export type LigneRegistreDepart = {
   numero: string; enregistre_le: string; expedie_le: string | null; objet: string; departement: string; demandeur: string;
   mode_envoi: string; nb_pieces: number; urgent: boolean; destinataires: string | null; ampliations: string | null; statut: string;
-  ar_demande: boolean; accuses: string | null; reponse_a: string | null; signature_numero: string | null;
+  ar_demande: boolean; accuses: string | null; reponse_a: string | null; signature_numero: string | null; preuves?: string | null;
 };
 
 export async function genererRegistreDepartPdf(lignes: LigneRegistreDepart[], titre: string, auteur: string, langue: Langue, dep: (n: string) => string): Promise<Buffer> {

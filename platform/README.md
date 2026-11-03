@@ -86,7 +86,7 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
 ### 3.5 Service du courrier
 - **Arrivée** : enregistrement sans ouvrir le pli (`ARR-2026-000123`), récépissé PDF, numérisation (scanner ou photos de téléphone), remise, accusé de réception, imputation.
-- **Départ** : demande d'expédition depuis un document validé (la lettre signée est jointe), numéro `DEP-…`, bordereau d'envoi, accusés de réception, relances.
+- **Départ** : demande d'expédition depuis un document validé (la lettre signée est jointe), numéro `DEP-…`, bordereau d'envoi, relances, et accusé de réception prouvé par une **décharge** (fichier, date réelle de remise, signataire ; exception motivée du chef du courrier).
 - **Conservation** : catégories et durées, gel, propositions de destruction validées par le chef du courrier. Aucune destruction automatique.
 - Registres exportables en PDF et en Excel ; menu « Courrier » avec pastille du courrier à traiter.
 
@@ -117,7 +117,7 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
 ### 5.1 Supabase (projet partagé)
 1. Dans le projet Supabase existant, ouvrir **SQL Editor** et exécuter dans l'ordre les fichiers de
-   `supabase/migrations/` (`0001` à `0032`). Ne rejouer que ceux qui manquent.
+   `supabase/migrations/` (`0001` à `0033`). Ne rejouer que ceux qui manquent.
 2. **Authentication → URL Configuration → Redirect URLs** : ajouter l'adresse du site de l'Agence
    (`https://api-cameroun-ged.vercel.app/**`) à côté de celle des autres organisations.
 3. **Authentication → Multi-Factor** : « TOTP (App Authenticator) » activé.
@@ -147,7 +147,7 @@ Importer le dépôt GitHub, définir `Root Directory` sur `platform`, puis rense
 | `NEXT_PUBLIC_ORG_COULEUR_PRIMAIRE` / `_ACCENT` | bleu et jaune du logo |
 | `NEXT_PUBLIC_ORG_COULEUR_RUBAN` | vert, rouge, jaune (couleurs du drapeau) |
 | `NEXT_PUBLIC_ORG_SITE_PUBLIC` | `true` |
-| `NEXT_PUBLIC_ORG_COURRIER` | `true` (service du courrier, migrations 0029 à 0032) |
+| `NEXT_PUBLIC_ORG_COURRIER` | `true` (service du courrier, migrations 0029 à 0033) |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | optionnel : alertes par e-mail |
 | `CLOUDMERSIVE_API_KEY` | optionnel : seconde couche antivirus |
 

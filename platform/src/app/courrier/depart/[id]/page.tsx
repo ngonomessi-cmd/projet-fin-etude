@@ -10,8 +10,9 @@ import { formaterDate, formaterDateHeure, formaterTaille } from "@/lib/courrier/
 import { traducteurDepartements, traductionServeur } from "@/lib/i18n/serveur";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { NumerisationCourrier } from "../../[id]/NumerisationCourrier";
+import { FormulaireDecharge } from "./FormulaireDecharge";
 import { SectionConservation } from "../../SectionConservation";
-import { accepterDemande, accuserDestinataire, annulerDepart, enregistrerPieceDepart, expedier, refuserDemande } from "../actions";
+import { accepterDemande, accuserSansDecharge, annulerDepart, enregistrerPieceDepart, expedier, refuserDemande } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +41,11 @@ export default async function FicheDepart({ params, searchParams }: Props) {
   const { data: d } = await supabase.from("departs").select("*").eq("id", id).maybeSingle<Depart>();
   if (!d) notFound();
   const [destRes, piecesRes, mouvRes, arriveeRes] = await Promise.all([
-    supabase.from("depart_destinataires").select("id, role, nom, adresse, statut, expedie_le, accuse_le, accuse_par").eq("depart_id", id).order("ordre")
-      .returns<{ id: string; role: string; nom: string; adresse: string | null; statut: string; expedie_le: string | null; accuse_le: string | null; accuse_par: string | null }[]>(),
+    supabase.from("depart_destinataires").select("id, role, nom, adresse, statut, expedie_le, accuse_le, accuse_par, preuve, remis_le, recu_par, recu_qualite, remise_mode, decharge_piece_id, motif_sans_decharge").eq("depart_id", id).order("ordre")
+      .returns<{
+        id: string; role: string; nom: string; adresse: string | null; statut: string; expedie_le: string | null; accuse_le: string | null; accuse_par: string | null;
+        preuve: string | null; remis_le: string | null; recu_par: string | null; recu_qualite: string | null; remise_mode: string | null; decharge_piece_id: string | null; motif_sans_decharge: string | null;
+      }[]>(),
     supabase.from("depart_pieces").select("id, nom_fichier, taille, empreinte_sha256, nature, ajoute_par, created_at").eq("depart_id", id).order("created_at")
       .returns<{ id: string; nom_fichier: string; taille: number; empreinte_sha256: string; nature: string; ajoute_par: string; created_at: string }[]>(),
     supabase.from("depart_mouvements").select("id, action, par, details, created_at").eq("depart_id", id).order("created_at")
@@ -69,7 +73,7 @@ export default async function FicheDepart({ params, searchParams }: Props) {
   const message = ok ? (MESSAGES_DEPART_OK[ok] ?? MESSAGES_CONSERVATION_OK[ok]) : null;
   const messageErreur = erreur ? (MESSAGES_DEPART_ERREUR[erreur] ?? MESSAGES_CONSERVATION_ERREUR[erreur] ?? MESSAGES_DEPART_ERREUR.generique) : null;
   const naturePiece: Record<string, [string, string]> = {
-    lettre: ["Lettre", "Letter"], lettre_signee: ["Lettre signée", "Signed letter"], accuse: ["Accusé de réception", "Acknowledgement of receipt"], annexe: ["Annexe", "Annex"],
+    lettre: ["Lettre", "Letter"], lettre_signee: ["Lettre signée", "Signed letter"], accuse: ["Décharge", "Receipt"], annexe: ["Annexe", "Annex"],
   };
 
   return (
@@ -90,7 +94,7 @@ export default async function FicheDepart({ params, searchParams }: Props) {
         {d.statut === "annule" && <Alerte type="erreur">{t("Départ annulé", "Outgoing mail cancelled")} : {d.motif}</Alerte>}
         {relance && (
           <Alerte type="erreur">
-            {t("Aucun accusé de réception n'a été enregistré depuis l'expédition (relance prévue le", "No acknowledgement of receipt has been recorded since dispatch (reminder due on")} {formaterDate(d.relance_le, langue)}).{" "}
+            {t("Aucune décharge n'a été enregistrée depuis l'expédition (relance prévue le", "No receipt has been recorded since dispatch (reminder due on")} {formaterDate(d.relance_le, langue)}).{" "}
             {t("Relancez le destinataire.", "Remind the recipient.")}
           </Alerte>
         )}
@@ -180,15 +184,50 @@ export default async function FicheDepart({ params, searchParams }: Props) {
                     ? t("À expédier", "To be sent")
                     : x.statut === "expedie"
                       ? `${t("Expédié le", "Sent on")} ${formaterDateHeure(x.expedie_le, langue)}`
-                      : `${t("Accusé reçu le", "Receipt acknowledged on")} ${formaterDateHeure(x.accuse_le, langue)}${x.accuse_par ? ` · ${t("enregistré par", "recorded by")} ${nom(x.accuse_par)}` : ""}`}
+                      : x.preuve === "decharge"
+                        ? `${t("Reçu le", "Received on")} ${formaterDateHeure(x.remis_le ?? x.accuse_le, langue)} · ${t("décharge signée par", "receipt signed by")} ${x.recu_par ?? "—"}${x.recu_qualite ? ` (${x.recu_qualite})` : ""}${x.remise_mode ? ` · ${en(MODES_ENVOI[x.remise_mode] ?? [x.remise_mode, x.remise_mode], langue)}` : ""}`
+                        : `${t("Accusé le", "Acknowledged on")} ${formaterDateHeure(x.accuse_le, langue)}`}
+                  {x.statut === "accuse" && x.accuse_par ? ` · ${t("enregistré par", "recorded by")} ${nom(x.accuse_par)}` : ""}
                 </p>
+                {x.preuve === "decharge" && (
+                  <p className="mt-1 text-xs">
+                    <Puce classe="bg-emerald-100 text-emerald-900">{t("Décharge signée", "Signed receipt")}</Puce>
+                    {x.decharge_piece_id && (
+                      <a href={`/courrier/depart/${d.id}/piece/${x.decharge_piece_id}`} className="ml-2 text-navy-900 underline underline-offset-4">{t("Voir la décharge", "View the receipt")}</a>
+                    )}
+                  </p>
+                )}
+                {x.preuve === "sans_decharge" && (
+                  <p className="mt-1 text-xs text-amber-900">
+                    <Puce classe="bg-amber-100 text-amber-900">{t("Sans décharge", "No receipt")}</Puce>
+                    <span className="ml-2">{t("Motif", "Reason")} : {x.motif_sans_decharge}</span>
+                  </p>
+                )}
+                {x.statut === "accuse" && !x.preuve && (
+                  <p className="mt-1 text-xs text-paper-muted">{t("Accusé enregistré avant l'obligation de décharge.", "Acknowledgement recorded before receipts became mandatory.")}</p>
+                )}
               </div>
               {role && x.role === "destinataire" && x.statut === "expedie" && (
-                <form action={accuserDestinataire}>
-                  <input type="hidden" name="id" value={d.id} />
-                  <input type="hidden" name="destinataire" value={x.id} />
-                  <button type="submit" className={boutonDiscret}>{t("Accusé reçu", "Receipt acknowledged")}</button>
-                </form>
+                <details className="w-full rounded-md border border-paper-200 p-3" id={`decharge-${x.id}`}>
+                  <summary className="cursor-pointer text-sm font-medium text-navy-900 underline underline-offset-4">{t("Enregistrer la décharge", "Record the receipt")}</summary>
+                  <FormulaireDecharge departId={d.id} numero={d.numero ?? "DEP"} destinataireId={x.id} destinataireNom={x.nom} expedieLe={x.expedie_le ?? d.expedie_le} modeEnvoi={d.mode_envoi} />
+                  {role === "chef" && (
+                    <details className="mt-3 text-sm">
+                      <summary className="cursor-pointer text-paper-muted hover:text-[#1c2029]">{t("Accuser sans décharge (exception du chef du courrier)", "Acknowledge without a receipt (exception for the head of the mail service)")}</summary>
+                      <form action={accuserSansDecharge} className="mt-3 flex flex-wrap items-end gap-3">
+                        <input type="hidden" name="id" value={d.id} />
+                        <input type="hidden" name="destinataire" value={x.id} />
+                        <div className="min-w-64 flex-1">
+                          <label htmlFor={`sd-${x.id}`} className="mb-1 block text-xs font-medium text-paper-muted">
+                            {t("Motif (obligatoire, 10 caractères au moins) — il reste visible dans le dossier", "Reason (required, at least 10 characters) — it stays visible in the file")}
+                          </label>
+                          <input id={`sd-${x.id}`} name="motif" required minLength={10} maxLength={500} className={champ} placeholder={t("ex. Confirmation de réception par téléphone, décharge égarée", "e.g. Receipt confirmed by phone, receipt lost")} />
+                        </div>
+                        <button type="submit" className={`${boutonDiscret} !text-amber-900`}>{t("Accuser sans décharge", "Acknowledge without a receipt")}</button>
+                      </form>
+                    </details>
+                  )}
+                </details>
               )}
             </li>
           ))}
@@ -226,12 +265,12 @@ export default async function FicheDepart({ params, searchParams }: Props) {
             enregistrer={enregistrerPieceDepart}
             natures={[
               { valeur: "lettre_signee", libelle: t("Archiver la lettre signée", "Archive the signed letter") },
-              { valeur: "accuse", libelle: t("Archiver un accusé de réception", "Archive an acknowledgement of receipt"), infobulle: t("Décharge, avis de la poste ou preuve de remise", "Receipt, postal notice or proof of delivery") },
+              { valeur: "annexe", libelle: t("Archiver une annexe", "Archive an annex") },
             ]}
             titre={t("Numériser une pièce", "Scan an item")}
             aide={t(
-              "Lettre signée sur papier, ou accusé de réception reçu en retour. Scanner de bureau : choisissez le PDF. Téléphone : photographiez chaque page, elles seront assemblées en un seul PDF.",
-              "Letter signed on paper, or acknowledgement of receipt received back. Desk scanner: choose the PDF. Phone: photograph each page; they will be assembled into a single PDF."
+              "Lettre signée sur papier, ou annexe. La décharge d'un destinataire se dépose depuis sa ligne, plus haut (« Enregistrer la décharge »). Scanner de bureau : choisissez le PDF. Téléphone : photographiez chaque page, elles seront assemblées en un seul PDF.",
+              "Letter signed on paper, or annex. A recipient's receipt is filed from their line above (“Record the receipt”). Desk scanner: choose the PDF. Phone: photograph each page; they will be assembled into a single PDF."
             )}
           />
         )}

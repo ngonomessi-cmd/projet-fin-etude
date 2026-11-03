@@ -25,8 +25,8 @@ export async function GET(_requete: Request, { params }: { params: Promise<{ id:
   }>();
   if (!d || !d.numero) return introuvable();
   const [{ data: dests }, { data: demandeur }, { data: arrivee }] = await Promise.all([
-    supabase.from("depart_destinataires").select("nom, adresse, role, statut, accuse_le").eq("depart_id", id).order("ordre")
-      .returns<{ nom: string; adresse: string | null; role: string; statut: string; accuse_le: string | null }[]>(),
+    supabase.from("depart_destinataires").select("nom, adresse, role, statut, accuse_le, remis_le, preuve").eq("depart_id", id).order("ordre")
+      .returns<{ nom: string; adresse: string | null; role: string; statut: string; accuse_le: string | null; remis_le: string | null; preuve: string | null }[]>(),
     supabase.from("profiles").select("nom_complet").eq("id", d.demandeur_id).maybeSingle<{ nom_complet: string }>(),
     d.courrier_arrivee_id ? supabase.from("courriers").select("numero").eq("id", d.courrier_arrivee_id).maybeSingle<{ numero: string }>() : Promise.resolve({ data: null }),
   ]);
@@ -34,7 +34,7 @@ export async function GET(_requete: Request, { params }: { params: Promise<{ id:
     {
       numero: d.numero, objet: d.objet, departement: d.departement, demandeur: demandeur?.nom_complet ?? "—", mode: d.mode_envoi, nbPieces: d.nb_pieces, urgent: d.urgent,
       demandeLe: d.demande_le, enregistreLe: d.enregistre_le, expedieLe: d.expedie_le, statut: d.statut, signature: d.signature_numero, reponseA: arrivee?.numero ?? null,
-      destinataires: (dests ?? []).map((x) => ({ nom: x.nom, adresse: x.adresse, role: x.role, statut: x.statut, accuseLe: x.accuse_le })),
+      destinataires: (dests ?? []).map((x) => ({ nom: x.nom, adresse: x.adresse, role: x.role, statut: x.statut, accuseLe: x.accuse_le, remisLe: x.remis_le, preuve: x.preuve })),
     },
     langue,
     dep

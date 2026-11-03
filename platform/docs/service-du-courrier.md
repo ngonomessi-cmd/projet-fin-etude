@@ -35,8 +35,20 @@ empreinte SHA-256.
 document validé ou publié (la lettre signée, ou le PDF du document, est jointe automatiquement, sauf
 document confidentiel), ou le service enregistre directement une lettre signée sur papier. Le service
 accepte (numéro `DEP-AAAA-NNNNNN`) ou renvoie avec un motif, imprime le bordereau d'envoi, marque
-l'expédition, puis enregistre l'accusé de réception de chaque destinataire. Une relance est signalée
-si l'accusé tarde (15 jours par défaut).
+l'expédition, puis enregistre la **décharge** de chaque destinataire. Une relance est signalée si la
+décharge tarde (15 jours par défaut).
+
+**Décharge** — l'accusé de réception d'un destinataire ne se valide plus d'un simple clic : il se prouve.
+Sur la ligne du destinataire, « Enregistrer la décharge » demande, en une seule opération :
+le **fichier** de la décharge (PDF du scanner, ou photos de téléphone assemblées en un PDF) ;
+la **date et l'heure réelles de remise** (pas avant l'expédition, pas dans le futur) ;
+le **nom** (obligatoire) et la **qualité** de la personne qui a signé ; le **mode de remise**.
+Le fichier est contrôlé comme tout scan, son empreinte SHA-256 est calculée côté serveur et il est archivé
+comme pièce « Décharge ». Une seule décharge par destinataire, un seul fichier par décharge.
+**Exception** : le **chef du courrier** peut accuser « sans décharge », avec un motif de 10 caractères au
+moins, qui reste visible dans le dossier et dans le journal. Un agent du courrier n'y a pas accès. Les accusés
+enregistrés avant cette obligation restent valides (« Accusé enregistré avant l'obligation de décharge »).
+Le récépissé d'envoi PDF et l'export Excel du registre des départs indiquent la preuve de chaque réception.
 
 **Conservation** — Chaque élément appartient à une catégorie (durée, sort final). Le système
 **propose** les éléments échus ; le **chef du courrier valide**, avec la référence de la décision.
@@ -69,7 +81,8 @@ dans la table `categories_conservation` sans toucher au code) :
 
 1. Dans Supabase (**SQL Editor**), exécuter **une seule fois, dans l'ordre**, après la migration 0028 :
    `0029_courrier_arrivee.sql`, `0030_courrier_depart.sql`, `0031_courrier_conservation.sql`
-   et `0032_courrier_categories_khs.sql` (catégories de conservation de KHS Bank).
+   `0032_courrier_categories_khs.sql` (catégories de conservation de KHS Bank)
+   et `0033_courrier_decharge_depart.sql` (décharge de réception des départs).
 2. Dans le projet Vercel de chaque organisation qui l'utilise (API, KHS Bank) :
    `NEXT_PUBLIC_ORG_COURRIER=true`, puis redéployer.
 3. **Utilisateurs** : donner « Agent du courrier » aux agents du service, « Chef du courrier » à son responsable.
@@ -85,11 +98,11 @@ catégorie, avec son sigle), comme le fait la migration 0032.
 
 ## 5. Tests réalisés
 
-- **Base de données** : 147 contrôles pour l'API et 15 pour KHS (numérotation indépendante, cloisonnement,
+- **Base de données** : 169 contrôles pour l'API (dont 22 sur la décharge) et 15 pour KHS (numérotation indépendante, cloisonnement,
   catégories propres) sur un PostgreSQL jetable (désignation, numérotation, cloisonnement
   entre organisations, plis personnels, archive, imputation, correction, annulation, registres, départ,
   conservation, gel, destruction, double authentification).
-- **Navigateur** : parcours complet en 33 vérifications (enregistrement, numérisation, remise, accusé,
+- **Navigateur** : parcours complet en 42 vérifications (enregistrement, numérisation, remise, accusé,
   imputation, départ, bordereau, exports PDF et Excel, conservation, cloisonnement, mobile, anglais).
 
 ## 6. Limites connues
@@ -98,6 +111,8 @@ catégorie, avec son sigle), comme le fait la migration 0032.
 - Un département n'existe que s'il est porté par au moins un agent (il n'y a pas d'organigramme).
 - La lettre jointe à une demande d'expédition est la version signée si elle existe, sinon le PDF du
   document ; un document confidentiel n'est jamais joint.
+- Une décharge par destinataire : pas de dépôt groupé. L'accusé électronique automatique (quand le destinataire
+  utilise aussi la plateforme) n'est pas prévu : sa valeur juridique reste à confirmer.
 - Pas de page publique de suivi, pas de relance automatique par e-mail, pas de reconnaissance du texte
   des scans (OCR).
 - Les durées de conservation sont des propositions, pas des règles légales.
