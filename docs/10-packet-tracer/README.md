@@ -1,10 +1,13 @@
 # Maquette Cisco Packet Tracer — KHS Bank / MOM-TECH
 
-Cette section adapte l'[architecture cible](../06-architecture/) du dossier en une maquette réellement
-**constructible et testable dans Cisco Packet Tracer (PT)**, logiciel de simulation réseau Cisco. Je ne
-peux pas exécuter Packet Tracer ni produire directement un fichier `.pkt` (format propriétaire, logiciel
-graphique) — cette section fournit tout ce qu'il faut pour la construire vous-mêmes : plan d'équipements,
-câblage, configurations CLI (Command Line Interface — ligne de commande) complètes, et plan de test.
+Cette section adapte l'[architecture cible](../06-architecture/) du dossier en une maquette
+**construite et testable dans Cisco Packet Tracer (PT)**, logiciel de simulation réseau Cisco. Elle
+fournit le plan d'équipements, le câblage, le plan d'adressage, les configurations CLI (Command Line
+Interface — ligne de commande) complètes de chaque équipement et le plan de test. Elle sert de **preuve
+par la pratique** des choix du Lot A : redondance du cœur de réseau (HSRP), segmentation en VLAN,
+routage inter-VLAN, filtrage, NAT et liaison inter-site.
+
+![Maquette Packet Tracer — sites de Paris et de Lyon reliés par un FAI simulé](maquette-packet-tracer.png)
 
 - [01 — Topologie et câblage](01-topologie-et-cablage.md)
 - [02 — Plan d'adressage](02-plan-adressage.md)

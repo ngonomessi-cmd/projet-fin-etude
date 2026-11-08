@@ -49,6 +49,7 @@ def load(relpath: str, shift: int = 1) -> str:
     with open(f"{DOCS}/{relpath}", encoding="utf-8") as f:
         text = f.read()
     text = strip_md_links(text)
+    text = text.replace("](maquette-packet-tracer.png)", "](docs/10-packet-tracer/maquette-packet-tracer.png)")
     text = shift_headings(text, shift)
     return text.strip("\n")
 
@@ -128,11 +129,21 @@ PARTS = [
         "09-procedures/configuration-commutateur-coeur-n3.md",
         "09-procedures/procedure-lot1-stockage-sauvegarde.md",
     ]),
+    ("10. Maquette Cisco Packet Tracer", [
+        "10-packet-tracer/README.md",
+        "10-packet-tracer/01-topologie-et-cablage.md",
+        "10-packet-tracer/02-plan-adressage.md",
+        "10-packet-tracer/05-plan-de-test.md",
+    ]),
 ]
 
 ANNEXES = [
     ("Annexe A — Cahier des charges KHS Bank (texte intégral)", [
         "02-cahier-des-charges/cahier-des-charges-khs-bank.md",
+    ]),
+    ("Annexe B — Maquette Packet Tracer : construction et configuration des postes", [
+        "10-packet-tracer/03-guide-construction.md",
+        "10-packet-tracer/04-configuration-serveurs-et-postes.md",
     ]),
 ]
 

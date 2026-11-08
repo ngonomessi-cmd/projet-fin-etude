@@ -2900,6 +2900,368 @@ cf. Recette).
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
+# 10. Maquette Cisco Packet Tracer
+
+## Maquette Cisco Packet Tracer — KHS Bank / MOM-TECH
+
+Cette section adapte l'[architecture cible](../06-architecture/) du dossier en une maquette
+**construite et testable dans Cisco Packet Tracer (PT)**, logiciel de simulation réseau Cisco. Elle
+fournit le plan d'équipements, le câblage, le plan d'adressage, les configurations CLI (Command Line
+Interface — ligne de commande) complètes de chaque équipement et le plan de test. Elle sert de **preuve
+par la pratique** des choix du Lot A : redondance du cœur de réseau (HSRP), segmentation en VLAN,
+routage inter-VLAN, filtrage, NAT et liaison inter-site.
+
+![Maquette Packet Tracer — sites de Paris et de Lyon reliés par un FAI simulé](docs/10-packet-tracer/maquette-packet-tracer.png)
+
+- 01 — Topologie et câblage
+- 02 — Plan d'adressage
+- 03 — Guide de construction pas-à-pas
+- 04 — Configuration des serveurs et postes
+- 05 — Plan de test
+- [configs/](configs/) — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
+
+### Pourquoi les équipements diffèrent du dossier "réel"
+
+Le dossier de mise en situation prescrit des équipements haut de gamme (Cisco Catalyst 9300, Fortinet
+FortiGate) qui n'existent pas dans le catalogue de Packet Tracer. La maquette utilise les équivalents
+**disponibles et pédagogiquement reconnus** dans PT, sans changer la logique d'architecture :
+
+| Rôle | Dossier (cible réelle) | Maquette Packet Tracer |
+|---|---|---|
+| Cœur de réseau (N3) | Cisco Catalyst 9300 en stack | 2 × Switch multicouche **3560-24PS** en **HSRP** (Hot Standby Router Protocol — protocole de redondance de passerelle) |
+| Distribution / Accès | Cisco Catalyst 9200 | Switch **2960-24TT** |
+| Pare-feu périmétrique | Fortinet FortiGate 200F en cluster HA | **ASA 5505** (pare-feu Cisco, un par site) |
+| Routeur de bordure | Intégré au pare-feu | Routeur **1941/2911** |
+| Borne Wi-Fi | Cisco Aironet 2802 | **AccessPoint-PT** |
+| Serveurs (AD/DNS/DHCP, fichiers) | Windows Server 2022 | **Server-PT** (services configurables par onglet GUI) |
+
+### Simplifications assumées (à annoncer en soutenance)
+
+- **Un seul pare-feu par site** (pas de cluster HA) : la redondance de la maquette porte sur le cœur de
+  réseau (HSRP) et sur le double lien FAI (Fournisseur d'Accès à Internet), pas sur le pare-feu lui-même.
+  La configuration HA du pare-feu reste documentée dans le Lot A du dossier.
+- **Redondance de l'uplink cœur → pare-feu à Paris** : l'ASA 5505 en licence de base n'accepte que
+  2 VLAN actifs (inside/outside), donc pas de trunk vers le cœur. Les deux ports internes disponibles
+  de l'ASA (Ethernet0/1 et 0/2) sont donc affectés au **même VLAN "inside"**, formant un petit segment
+  partagé (VLAN 100, transit) auquel CORE-PARIS-SW1 **et** CORE-PARIS-SW2 sont directement raccordés :
+  si l'un des deux cœurs tombe, l'autre conserve un accès direct au pare-feu, sans dépendre de l'HSRP
+  (Hot Standby Router Protocol) pour cela.
+- **Un seul lien FAI simulé** par site vers un routeur « ISP-RTR » représentant Internet (la redondance
+  FAI réelle à deux opérateurs distincts est documentée mais non doublée physiquement dans la maquette,
+  pour rester dans un temps de construction raisonnable).
+- **Liaison inter-site en tunnel GRE** (Generic Routing Encapsulation — encapsulation générique de
+  routage) entre les deux routeurs de site, représentant le VPN (Virtual Private Network — réseau privé
+  virtuel) IPsec du dossier réel. Le tunnel GRE est fiable et intégralement supporté par PT ; l'ajout
+  d'IPsec par-dessus (GRE over IPsec) est indiqué en option dans les configurations routeur.
+- **Échelle réduite** : un seul poste par VLAN plutôt que les 920 postes réels — le plan d'adressage
+  (VLSM) reste néanmoins identique à celui du dossier, pour démontrer la cohérence entre la conception
+  papier et la maquette pratique.
+- **Un seul switch d'accès et un seul serveur par site** (au lieu de deux) : les VLAN client (postes,
+  bancaire, Wi-Fi, VOIP) partagent le même commutateur d'accès, et un même serveur Packet Tracer cumule
+  DHCP, DNS et fichiers — cela ne change ni les VLAN, ni les règles de sécurité, seulement le nombre
+  d'appareils à placer et câbler.
+- **Wi-Fi et téléphonie IP démontrés uniquement à Paris** : la compétence (VLAN voix, VLAN invités
+  isolé) est identique à Lyon ; il suffirait d'y reproduire le même montage si besoin en soutenance.
+- **Laptop invité connecté en filaire plutôt qu'en Wi-Fi réel** : le module sans fil (WPC300N) s'est
+  révélé incompatible avec le modèle de laptop utilisé, selon la version de Packet Tracer ("Module Not
+  Compatible"). Le poste reste dans le même VLAN 40 (invités), avec les mêmes règles d'isolement — seul
+  le support physique change, pas la compétence réseau démontrée.
+- **20 équipements au total** (au lieu de 28 dans une première version) : couche distribution supprimée
+  (les cœurs se connectent directement à l'accès), imprimante et second poste bureautique retirés
+  (aucune compétence réseau notée n'en dépendait).
+
+### Vue d'ensemble logique
+
+```
+Internet (ISP-RTR)
+        │
+   ┌────┴────┐
+RTR-PARIS   RTR-LYON  ←── tunnel GRE (VPN inter-site) ──→ (reliés entre eux)
+   │            │
+FW-PARIS     FW-LYON        (ASA 5505, périmètre + NAT)
+   │            │
+CORE-PARIS   CORE-LYON      (L3, HSRP à Paris)
+ -SW1/SW2       │
+   │            │
+ACC-PARIS-SW   ACC-LYON-SW
+   │                │
+postes + AP +   postes
+IP Phone +
+serveur
+```
+
+## Topologie et câblage
+
+> Version allégée (20 équipements au lieu de 28) : mêmes compétences démontrées (VLAN, HSRP, ACL, NAT,
+> VPN, DHCP, sécurité des ports), avec un seul switch d'accès et un seul serveur par site, moins
+> d'appareils terminaux redondants. Voir les simplifications assumées.
+
+### 1. Inventaire des équipements
+
+#### Site Paris (siège)
+
+| Nom | Modèle Packet Tracer | Rôle |
+|---|---|---|
+| RTR-PARIS | Router 2911 | Routeur de bordure (Internet + tunnel GRE) |
+| FW-PARIS | ASA 5505 | Pare-feu périmétrique (NAT, ACL) |
+| CORE-PARIS-SW1 | Multilayer Switch 3560-24PS | Cœur N3, HSRP actif |
+| CORE-PARIS-SW2 | Multilayer Switch 3560-24PS | Cœur N3, HSRP secours |
+| ACC-PARIS-SW | Switch 2960-24TT | Accès unique (postes, bancaire, Wi-Fi, VOIP) |
+| AP-PARIS | AccessPoint-PT | Borne Wi-Fi (VLAN invités) |
+| SRV-PARIS | Server-PT | DHCP + DNS + fichiers (HTTP/FTP), un seul serveur |
+| PC-BUR-PARIS-1 | PC-PT | Poste bureautique (VLAN 10) |
+| PC-BANCAIRE-PARIS-1 | PC-PT | Poste application KHS-Core (VLAN 20) |
+| LAPTOP-WIFI-PARIS-1 | Laptop-PT | Poste invité (VLAN 40) — **branché en filaire**, cf. note ci-dessous |
+| IPPHONE-PARIS-1 | IP Phone-PT | Téléphonie (VLAN 50, voix) |
+
+#### Site Lyon (secondaire)
+
+| Nom | Modèle Packet Tracer | Rôle |
+|---|---|---|
+| RTR-LYON | Router 2911 | Routeur de bordure |
+| FW-LYON | ASA 5505 | Pare-feu périmétrique |
+| CORE-LYON-SW | Multilayer Switch 3560-24PS | Cœur + distribution + passerelle (pas d'HSRP) |
+| ACC-LYON-SW | Switch 2960-24TT | Accès |
+| SRV-LYON | Server-PT | DHCP + DNS |
+| PC-BUR-LYON-1 | PC-PT | Poste bureautique |
+| PC-BANCAIRE-LYON-1 | PC-PT | Poste KHS-Core |
+
+#### Internet simulé
+
+| Nom | Modèle Packet Tracer | Rôle |
+|---|---|---|
+| ISP-RTR | Router 2911 | Représente le fournisseur d'accès Internet |
+| SRV-INTERNET-TEST | Server-PT | Cible de test (ping, DNS, HTTP) « côté Internet » |
+
+> **Note — LAPTOP-WIFI-PARIS-1 en filaire :** le module Wi-Fi (WPC300N) s'est révélé incompatible avec
+> le modèle Laptop-PT dans certaines versions de Packet Tracer ("Module Not Compatible"). Le laptop est
+> donc connecté par câble, sur un port d'accès VLAN 40 dédié de ACC-PARIS-SW — la compétence démontrée
+> (isolement du VLAN invités) reste strictement identique, seul le support physique change.
+
+**Total : 20 équipements** (contre 28 dans la version initiale — Wi-Fi et téléphonie ne sont démontrés
+qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un seul switch d'accès par site).
+
+### 2. Ce qui change par rapport à la version initiale
+
+| Suppression | Remplacé par |
+|---|---|
+| DIST-PARIS-SW | Les deux cœurs se connectent **directement** à ACC-PARIS-SW (2 liens redondants) |
+| ACC-PARIS-SW2 | Fusionné dans **ACC-PARIS-SW**, qui porte tous les VLAN clients |
+| SRV-FICHIERS-PARIS | Fusionné dans **SRV-PARIS** (un serveur Packet Tracer peut cumuler DHCP, DNS, HTTP, FTP) |
+| PC-BUR-PARIS-2 | Un seul poste bureautique suffit à prouver le VLAN 10 |
+| PRINT-PARIS-1 | Aucune compétence réseau notée n'en dépend |
+| AP-LYON, LAPTOP-WIFI-LYON-1, IPPHONE-LYON-1 | Wi-Fi et VOIP déjà démontrés à Paris |
+
+### 3. Plan de câblage
+
+| Périphérique A | Interface A | Câble | Périphérique B | Interface B |
+|---|---|---|---|---|
+| RTR-PARIS | GigabitEthernet0/0 | Automatique | ISP-RTR | GigabitEthernet0/0 |
+| RTR-LYON | GigabitEthernet0/0 | Automatique | ISP-RTR | GigabitEthernet0/1 |
+| ISP-RTR | GigabitEthernet0/2 | Automatique | SRV-INTERNET-TEST | FastEthernet0 |
+| RTR-PARIS | GigabitEthernet0/1 | Automatique | FW-PARIS | Ethernet0/0 (outside) |
+| FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | FastEthernet0/1 |
+| FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | FastEthernet0/1 |
+| RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
+| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
+| CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | CORE-PARIS-SW2 | FastEthernet0/2 |
+| CORE-PARIS-SW1 | FastEthernet0/3 | Automatique | SRV-PARIS | FastEthernet0 |
+| CORE-PARIS-SW1 | FastEthernet0/4 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
+| CORE-PARIS-SW2 | FastEthernet0/3 | Automatique | ACC-PARIS-SW | FastEthernet0/2 |
+| ACC-PARIS-SW | FastEthernet0/3 | Automatique | PC-BUR-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/4 | Automatique | PC-BANCAIRE-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/5 | Automatique | AP-PARIS | Port0 |
+| ACC-PARIS-SW | FastEthernet0/6 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
+| ACC-PARIS-SW | FastEthernet0/7 | Automatique | IPPHONE-PARIS-1 | Port Switch |
+| CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
+| CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
+| ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
+| ACC-LYON-SW | FastEthernet0/3 | Automatique | PC-BANCAIRE-LYON-1 | FastEthernet0 |
+
+### 4. Schéma logique
+
+```
+                                   ┌───────────────────┐
+                                   │  SRV-INTERNET-TEST │
+                                   └─────────┬─────────┘
+                                             │
+                                   ┌─────────┴─────────┐
+                                   │      ISP-RTR       │
+                                   └────┬──────────┬───┘
+                          Gi0/0 (Paris) │          │ Gi0/1 (Lyon)
+                    ┌────────────────────┘          └────────────────────┐
+              ┌─────┴─────┐                                       ┌──────┴────┐
+              │ RTR-PARIS │═══════ Tunnel GRE (VPN inter-site) ══════│ RTR-LYON  │
+              └─────┬─────┘                                       └──────┬────┘
+                    │                                                    │
+              ┌─────┴─────┐                                       ┌──────┴────┐
+              │ FW-PARIS  │ (ASA 5505)                             │ FW-LYON   │
+              └──┬─────┬──┘                                       └──────┬────┘
+         ┌───────┘     └───────┐                                         │
+   ┌─────┴──────┐        ┌─────┴──────┐                            ┌─────┴──────┐
+   │CORE-PARIS  │══HSRP═══│CORE-PARIS  │                            │ CORE-LYON  │
+   │   -SW1     │  +trunk  │   -SW2     │                            │    -SW     │
+   └──┬───┬─────┘          └─────┬───┬──┘                            └──┬───┬────┘
+      │   └──────── ACC-PARIS-SW ┘   │                                  │   │
+   SRV-PARIS   (postes, bancaire, Wi-Fi, VOIP)                     SRV-LYON  ACC-LYON-SW
+                                                                              (postes)
+```
+
+## Plan d'adressage
+
+Le plan VLAN et VLSM reprend **exactement** celui du dossier,
+pour démontrer la cohérence entre la conception et la maquette. Seules les adresses des liaisons
+routeur/pare-feu/WAN (non présentes dans le dossier, propres à la construction Packet Tracer) sont
+ajoutées ici.
+
+### Site Paris
+
+| VLAN | Usage | Réseau | Masque | Passerelle (HSRP, virtuelle) | CORE-PARIS-SW1 (physique) | CORE-PARIS-SW2 (physique) |
+|---|---|---|---|---|---|---|
+| 10 | Bureautique | 10.10.0.0/22 | 255.255.252.0 | 10.10.0.1 | 10.10.0.2 | 10.10.0.3 |
+| 20 | Bancaire (KHS-Core) | 10.10.4.0/26 | 255.255.255.192 | 10.10.4.1 | 10.10.4.2 | 10.10.4.3 |
+| 30 | Serveurs | 10.10.4.64/27 | 255.255.255.224 | 10.10.4.65 | 10.10.4.66 | 10.10.4.67 |
+| 40 | Wi-Fi invités | 10.10.8.0/24 | 255.255.255.0 | 10.10.8.1 | 10.10.8.2 | 10.10.8.3 |
+| 50 | VOIP | 10.10.10.0/23 | 255.255.254.0 | 10.10.10.1 | 10.10.10.2 | 10.10.10.3 |
+| 99 | Management | 10.10.12.0/26 | 255.255.255.192 | 10.10.12.1 | 10.10.12.2 | 10.10.12.3 |
+| 999 | Native (inutilisé, durcissement) | — | — | — | — | — |
+
+**Adresses des hôtes Paris :**
+
+| Hôte | VLAN | Adresse IP | Passerelle |
+|---|---|---|---|
+| PC-BUR-PARIS-1 | 10 | DHCP (plage 10.10.0.10–200) | 10.10.0.1 |
+| PC-BANCAIRE-PARIS-1 | 20 | 10.10.4.10/26 | 10.10.4.1 |
+| SRV-PARIS (DHCP+DNS+fichiers) | 30 | 10.10.4.70/27 (statique) | 10.10.4.65 |
+| LAPTOP-WIFI-PARIS-1 | 40 | DHCP (plage 10.10.8.10–200) | 10.10.8.1 |
+| IPPHONE-PARIS-1 | 50 | DHCP (plage 10.10.10.10–200) | 10.10.10.1 |
+
+### Liaisons routées Paris (hors dossier, propres à la maquette)
+
+| Liaison | Réseau /30 | Extrémité A | Extrémité B |
+|---|---|---|---|
+| RTR-PARIS ↔ ISP-RTR | 203.0.113.0/30 | RTR-PARIS Gi0/0 = .2 | ISP-RTR Gi0/0 = .1 |
+| RTR-PARIS ↔ FW-PARIS | 10.10.254.0/30 | RTR-PARIS Gi0/1 = .1 | FW-PARIS Eth0/0 (outside) = .2 |
+| FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.4/29 | FW-PARIS Eth0/1+0/2 (inside) = .5 | CORE-PARIS-SW1 = .6 · CORE-PARIS-SW2 = .7 |
+| CORE-PARIS-SW1 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/1 |
+| CORE-PARIS-SW2 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/2 |
+| Tunnel GRE Paris (Tunnel0) | 172.16.0.0/30 | RTR-PARIS = .1 | (RTR-LYON = .2) |
+
+### Site Lyon
+
+| VLAN | Usage | Réseau | Masque | Passerelle (CORE-LYON-SW) |
+|---|---|---|---|---|
+| 10 | Bureautique | 10.20.0.0/24 | 255.255.255.0 | 10.20.0.1 |
+| 20 | Bancaire (KHS-Core) | 10.20.1.0/27 | 255.255.255.224 | 10.20.1.1 |
+| 30 | Serveurs | 10.20.1.32/28 | 255.255.255.240 | 10.20.1.33 |
+| 40 | Wi-Fi invités | 10.20.2.0/25 | 255.255.255.128 | 10.20.2.1 |
+| 50 | VOIP | 10.20.2.128/25 | 255.255.255.128 | 10.20.2.129 |
+| 99 | Management | 10.20.3.0/27 | 255.255.255.224 | 10.20.3.1 |
+
+**Adresses des hôtes Lyon :**
+
+| Hôte | VLAN | Adresse IP | Passerelle |
+|---|---|---|---|
+| PC-BUR-LYON-1 | 10 | DHCP (plage 10.20.0.10–200) | 10.20.0.1 |
+| PC-BANCAIRE-LYON-1 | 20 | 10.20.1.10/27 | 10.20.1.1 |
+| SRV-LYON (DHCP+DNS) | 30 | 10.20.1.40/28 (statique) | 10.20.1.33 |
+
+### Liaisons routées Lyon
+
+| Liaison | Réseau /30 | Extrémité A | Extrémité B |
+|---|---|---|---|
+| RTR-LYON ↔ ISP-RTR | 203.0.113.4/30 | RTR-LYON Gi0/0 = .6 | ISP-RTR Gi0/1 = .5 |
+| RTR-LYON ↔ FW-LYON | 10.20.254.0/30 | RTR-LYON Gi0/1 = .1 | FW-LYON Eth0/0 (outside) = .2 |
+| FW-LYON ↔ CORE-LYON-SW | 10.20.254.4/30 | FW-LYON Eth0/1 (inside) = .5 | CORE-LYON-SW Gi0/1 = .6 |
+| Tunnel GRE Lyon (Tunnel0) | 172.16.0.0/30 | RTR-LYON = .2 | (RTR-PARIS = .1) |
+
+### Internet simulé
+
+| Liaison | Réseau /30 | Extrémité A | Extrémité B |
+|---|---|---|---|
+| ISP-RTR ↔ SRV-INTERNET-TEST | 203.0.113.8/30 | ISP-RTR Gi0/2 = .9 | SRV-INTERNET-TEST = .10 |
+
+### Logique de routage (résumé)
+
+- **RTR-PARIS / RTR-LYON** : route par défaut vers `ISP-RTR` (Internet) + route statique spécifique vers
+  le réseau distant (10.20.0.0/16 ou 10.10.0.0/16) via le **Tunnel0**.
+- **FW-PARIS / FW-LYON** : route par défaut vers le routeur de site (`outside`) ; exemption de NAT
+  (Network Address Translation) pour le trafic à destination du site distant (trafic inter-site jamais
+  traduit, uniquement le trafic réellement destiné à Internet).
+- **CORE-PARIS-SW1/2 / CORE-LYON-SW** : route par défaut vers le pare-feu (`inside`).
+
+Cette logique est détaillée avec la syntaxe exacte dans les fichiers de [configs/](configs/).
+
+## Plan de test
+
+Cohérent avec le cahier de tests du dossier, adapté à ce qui
+est concrètement observable dans la maquette Packet Tracer.
+
+### Tests fonctionnels de base
+
+| # | Test | Méthode | Résultat attendu |
+|---|---|---|---|
+| PT01 | Connectivité locale | `ping 10.10.0.1` depuis PC-BUR-PARIS-1 | Réponse OK (passerelle HSRP) |
+| PT02 | Attribution DHCP | `ipconfig` sur PC-BUR-PARIS-1 | IP dans `10.10.0.0/22`, passerelle `10.10.0.1` |
+| PT03 | Inter-VLAN autorisé | `ping` de PC-BANCAIRE-PARIS-1 vers SRV-PARIS (10.10.4.70) | Réponse OK |
+| PT04 | Isolation VLAN invités | `ping 10.10.0.10` depuis LAPTOP-WIFI-PARIS-1 | **Échoue** (bloqué par `ACL-INVITES`) |
+| PT05 | Accès Internet des invités | `ping 203.0.113.10` (SRV-INTERNET-TEST) depuis LAPTOP-WIFI-PARIS-1 | Réponse OK (l'ACL bloque le LAN interne, pas Internet) |
+| PT06 | NAT sortant | `ping 203.0.113.10` depuis PC-BANCAIRE-PARIS-1, puis `show ip nat translations` sur RTR-PARIS | Une entrée de traduction apparaît |
+| PT07 | Connectivité inter-site | `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1 | Réponse OK, via le tunnel GRE |
+| PT08 | Exemption de NAT inter-site | `show ip nat translations` sur RTR-PARIS après PT07 | **Aucune** entrée pour la destination 10.20.x.x |
+| PT09 | Téléphonie | Sur IPPHONE-PARIS-1, vérifier l'obtention d'une IP dans `10.10.10.0/23` | Voice VLAN fonctionnel |
+| PT10 | Filtrage du pare-feu | Depuis ISP-RTR, tenter `ping 10.10.254.5` (IP inside de FW-PARIS) | **Échoue** (aucune règle n'autorise l'entrant depuis l'extérieur) |
+
+### Tests de résilience (les plus importants pour la soutenance)
+
+#### PT11 — Bascule HSRP (Hot Standby Router Protocol)
+
+1. Lancer un `ping -t 10.10.0.1` en continu depuis PC-BUR-PARIS-1 (onglet Desktop → Command Prompt).
+2. Sur CORE-PARIS-SW1, exécuter `show standby brief` pour confirmer qu'il est **Active**.
+3. Éteindre CORE-PARIS-SW1 (clic droit → Turn Off, ou simplement `shutdown` sur son interface Vlan10
+   depuis sa console avant l'extinction).
+4. Observer le ping : quelques paquets perdus puis reprise automatique — CORE-PARIS-SW2 devient actif.
+5. Vérifier avec `show standby brief` sur CORE-PARIS-SW2 qu'il est passé à l'état **Active**.
+
+**Résultat attendu :** interruption de quelques secondes maximum, aucune reconfiguration manuelle
+nécessaire — démontre la suppression du point de défaillance unique identifié en audit (constat **R1**).
+
+#### PT12 — Redondance de l'uplink cœur → pare-feu
+
+1. Avec CORE-PARIS-SW1 toujours éteint (suite du test précédent), tenter `ping 203.0.113.10` depuis
+   PC-BANCAIRE-PARIS-1.
+2. **Résultat attendu :** la réponse fonctionne toujours — le trafic emprunte désormais CORE-PARIS-SW2,
+   raccordé indépendamment au pare-feu via le VLAN de transit 100 (cf. README).
+3. Rallumer CORE-PARIS-SW1 et vérifier, avec `show standby brief`, qu'il reprend le rôle actif après
+   convergence (préemption activée).
+
+#### PT13 — Panne du lien inter-site
+
+1. Débrancher (ou désactiver l'interface Tunnel0/l'interface physique sous-jacente) le lien entre
+   RTR-PARIS et ISP-RTR.
+2. Tenter `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1.
+3. **Résultat attendu :** échec — confirme que la redondance inter-site réelle nécessiterait un second
+   tunnel sur un second lien FAI, comme documenté dans le
+   Lot A du dossier (simplification assumée de la
+   maquette, cf. README).
+
+### Vérifications complémentaires (commandes `show`)
+
+| Commande | Où | Ce qu'elle prouve |
+|---|---|---|
+| `show vlan brief` | Tous les switches | VLAN correctement créés et ports assignés |
+| `show ip interface brief` | Cœurs, routeurs | Toutes les interfaces `up/up` |
+| `show standby brief` | CORE-PARIS-SW1/SW2 | État HSRP (Active/Standby, priorités) |
+| `show ip route` | RTR-PARIS, RTR-LYON, cœurs | Présence des routes par défaut et de la route inter-site |
+| `show ip nat translations` / `show ip nat statistics` | RTR-PARIS, RTR-LYON | NAT actif uniquement pour le trafic Internet |
+| `show interfaces trunk` | Tous les switches | VLAN autorisés cohérents avec le plan |
+| `show port-security` | Switches d'accès | Nombre d'adresses MAC autorisées par port |
+| `show crypto session` *(si IPsec ajouté en option)* | RTR-PARIS, RTR-LYON | Tunnel IPsec établi au-dessus du GRE |
+
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
+
 # Annexes
 
 ## Annexe A — Cahier des charges KHS Bank (texte intégral)
@@ -3156,3 +3518,131 @@ d'anomalies comportementales, lutte anti-fraude).
 
 **Livrables :** architecture du SOC ; planning préliminaire de réalisation ; plan de test global ; plan de
 formation ; contrat de support ; démonstration sur plateforme de test.
+
+## Annexe B — Maquette Packet Tracer : construction et configuration des postes
+
+### Guide de construction pas-à-pas
+
+#### 1. Placer les équipements
+
+Dans Packet Tracer, les catégories d'équipements se trouvent dans la barre en bas à gauche :
+
+1. **Routeurs** (icône routeur) → glisser 3× **Router 2911** : `ISP-RTR`, `RTR-PARIS`, `RTR-LYON`.
+2. **Pare-feu / sécurité** → glisser 2× **ASA 5505** : `FW-PARIS`, `FW-LYON`.
+3. **Switches** → glisser :
+   - 3× **Multilayer Switch 3560-24PS** : `CORE-PARIS-SW1`, `CORE-PARIS-SW2`, `CORE-LYON-SW`
+   - 2× **Switch 2960-24TT** : `ACC-PARIS-SW`, `ACC-LYON-SW`
+4. **Sans fil** → glisser 1× **AccessPoint-PT** : `AP-PARIS` (le Wi-Fi n'est démontré qu'à Paris).
+5. **Fin de chaîne (End Devices)** → glisser les 2 serveurs (**Server-PT**), les 4 PC (**PC-PT**), 1
+   **Laptop-PT** et 1 **IP Phone** — cf. inventaire complet
+   (20 équipements au total).
+
+Renommez chaque appareil (clic sur son nom sous l'icône) exactement comme dans l'inventaire : les noms
+sont repris tels quels dans les fichiers de configuration.
+
+#### 2. Câbler
+
+Suivez le plan de câblage dans l'ordre indiqué, en
+utilisant le câble **« Automatique »** (l'icône éclair dans la palette de câbles) : Packet Tracer choisit
+alors automatiquement croisé/droit selon les deux extrémités.
+
+> Pour le laptop : reliez-le **en filaire** à `ACC-PARIS-SW` (FastEthernet0/7) comme n'importe quel PC —
+> le module Wi-Fi (WPC300N) s'est révélé incompatible avec ce modèle dans certaines versions de Packet
+> Tracer ("Module Not Compatible"), voir la note dans 01. La compétence
+> démontrée (isolement du VLAN invités) est identique.
+
+#### 3. Configurer, dans cet ordre
+
+L'ordre compte : chaque étape dépend de la précédente pour être testable.
+
+1. **ISP-RTR** (copier [`configs/ISP-RTR.txt`](configs/ISP-RTR.txt) dans sa console).
+2. **RTR-PARIS** puis **RTR-LYON** ([`RTR-PARIS.txt`](configs/RTR-PARIS.txt), [`RTR-LYON.txt`](configs/RTR-LYON.txt)) —
+   testez `ping 203.0.113.1` depuis chaque routeur avant de continuer.
+3. **FW-PARIS** puis **FW-LYON** ([`FW-PARIS.txt`](configs/FW-PARIS.txt), [`FW-LYON.txt`](configs/FW-LYON.txt)).
+4. **CORE-PARIS-SW1**, **CORE-PARIS-SW2**, **CORE-LYON-SW** (cœurs en premier, avant l'accès,
+   car ce sont eux qui portent les VLAN et le routage inter-VLAN).
+5. **ACC-PARIS-SW**, puis **ACC-LYON-SW**.
+6. Configurez les **serveurs** (cf. 04), puis les **PC en IP
+   statique**, puis laissez le PC/laptop/téléphone en **DHCP** démarrer normalement.
+7. Configurez la **borne Wi-Fi** (`AP-PARIS`) pour le SSID du VLAN invités — elle reste en place dans la
+   maquette même si le laptop de test, lui, y est relié en filaire (cf. note ci-dessus).
+
+#### 4. Copier-coller une configuration dans Packet Tracer
+
+1. Cliquer sur l'équipement → onglet **CLI**.
+2. Appuyer sur Entrée pour obtenir l'invite, taper `enable` si l'appareil vient d'être allumé.
+3. Coller le contenu du fichier `.txt` correspondant (clic droit → Coller, ou `Ctrl+Maj+V` selon l'OS).
+4. Vérifier qu'aucune ligne n'affiche `% Invalid input` — si c'est le cas, il manque probablement un
+   `exit` avant la ligne suivante (mode de configuration mal refermé).
+
+#### 5. Sauvegarder
+
+Une fois l'ensemble opérationnel, enregistrez le projet (`Fichier → Enregistrer sous`) au format
+`.pkt`, par exemple `KHSBank-MOMTECH-Maquette.pkt`, et passez au plan de test.
+
+### Configuration des serveurs, postes et équipements terminaux
+
+Contrairement aux routeurs/commutateurs/pare-feu, les serveurs, PC et bornes Wi-Fi de Packet Tracer se
+configurent principalement via leur **onglet graphique** (Desktop / Config / Services), pas en CLI.
+
+#### SRV-PARIS (DHCP + DNS + fichiers, un seul serveur)
+
+**Onglet Desktop → IP Configuration** (adressage statique) :
+- IP : `10.10.4.70` — Masque : `255.255.255.224` — Passerelle : `10.10.4.65` — DNS : `10.10.4.70` (lui-même)
+
+**Onglet Services → DHCP** (activer, puis créer un pool par VLAN client) :
+
+| Pool | Passerelle par défaut | DNS | Adresse de départ | Masque | Max. utilisateurs |
+|---|---|---|---|---|---|
+| BUREAUTIQUE | 10.10.0.1 | 10.10.4.70 | 10.10.0.10 | 255.255.252.0 | 500 |
+| WIFI-INVITES | 10.10.8.1 | 10.10.4.70 | 10.10.8.10 | 255.255.255.0 | 190 |
+| VOIP | 10.10.10.1 | 10.10.4.70 | 10.10.10.10 | 255.255.254.0 | 190 |
+
+**Onglet Services → DNS** (activer, ajouter un enregistrement de type A) :
+
+| Nom | Adresse IP |
+|---|---|
+| khscore.khsbank.internal | 10.10.4.10 |
+
+**Onglet Services → HTTP** : activé (page d'accueil éditable, ex. « Portail intranet KHS Bank »).
+**Onglet Services → FTP** : activé, créer un utilisateur (ex. `momtech` / `Cisco123!`) avec droits
+lecture/écriture, pour démontrer un partage de fichiers accessible depuis les postes.
+
+#### SRV-LYON (DHCP + DNS)
+
+**IP Configuration** : IP `10.20.1.40` / masque `255.255.255.240` / passerelle `10.20.1.33` / DNS `10.20.1.40`.
+
+**Services → DHCP** :
+
+| Pool | Passerelle par défaut | DNS | Adresse de départ | Masque |
+|---|---|---|---|---|
+| BUREAUTIQUE-LYON | 10.20.0.1 | 10.20.1.40 | 10.20.0.10 | 255.255.255.0 |
+
+#### SRV-INTERNET-TEST
+
+**IP Configuration** : IP `203.0.113.10` / masque `255.255.255.252` / passerelle `203.0.113.9`.
+**Services → HTTP** : activé (page « Vous avez atteint Internet ») — sert de cible de test pour vérifier
+que le NAT (Network Address Translation) fonctionne depuis les deux sites.
+
+#### Postes et périphériques
+
+| Équipement | Configuration |
+|---|---|
+| PC-BUR-PARIS-1 | DHCP (automatique, VLAN 10) |
+| PC-BANCAIRE-PARIS-1 | IP statique `10.10.4.10` / `255.255.255.192` / passerelle `10.10.4.1` / DNS `10.10.4.70` |
+| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. 01) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/7 |
+| IPPHONE-PARIS-1 | DHCP automatique via VLAN voix (aucune configuration manuelle) |
+| PC-BUR-LYON-1 | DHCP (VLAN 10) |
+| PC-BANCAIRE-LYON-1 | IP statique `10.20.1.10` / `255.255.255.224` / passerelle `10.20.1.1` / DNS `10.20.1.40` |
+
+#### Borne Wi-Fi (AP-PARIS)
+
+Sur `AP-PARIS`, onglet **Config → Port1 (Wireless)** :
+- SSID : `KHS-GUEST-PARIS`
+- Authentification : **WPA2-PSK**, phrase de passe `KhsGuest2026!`
+- Canal : laisser par défaut
+
+> Cette borne ne fait que ponter le VLAN invités (40) déjà défini sur son port filaire d'accès — aucune
+> configuration réseau supplémentaire n'est nécessaire côté commutateur. Le Wi-Fi et la téléphonie IP ne
+> sont démontrés qu'à Paris : la compétence est la même à Lyon, il suffirait d'y répéter exactement ce
+> montage (cf. simplifications assumées).

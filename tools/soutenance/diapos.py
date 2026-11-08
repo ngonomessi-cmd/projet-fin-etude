@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Génère le diaporama de soutenance KHS Bank / MOM-TECH (python-pptx).
-import sys
+import sys, os
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
@@ -144,10 +144,10 @@ s.notes_slide.notes_text_frame.text = ("Bonjour. Je vais vous présenter le proj
 # ---------------------------------------------------------------- 2. Plan
 s = slide("Plan de la présentation", "Introduction",
           "Quatre temps, conformément au plan de soutenance : les acteurs, le cahier des charges, les actions réalisées, la synthèse. "
-          "Durée visée : environ 20 minutes de présentation, 10 minutes de démonstration, puis les questions du jury.")
+          "Durée visée : environ 25 minutes de présentation, 10 minutes de démonstration, puis les questions du jury.")
 items = [("1", "Les acteurs", "KHS Bank, client · MOM-TECH, prestataire"),
          ("2", "Le cahier des charges", "objectifs, contraintes, résultats attendus, délais"),
-         ("3", "Les actions réalisées", "gestion de projet, audit, solutions, architecture, migration"),
+         ("3", "Les actions réalisées", "gestion de projet, audit, solutions, maquette Packet Tracer, migration"),
          ("4", "Focus : la GED sécurisée", "démonstrateur et démonstration en direct"),
          ("5", "Synthèse et conclusion", "bilan financier, recette, perspectives")]
 for i, (n, t1, t2) in enumerate(items):
@@ -248,6 +248,42 @@ for i, (t1, t2) in enumerate([("1", "Aucun point de défaillance unique"), ("2",
 text(s, 0.7, 4.5, 12, 0.4, "Migration en coexistence progressive — 7 étapes", size=18, bold=True, color=NAVY)
 flow(s, 0.7, 5.05, 12.0, 1.0, ["1 Réseau", "2 Systèmes", "3 Identité", "4 Messagerie", "5 Sécurité", "6 KHS-Core", "7 Postes"], size=14)
 text(s, 0.7, 6.25, 12, 0.5, "Résultat : aucune interruption des services bancaires pendant toute la durée du projet", size=16, bold=True, color=GREEN)
+
+# ---------------------------------------------------------------- 9b. Maquette Packet Tracer
+IMG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "docs", "10-packet-tracer", "maquette-packet-tracer.png")
+s = slide("Maquette Cisco Packet Tracer : la preuve par la pratique", "3 · Actions réalisées",
+          "Pour valider l'architecture réseau du Lot A, j'ai construit une maquette dans Cisco Packet Tracer : deux sites, Paris et Lyon, reliés par un FAI simulé. "
+          "Paris : un routeur de bordure, un pare-feu ASA 5505, deux switchs de cœur multicouches en HSRP, un switch d'accès, un serveur, un poste bureautique, un poste bancaire, "
+          "une borne Wi-Fi, un téléphone IP et un portable invité. Lyon : routeur, pare-feu, un cœur, un accès, deux postes et un serveur. "
+          "Le plan d'adressage VLSM est identique à celui du dossier : c'est la cohérence entre la conception papier et la maquette. "
+          "Les liaisons inter-sites passent par un tunnel GRE qui représente le VPN IPsec du dossier. "
+          "Les équipements du dossier réel, Catalyst 9300 et FortiGate, n'existent pas dans Packet Tracer : j'ai pris les équivalents pédagogiques, sans changer la logique. "
+          "Cette maquette est la preuve des compétences C07 et C08 : routage, VLAN, haute disponibilité du cœur.")
+s.shapes.add_picture(IMG, Inches(0.5), Inches(1.4), width=Inches(7.6))
+rect(s, 0.5, 1.4, 7.6, 4.26, line=LINE)
+text(s, 0.5, 5.75, 7.6, 0.4, "Paris (siège) à gauche · Lyon à droite · FAI simulé au centre", size=12, color=GREY, italic=True, align=PP_ALIGN.CENTER)
+bullets(s, 8.4, 1.4, 4.5, 5.2, [("20 équipements", "2 sites, Cisco"), ("6 VLAN", "bureautique, bancaire, serveurs, invités, VOIP, management"), ("Plan VLSM", "identique au dossier"), ("HSRP", "2 cœurs L3 à Paris, passerelle virtuelle"), ("ASA 5505 + NAT + ACL", "invités isolés du LAN"), ("Tunnel GRE", "inter-site, équivalent du VPN du dossier")], size=16, gap=9)
+rect(s, 0.5, 6.25, 12.3, 0.65, fill=NAVY)
+text(s, 0.7, 6.28, 11.9, 0.6, "Compétences C07 · C08 : routage, VLAN, routage inter-VLAN, redondance du cœur", size=17, bold=True, color=GOLD, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
+
+# ---------------------------------------------------------------- 9c. Tests de la maquette
+s = slide("Maquette : tests de résilience et de sécurité", "3 · Actions réalisées",
+          "Le plan de test de la maquette comporte treize tests. Voici les plus parlants. "
+          "Le test de bascule HSRP : je lance un ping continu, j'éteins le cœur actif, quelques paquets sont perdus puis le second cœur reprend : c'est la suppression du point de défaillance unique R1. "
+          "Le second test : le trafic vers Internet continue grâce au raccordement indépendant du second cœur au pare-feu. "
+          "Côté sécurité : le VLAN invités est isolé du réseau interne mais garde l'accès à Internet, le NAT n'est pas appliqué au trafic inter-site, et le pare-feu bloque les connexions entrantes depuis l'extérieur. "
+          "Je précise les simplifications assumées : un seul pare-feu par site, pas de cluster ; un seul FAI simulé par site ; GRE à la place d'IPsec ; échelle réduite à un poste par VLAN. "
+          "La redondance complète est décrite dans le Lot A. [À dérouler en direct si le temps le permet, ou montrer les captures.]")
+table(s, 0.7, 1.45, 12.0, [("Test", 1.0), ("Action", 3.2), ("Résultat attendu", 3.2)], [
+    ["PT11", "Éteindre le cœur actif pendant un ping continu", "Quelques paquets perdus, le second cœur prend le relais (HSRP)"],
+    ["PT12", "Cœur 1 éteint : ping vers Internet", "Le trafic passe par le cœur 2, relié au pare-feu"],
+    ["PT04", "Ping du VLAN invités vers le LAN interne", "Échec : bloqué par l'ACL des invités"],
+    ["PT05", "Ping du VLAN invités vers Internet", "Réponse : l'ACL ne bloque que le LAN"],
+    ["PT07", "Ping Paris → Lyon", "Réponse via le tunnel GRE, sans NAT"],
+    ["PT10", "Ping depuis Internet vers l'adresse du pare-feu", "Échec : aucune règle n'autorise l'entrant"]], size=14, hsize=14, rowh=0.6)
+rect(s, 0.7, 5.75, 12.0, 1.15, fill=GOLDL)
+text(s, 0.9, 5.8, 11.6, 1.1, ["Simplifications assumées : un pare-feu par site (pas de cluster HA) · un FAI simulé par site · GRE à la place d'IPsec ·",
+                              "un poste par VLAN · équivalents Packet Tracer des Catalyst 9300 et FortiGate (absents du catalogue)"], size=14, color=INK, anchor=MSO_ANCHOR.MIDDLE, spacing=3)
 
 # ---------------------------------------------------------------- 10. Focus GED
 s = slide("Focus : la GED sécurisée (Lot F)", "4 · Focus GED",
