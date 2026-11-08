@@ -29,6 +29,7 @@ l'ensemble des exigences réglementaires (RGPD, ACPR, DSP2, PCI-DSS) identifiée
 | [D](lot-d-antivirus-edr.md) | Antivirus/EDR centralisé | Microsoft Defender for Endpoint (XDR) | C4 |
 | [E](lot-e-ids-ips.md) | Système de prévention d'intrusion | Fortinet IPS (FortiGate) + Defender complémentaire | R5, C1 |
 | [F](lot-f-audit-securite-ged.md) | Audit de sécurité + GED sécurisée | Méthodologie d'audit continue + Microsoft Purview (GED, DLP, PAM/PIM) | C2, C5, C6, C8 |
+| [F (suite)](lot-f-demonstrateur-ged.md) | Démonstrateur exécutable de la GED sécurisée | Next.js + Supabase/PostgreSQL : RLS, TOTP, audit immuable, signature, courrier | C2, C5, C8 |
 | [G](lot-g-pra-pca.md) | PRA / PCA | Cluster VMware répliqué + Veeam, RPO/RTO définis | S1, S2, S8, C3 |
 | [H](lot-h-monitoring-ticketing.md) | Monitoring et ticketing | PRTG/Zabbix + GLPI | S6, S7 |
 | [I](lot-i-gestion-parc-maintenance.md) | Gestion de parc et contrat de maintenance | GLPI + contrat de maintenance MOM-TECH | S7, R6 |

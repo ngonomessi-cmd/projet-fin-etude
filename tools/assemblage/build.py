@@ -94,6 +94,7 @@ PARTS = [
         "05-solutions/lot-d-antivirus-edr.md",
         "05-solutions/lot-e-ids-ips.md",
         "05-solutions/lot-f-audit-securite-ged.md",
+        "05-solutions/lot-f-demonstrateur-ged.md",
         "05-solutions/lot-g-pra-pca.md",
         "05-solutions/lot-h-monitoring-ticketing.md",
         "05-solutions/lot-i-gestion-parc-maintenance.md",
