@@ -78,6 +78,9 @@ def slide(titre, kicker=None, notes="", fond=WHITE):
     rect(s, 0, 1.05, 13.333, 0.05, fill=GOLD)
     if kicker:
         text(s, 0.6, 0.12, 9, 0.3, kicker.upper(), size=11, bold=True, color=GOLD)
+    # Les diapositives de la maquette réseau et du Lot F sont présentées par leur réalisateur.
+    if kicker == "4 · Focus GED" or titre.startswith("Maquette"):
+        text(s, 8.0, 0.12, 4.8, 0.3, "Présenté par Julien Joël NGONO MESSI", size=11, bold=True, color=GOLDL, align=PP_ALIGN.RIGHT)
     text(s, 0.6, 0.38, 12, 0.6, titre, size=28, bold=True, color=WHITE, anchor=MSO_ANCHOR.MIDDLE)
     text(s, 0.6, 7.08, 8, 0.3, "KHS Bank — Migration et sécurisation du SI · MOM-TECH", size=10, color=GREY)
     text(s, 12.0, 7.08, 0.8, 0.3, str(N["n"]), size=10, color=GREY, align=PP_ALIGN.RIGHT)
@@ -135,8 +138,9 @@ rect(s, 0.8, 3.55, 1.6, 0.06, fill=GOLD)
 text(s, 0.8, 1.5, 11.5, 0.4, "SOUTENANCE · TITRE ISRC — INGÉNIEUR SYSTÈMES, RÉSEAUX ET CYBERSÉCURITÉ", size=14, bold=True, color=GOLD)
 text(s, 0.8, 2.0, 11.8, 1.5, ["Migration et sécurisation", "du système d'information de KHS Bank"], size=40, bold=True, color=WHITE)
 text(s, 0.8, 3.8, 11, 0.6, "Projet mené par MOM-TECH — de l'audit à la GED sécurisée", size=22, color=GOLDL)
-text(s, 0.8, 6.3, 8, 0.4, "Julien Junior NGONO MESSI · IEF2I", size=16, color=WHITE)
-text(s, 0.8, 6.7, 8, 0.4, "16 décembre 2026", size=14, color=GREY)
+text(s, 0.8, 5.75, 11.8, 0.9, ["NGONO MESSI Julien Joël · ADJE Tchaffa Oladé Moïse", "WAFO Franklin Junior · ABAYOMI Obachegoun Olabissi"], size=18, bold=True, color=WHITE, spacing=2)
+text(s, 0.8, 6.65, 8, 0.4, "IEF2I · Institut Européen F2I", size=14, color=GOLDL)
+text(s, 9.0, 6.65, 3.5, 0.4, "16 décembre 2026", size=14, color=GOLDL, align=PP_ALIGN.RIGHT)
 s.notes_slide.notes_text_frame.text = ("Bonjour. Je vais vous présenter le projet de migration et de sécurisation du système d'information de KHS Bank, "
     "réalisé pour le compte de MOM-TECH. Je suivrai le plan attendu : les acteurs, le cahier des charges, les actions réalisées, puis la conclusion. "
     "Je terminerai par une démonstration en direct de la GED sécurisée que MOM-TECH a réalisée, et dans laquelle les agents créent eux-mêmes leurs documents Word, Excel et PowerPoint.")
@@ -181,6 +185,25 @@ card(s, 4.8, 1.5, 3.9, 2.2, "Cloud & infrastructure", "Architecture réseau, vir
 card(s, 8.9, 1.5, 3.8, 2.2, "IA & données", "Détection d'anomalies et de fraude, analyse comportementale couplée au SOC", size=18)
 text(s, 0.7, 4.0, 12, 0.4, "Équipe projet : 4 ingénieurs · 2 sous-équipes · démarche ITIL v4", size=18, bold=True, color=NAVY)
 bullets(s, 0.7, 4.6, 12, 2.2, [("Sous-équipe Réseau & Sécurité", "audit réseau, architecture, pare-feu, SOC"), ("Sous-équipe Systèmes & Cloud", "virtualisation, stockage, Microsoft 365, migration"), ("Chef de projet", "référent MOM-TECH au sein de la DSI de KHS Bank")], size=19)
+
+# ---------------------------------------------------------------- 4b. Équipe
+s = slide("L'équipe projet MOM-TECH", "1 · Les acteurs",
+          "Voici l'équipe : quatre ingénieurs. J'ai réalisé la GED sécurisée du Lot F et la maquette Packet Tracer de l'architecture réseau, et je présente ces deux parties. "
+          "[Chaque membre présente ensuite sa partie : à compléter avec la répartition du groupe.]")
+membres = [("NGONO MESSI", "Julien Joël", "GED sécurisée (Lot F)\nMaquette réseau Packet Tracer\nPrésente le Lot F", True),
+           ("ADJE", "Tchaffa Oladé Moïse", "Ingénieur MOM-TECH", False),
+           ("WAFO", "Franklin Junior", "Ingénieur MOM-TECH", False),
+           ("ABAYOMI", "Obachegoun Olabissi", "Ingénieur MOM-TECH", False)]
+for i, (nom, prenom, role, vedette) in enumerate(membres):
+    x = 0.7 + i * 3.05
+    rect(s, x, 1.6, 2.9, 4.4, fill=NAVY if vedette else WHITE, line=None if vedette else LINE)
+    rect(s, x, 1.6, 2.9, 0.08, fill=GOLD)
+    rect(s, x + 0.95, 2.0, 1.0, 1.0, fill=GOLD if vedette else GOLDL, shape=MSO_SHAPE.OVAL)
+    text(s, x + 0.95, 2.0, 1.0, 1.0, nom[0] + prenom[0], size=28, bold=True, color=NAVY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    text(s, x + 0.1, 3.2, 2.7, 0.5, nom, size=20, bold=True, color=WHITE if vedette else NAVY, align=PP_ALIGN.CENTER)
+    text(s, x + 0.1, 3.7, 2.7, 0.7, prenom, size=17, color=GOLDL if vedette else GREY, align=PP_ALIGN.CENTER)
+    text(s, x + 0.1, 4.5, 2.7, 1.4, role.split("\n"), size=15, bold=vedette, color=GOLD if vedette else GREY, align=PP_ALIGN.CENTER, spacing=3)
+text(s, 0.7, 6.3, 12, 0.5, "Équipe de 4 ingénieurs · 2 sous-équipes : Architecture Système et Réseau & Sécurité", size=15, color=GREY, italic=True, align=PP_ALIGN.CENTER)
 
 # ---------------------------------------------------------------- 5. CDC
 s = slide("Le cahier des charges", "2 · Cahier des charges",

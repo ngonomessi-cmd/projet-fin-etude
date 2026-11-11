@@ -16,7 +16,7 @@ Migration et sécurisation du système d'information de KHS Bank
 
 **Prestataire :** MOM-TECH
 
-**Candidats :** *[Prénom NOM 1]*, *[Prénom NOM 2]*, *[Prénom NOM 3]*, *[Prénom NOM 4]*
+**Candidats :** NGONO MESSI Julien Joël, ADJE Tchaffa Oladé Moïse, WAFO Franklin Junior, ABAYOMI Obachegoun Olabissi
 
 **Session :** 2026
 
@@ -185,10 +185,10 @@ Ingénieur Systèmes         Ingénieur      Ingénieur Réseaux &      Ingénie
 |---|---|---|
 | Chef de projet / Ingénieur Architecture Système | *[Prénom NOM 1]* | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA |
 | Ingénieur Réseaux & Sécurité | *[Prénom NOM 2]* | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
-| Ingénieur Cybersécurité / SOC | *[Prénom NOM 3]* | Lot D, F (audit sécurité), SOC/SIEM, GED sécurisée, conformité RGPD/ACPR |
+| Ingénieur Cybersécurité / SOC | NGONO MESSI Julien Joël | Lot D, F (audit sécurité), SOC/SIEM, **réalisation de la GED sécurisée**, **maquette Packet Tracer de l'architecture réseau (Lot A)**, conformité RGPD/ACPR |
 | Ingénieur Systèmes & Déploiement | *[Prénom NOM 4]* | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
 
-*(Noms des 4 candidats à compléter — la répartition ci-dessus respecte l'obligation du cahier des charges
+*(Noms des trois autres candidats à rattacher à leur rôle — la répartition ci-dessus respecte l'obligation du cahier des charges
 de structurer l'équipe en deux sous-équipes Architecture Système / Réseau & Sécurité, tout en couvrant
 l'ensemble des lots principaux et complémentaires.)*
 
