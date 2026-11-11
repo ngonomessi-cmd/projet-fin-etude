@@ -10,9 +10,9 @@ title: "Soutenance KHS Bank — Trame orale, scénario de démonstration et ques
 | Cahier des charges | 2 min | 5 |
 | Actions réalisées (gestion de projet, audit, solutions, architecture, migration) | 7 min | 6 à 9 |
 | **Maquette Cisco Packet Tracer** (présentation, puis tests en direct ou captures) | **4 à 6 min** | 10 et 11 |
-| Focus GED sécurisée (présentation) | 4 min | 12 à 15 |
-| **Démonstration en direct de la GED** | **8 à 10 min** | 14 (support) |
-| Synthèse (bilan, recette, conclusion) | 4 min | 16 à 19 |
+| Focus GED sécurisée (présentation) | 4 min | 12 à 16 |
+| **Démonstration en direct de la GED** | **8 à 10 min** | 15 (support) |
+| Synthèse (bilan, recette, conclusion) | 4 min | 17 à 20 |
 | **Total** | **≈ 34 à 36 min** (dont 18 min de démonstrations) | |
 
 Le plan suit celui attendu à la soutenance : entreprise et acteurs, éléments clés du cahier des charges, actions réalisées (aspects techniques et méthodologiques), synthèse et conclusion. **Adaptez les durées** à celles annoncées par votre jury. Si la présentation doit être plus courte : la démonstration de la GED se réduit à la version courte (§ 3.2) et la maquette Packet Tracer à un seul test (la bascule HSRP, PT11).
@@ -36,12 +36,13 @@ Les mêmes textes figurent dans les notes du fichier PowerPoint (mode présentat
 | 11 | Tests de résilience et de sécurité ; simplifications assumées | « Je coupe le cœur actif pendant un ping continu : le second cœur prend le relais. C'est la fin du point de défaillance unique R1. » |
 | 12 | Lot F : production = SharePoint + Purview ; démonstrateur libre | « Je ne peux pas montrer Purview sans tenant. J'ai donc construit un démonstrateur qui applique les mêmes règles. » |
 | 13 | La sécurité est dans la base, pas dans le code | « Même si l'application avait un défaut, la base refuserait l'accès. » |
-| 14 | Annonce de la démonstration | « Cinq personnages, un document confidentiel, six étapes. » |
-| 15 | Courrier physique et multi-organisation | « Le courrier papier reste critique dans une banque. Une même plateforme sert deux organisations, cloisonnées par la base. » |
-| 16 | ≈ 4,8 M€ d'investissement, ≈ 1,5 M€/an, ≈ 11 % du budget | « Le coût récurrent laisse de la marge sur le budget de 14 M€. » |
-| 17 | Recette : tous les tests de l'extrait sont conformes | « Chaque exigence critique a un test et un résultat attendu. » |
-| 18 | Objectifs atteints, perspectives | « 14 constats traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
-| 19 | Remerciements | « Je suis à votre disposition pour vos questions. » |
+| 14 | Preuve en situation : un rédacteur refusé | « Voici le site déployé : un rédacteur force l'adresse d'administration. Refus à trois niveaux : menu, page, et surtout la base. » |
+| 15 | Annonce de la démonstration | « Cinq personnages, un document confidentiel, six étapes. » |
+| 16 | Courrier physique et multi-organisation | « Le courrier papier reste critique dans une banque. Une même plateforme sert deux organisations, cloisonnées par la base. » |
+| 17 | ≈ 4,8 M€ d'investissement, ≈ 1,5 M€/an, ≈ 11 % du budget | « Le coût récurrent laisse de la marge sur le budget de 14 M€. » |
+| 18 | Recette : tous les tests de l'extrait sont conformes | « Chaque exigence critique a un test et un résultat attendu. » |
+| 19 | Objectifs atteints, perspectives | « 14 constats traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
+| 20 | Remerciements | « Je suis à votre disposition pour vos questions. » |
 
 # 3. Scénario de démonstration (8 à 10 minutes)
 
@@ -74,6 +75,8 @@ Le rôle « chef du courrier » et « agent du courrier » se désigne depuis la
 | 7 | Camille | **Courrier → Nouveau** : saisir expéditeur, référence, objet ; numériser ; « Déclarer la remise » | Numéro `ARR-2026-…`, récépissé PDF, empreinte du scan | 1,5 min |
 | 8 | Aude | **Audit** | Chaque étape est inscrite ; aucune action de suppression n'existe | 1 min |
 | 9 | (Optionnel, en commentaire) | Montrer le code du déclencheur d'immutabilité, ou citer le test qui refuse `DELETE` | Le journal est protégé, **y compris pour la clé de service** | 0,5 min |
+
+**Variante de l'étape 2 (30 secondes)** : connecté en rédacteur, saisir l'adresse `/admin/utilisateurs`. L'accès est refusé (même écran que la diapositive 14) : le menu ne propose pas l'administration, la page refuse, et la base vérifie le rôle.
 
 **Version courte (5 min)** : étapes 1, 2, 4, 5 et 8.
 

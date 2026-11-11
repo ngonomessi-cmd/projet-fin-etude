@@ -86,6 +86,17 @@ Autres dispositions qui renforcent le modèle :
 - **Références non falsifiables** : la référence d'un document (`KHS-2026-000123`) est attribuée par la
   base. Une tentative de la fixer ou de la modifier est ignorée.
 
+**Preuve en situation.** La capture ci-dessous a été réalisée sur le site déployé. Un agent connecté avec
+le rôle **Rédacteur** (Joël MESSI, département Conformité) a forcé l'adresse de la page d'administration
+des utilisateurs. L'accès est refusé. Le refus s'appuie sur trois niveaux de contrôle :
+
+1. **interface** : le menu de l'agent ne propose aucune entrée d'administration ;
+2. **page** : un message d'accès réservé au rôle Administrateur remplace le contenu ;
+3. **base de données** : la fonction `changer_role_utilisateur` vérifie le rôle de l'appelant et refuse
+   toute modification de rôle venant d'un autre profil, même si l'interface était contournée.
+
+![Accès refusé à un agent Rédacteur qui force l'adresse de la page d'administration des utilisateurs](capture-acces-refuse-redacteur.png){width=70%}
+
 **Test de falsification réalisé :** un rédacteur qui insère un document avec une fausse référence, une
 version arbitraire et une date d'archivage obtient un document dont ces valeurs ont été remplacées par
 celles de la base ; un agent d'un autre département ou un lecteur reçoit une réponse « introuvable ».

@@ -322,6 +322,25 @@ card(s, 0.7, 4.4, 3.9, 2.3, "RLS : qui voit quoi", "Rôle + département + class
 card(s, 4.75, 4.4, 3.9, 2.3, "MFA imposée par la base", "Sans code TOTP (niveau aal2), aucune table n'est lisible, même par appel direct à l'API", size=17)
 card(s, 8.8, 4.4, 3.9, 2.3, "Audit immuable", "Un déclencheur refuse tout UPDATE ou DELETE, même avec la clé de service", size=17)
 
+# ---------------------------------------------------------------- 11b. Preuve : accès refusé
+CAPTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "docs", "05-solutions", "capture-acces-refuse-redacteur.png")
+s = slide("Preuve en situation : un rédacteur refusé", "4 · Focus GED",
+          "Voici une capture réalisée sur le site déployé. Je suis connecté avec un compte Rédacteur, Joël MESSI, du département Conformité. "
+          "Je force l'adresse de la page d'administration des utilisateurs. L'accès est refusé. "
+          "Trois niveaux de contrôle : l'interface ne propose pas l'entrée d'administration dans le menu ; la page affiche un message d'accès réservé à l'administrateur ; "
+          "et surtout la base de données vérifie le rôle de l'appelant dans la fonction de changement de rôle, ce qui protège même si l'interface était contournée. "
+          "C'est le principe du moindre privilège : tout nouveau compte est Lecteur, et seul un administrateur change un rôle.")
+s.shapes.add_picture(CAPTURE, Inches(0.5), Inches(1.4), width=Inches(7.6))
+rect(s, 0.5, 1.4, 7.6, 4.14, line=LINE)
+text(s, 0.5, 5.6, 7.6, 0.4, "Site déployé · compte Rédacteur · adresse /admin/utilisateurs", size=12, color=GREY, italic=True, align=PP_ALIGN.CENTER)
+for i, (t1, t2) in enumerate([("1", "Interface : aucune entrée d'administration dans le menu"), ("2", "Page : accès réservé au rôle Administrateur"), ("3", "Base de données : la fonction changer_role_utilisateur vérifie le rôle et refuse")]):
+    y = 1.4 + i * 1.35
+    rect(s, 8.4, y, 0.6, 0.6, fill=GOLD, shape=MSO_SHAPE.OVAL)
+    text(s, 8.4, y, 0.6, 0.6, t1, size=20, bold=True, color=WHITE, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    text(s, 9.15, y - 0.05, 3.7, 1.2, t2, size=16, color=INK)
+rect(s, 0.5, 6.25, 12.3, 0.65, fill=NAVY)
+text(s, 0.7, 6.28, 11.9, 0.6, "Moindre privilège : tout nouveau compte est Lecteur · seul un administrateur change un rôle", size=17, bold=True, color=GOLD, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
+
 # ---------------------------------------------------------------- 12. Démo
 s = slide("Démonstration en direct : le parcours d'un document", "4 · Focus GED",
           "Voici le scénario de démonstration. Cinq personnages : une rédactrice, un validateur, un directeur général, un agent du courrier et une auditrice. "

@@ -49,7 +49,9 @@ def load(relpath: str, shift: int = 1) -> str:
     with open(f"{DOCS}/{relpath}", encoding="utf-8") as f:
         text = f.read()
     text = strip_md_links(text)
-    text = text.replace("](maquette-packet-tracer.png)", "](docs/10-packet-tracer/maquette-packet-tracer.png)")
+    # Images référencées par un simple nom de fichier : chemin relatif au dépôt une fois fusionné.
+    dossier = os.path.dirname(relpath)
+    text = re.sub(r"(!\[[^\]]*\]\()([^)/:]+\.(?:png|jpg|jpeg))\)", lambda m: f"{m.group(1)}docs/{dossier}/{m.group(2)})", text)
     text = shift_headings(text, shift)
     return text.strip("\n")
 
