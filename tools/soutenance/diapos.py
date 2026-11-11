@@ -188,21 +188,17 @@ bullets(s, 0.7, 4.6, 12, 2.2, [("Sous-équipe Réseau & Sécurité", "audit rés
 
 # ---------------------------------------------------------------- 4b. Équipe
 s = slide("L'équipe projet MOM-TECH", "1 · Les acteurs",
-          "Voici l'équipe : quatre ingénieurs. J'ai réalisé la GED sécurisée du Lot F et la maquette Packet Tracer de l'architecture réseau, et je présente ces deux parties. "
-          "[Chaque membre présente ensuite sa partie : à compléter avec la répartition du groupe.]")
-membres = [("NGONO MESSI", "Julien Joël", "GED sécurisée (Lot F)\nMaquette réseau Packet Tracer\nPrésente le Lot F", True),
-           ("ADJE", "Tchaffa Oladé Moïse", "Ingénieur MOM-TECH", False),
-           ("WAFO", "Franklin Junior", "Ingénieur MOM-TECH", False),
-           ("ABAYOMI", "Obachegoun Olabissi", "Ingénieur MOM-TECH", False)]
-for i, (nom, prenom, role, vedette) in enumerate(membres):
+          "Voici l'équipe : quatre ingénieurs MOM-TECH, deux sous-équipes, Architecture Système et Réseau & Sécurité.")
+membres = [("NGONO MESSI", "Julien Joël"), ("ADJE", "Tchaffa Oladé Moïse"), ("WAFO", "Franklin Junior"), ("ABAYOMI", "Obachegoun Olabissi")]
+for i, (nom, prenom) in enumerate(membres):
     x = 0.7 + i * 3.05
-    rect(s, x, 1.6, 2.9, 4.4, fill=NAVY if vedette else WHITE, line=None if vedette else LINE)
+    rect(s, x, 1.6, 2.9, 4.2, fill=WHITE, line=LINE)
     rect(s, x, 1.6, 2.9, 0.08, fill=GOLD)
-    rect(s, x + 0.95, 2.0, 1.0, 1.0, fill=GOLD if vedette else GOLDL, shape=MSO_SHAPE.OVAL)
-    text(s, x + 0.95, 2.0, 1.0, 1.0, nom[0] + prenom[0], size=28, bold=True, color=NAVY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    text(s, x + 0.1, 3.2, 2.7, 0.5, nom, size=20, bold=True, color=WHITE if vedette else NAVY, align=PP_ALIGN.CENTER)
-    text(s, x + 0.1, 3.7, 2.7, 0.7, prenom, size=17, color=GOLDL if vedette else GREY, align=PP_ALIGN.CENTER)
-    text(s, x + 0.1, 4.5, 2.7, 1.4, role.split("\n"), size=15, bold=vedette, color=GOLD if vedette else GREY, align=PP_ALIGN.CENTER, spacing=3)
+    rect(s, x + 0.95, 2.1, 1.0, 1.0, fill=GOLDL, shape=MSO_SHAPE.OVAL)
+    text(s, x + 0.95, 2.1, 1.0, 1.0, nom[0] + prenom[0], size=28, bold=True, color=NAVY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    text(s, x + 0.1, 3.4, 2.7, 0.5, nom, size=20, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
+    text(s, x + 0.1, 3.9, 2.7, 0.7, prenom, size=17, color=GREY, align=PP_ALIGN.CENTER)
+    text(s, x + 0.1, 4.8, 2.7, 0.6, "Ingénieur MOM-TECH", size=15, color=GREY, align=PP_ALIGN.CENTER)
 text(s, 0.7, 6.3, 12, 0.5, "Équipe de 4 ingénieurs · 2 sous-équipes : Architecture Système et Réseau & Sécurité", size=15, color=GREY, italic=True, align=PP_ALIGN.CENTER)
 
 # ---------------------------------------------------------------- 5. CDC
