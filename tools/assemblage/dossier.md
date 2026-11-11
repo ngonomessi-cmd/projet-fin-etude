@@ -161,7 +161,7 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|
-| Chef de projet / Ingénieur Architecture Système | NGONO MESSI Julien Joël | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA, **réalisation de la GED sécurisée (Lot F)**, **maquette Packet Tracer de l'architecture réseau** |
+| Chef de projet / Ingénieur Architecture Système | NGONO MESSI Julien Joël | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA, Lot F |
 | Ingénieur Réseaux & Sécurité | ADJE Tchaffa Oladé Moïse | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
 | Ingénieur Cybersécurité / SOC | ABAYOMI Obachegoun Olabissi Majesté | Lot D, F (audit sécurité), SOC/SIEM, conformité RGPD/ACPR |
 | Ingénieur Systèmes & Déploiement | WAFO Franklin Junior | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
