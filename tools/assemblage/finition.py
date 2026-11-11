@@ -25,7 +25,7 @@ OR = "B8923F"
 GRIS = "595959"
 LARGEUR_TEXTE_TWIPS = 11906 - 2 * 1134       # A4 portrait, marges de 2 cm
 EMU_CM = 360000
-CANDIDATS = ["NGONO MESSI Julien Joël", "ADJE Tchaffa Oladé Moïse", "WAFO Franklin Junior", "ABAYOMI Obachegoun Olabissi"]
+CANDIDATS = ["NGONO MESSI Julien Joël", "ADJE Tchaffa Oladé Moïse", "WAFO Franklin Junior", "ABAYOMI Obachegoun Olabissi Majesté"]
 PAYSAGE = ("PBS", "WBS", "Diagramme de Gantt")
 
 
@@ -340,6 +340,9 @@ def table_des_figures(d):
 def en_tete(d):
     premiere = d.sections[0]
     premiere.different_first_page_header_footer = True
+    # page de garde : en-tête et pied de page vides
+    premiere.first_page_header.is_linked_to_previous = False
+    premiere.first_page_footer.is_linked_to_previous = False
     h = premiere.header
     h.is_linked_to_previous = False
     p = h.paragraphs[0]

@@ -17,7 +17,7 @@ Migration et sécurisation du système d'information de KHS Bank
 
 **Prestataire :** MOM-TECH
 
-**Candidats :** *[Prénom NOM 1]*, *[Prénom NOM 2]*, *[Prénom NOM 3]*, *[Prénom NOM 4]*
+**Candidats :** NGONO MESSI Julien Joël, ADJE Tchaffa Oladé Moïse, WAFO Franklin Junior, ABAYOMI Obachegoun Olabissi Majesté
 
 **Session :** 2026
 

@@ -16,7 +16,7 @@ Client : KHS Bank — Prestataire : MOM-TECH
 
 **Prestataire :** MOM-TECH
 
-**Candidats :** *[Prénom NOM 1]*, *[Prénom NOM 2]*, *[Prénom NOM 3]*, *[Prénom NOM 4]*
+**Candidats :** NGONO MESSI Julien Joël, ADJE Tchaffa Oladé Moïse, WAFO Franklin Junior, ABAYOMI Obachegoun Olabissi Majesté
 
 **Session :** 2026
 
@@ -129,12 +129,12 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|
-| Chef de projet / Ingénieur Architecture Système | *[Prénom NOM 1]* | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA |
-| Ingénieur Réseaux & Sécurité | *[Prénom NOM 2]* | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
-| Ingénieur Cybersécurité / SOC | NGONO MESSI Julien Joël | Lot D, F (audit sécurité), SOC/SIEM, **réalisation de la GED sécurisée**, **maquette Packet Tracer de l'architecture réseau (Lot A)**, conformité RGPD/ACPR |
-| Ingénieur Systèmes & Déploiement | *[Prénom NOM 4]* | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
+| Chef de projet / Ingénieur Architecture Système | NGONO MESSI Julien Joël | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA, **réalisation de la GED sécurisée (Lot F)**, **maquette Packet Tracer de l'architecture réseau** |
+| Ingénieur Réseaux & Sécurité | ADJE Tchaffa Oladé Moïse | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
+| Ingénieur Cybersécurité / SOC | ABAYOMI Obachegoun Olabissi Majesté | Lot D, F (audit sécurité), SOC/SIEM, conformité RGPD/ACPR |
+| Ingénieur Systèmes & Déploiement | WAFO Franklin Junior | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
 
-*(Noms des trois autres candidats à rattacher à leur rôle — la répartition ci-dessus respecte l'obligation du cahier des charges
+*(La répartition ci-dessus respecte l'obligation du cahier des charges
 de structurer l'équipe en deux sous-équipes Architecture Système / Réseau & Sécurité, tout en couvrant
 l'ensemble des lots principaux et complémentaires.)*
 

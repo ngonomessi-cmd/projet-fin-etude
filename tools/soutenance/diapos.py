@@ -138,7 +138,7 @@ rect(s, 0.8, 3.55, 1.6, 0.06, fill=GOLD)
 text(s, 0.8, 1.5, 11.5, 0.4, "SOUTENANCE · TITRE ISRC — INGÉNIEUR SYSTÈMES, RÉSEAUX ET CYBERSÉCURITÉ", size=14, bold=True, color=GOLD)
 text(s, 0.8, 2.0, 11.8, 1.5, ["Migration et sécurisation", "du système d'information de KHS Bank"], size=40, bold=True, color=WHITE)
 text(s, 0.8, 3.8, 11, 0.6, "Projet mené par MOM-TECH — de l'audit à la GED sécurisée", size=22, color=GOLDL)
-text(s, 0.8, 5.75, 11.8, 0.9, ["NGONO MESSI Julien Joël · ADJE Tchaffa Oladé Moïse", "WAFO Franklin Junior · ABAYOMI Obachegoun Olabissi"], size=18, bold=True, color=WHITE, spacing=2)
+text(s, 0.8, 5.75, 11.8, 0.9, ["NGONO MESSI Julien Joël · ADJE Tchaffa Oladé Moïse", "WAFO Franklin Junior · ABAYOMI Obachegoun Olabissi Majesté"], size=18, bold=True, color=WHITE, spacing=2)
 text(s, 0.8, 6.65, 8, 0.4, "IEF2I · Institut Européen F2I", size=14, color=GOLDL)
 text(s, 9.0, 6.65, 3.5, 0.4, "16 décembre 2026", size=14, color=GOLDL, align=PP_ALIGN.RIGHT)
 s.notes_slide.notes_text_frame.text = ("Bonjour. Je vais vous présenter le projet de migration et de sécurisation du système d'information de KHS Bank, "
@@ -189,7 +189,7 @@ bullets(s, 0.7, 4.6, 12, 2.2, [("Sous-équipe Réseau & Sécurité", "audit rés
 # ---------------------------------------------------------------- 4b. Équipe
 s = slide("L'équipe projet MOM-TECH", "1 · Les acteurs",
           "Voici l'équipe : quatre ingénieurs MOM-TECH, deux sous-équipes, Architecture Système et Réseau & Sécurité.")
-membres = [("NGONO MESSI", "Julien Joël"), ("ADJE", "Tchaffa Oladé Moïse"), ("WAFO", "Franklin Junior"), ("ABAYOMI", "Obachegoun Olabissi")]
+membres = [("NGONO MESSI", "Julien Joël"), ("ADJE", "Tchaffa Oladé Moïse"), ("WAFO", "Franklin Junior"), ("ABAYOMI", "Obachegoun Olabissi Majesté")]
 for i, (nom, prenom) in enumerate(membres):
     x = 0.7 + i * 3.05
     rect(s, x, 1.6, 2.9, 4.2, fill=WHITE, line=LINE)
