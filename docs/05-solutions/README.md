@@ -9,8 +9,10 @@ individuellement, avec un fil conducteur cohérent :
   disponibilité répliqué entre les deux sites (socle du PRA/PCA).
 - **Identité, bureautique & sécurité applicative** : socle **Microsoft 365 E5 / Microsoft Entra ID**
   (ex-Azure AD) — bureautique, messagerie, IAM/MFA, EDR (Defender for Endpoint), protection des
-  données (Purview DLP) et GED sécurisée s'appuient sur la **même plateforme**, ce qui simplifie
-  l'administration, réduit le nombre d'éditeurs et permet une intégration native avec le SOC.
+  données (Purview DLP) s'appuient sur la **même plateforme**, ce qui simplifie l'administration, réduit
+  le nombre d'éditeurs et permet une intégration native avec le SOC. La **GED sécurisée** est réalisée par
+  MOM-TECH (ateliers Word/Excel/PowerPoint intégrés) et s'appuie sur Entra ID pour la gouvernance des accès
+  privilégiés.
 - **Supervision & SOC** : **Microsoft Sentinel** (SIEM/SOAR avec détection assistée par IA — UEBA), au
   cœur de l'expertise IA de MOM-TECH, complété par PRTG/Zabbix pour la supervision infrastructure et
   GLPI pour la gestion de parc et le ticketing.
@@ -28,8 +30,8 @@ l'ensemble des exigences réglementaires (RGPD, ACPR, DSP2, PCI-DSS) identifiée
 | [C](lot-c-office365-entra-id.md) | Bureautique Office 365 + identité | Microsoft 365 E5, Entra ID hybride, Conditional Access MFA | S5, C2 |
 | [D](lot-d-antivirus-edr.md) | Antivirus/EDR centralisé | Microsoft Defender for Endpoint (XDR) | C4 |
 | [E](lot-e-ids-ips.md) | Système de prévention d'intrusion | Fortinet IPS (FortiGate) + Defender complémentaire | R5, C1 |
-| [F](lot-f-audit-securite-ged.md) | Audit de sécurité + GED sécurisée | Méthodologie d'audit continue + Microsoft Purview (GED, DLP, PAM/PIM) | C2, C5, C6, C8 |
-| [F (suite)](lot-f-demonstrateur-ged.md) | Démonstrateur exécutable de la GED sécurisée | Next.js + Supabase/PostgreSQL : RLS, TOTP, audit immuable, signature, courrier | C2, C5, C8 |
+| [F](lot-f-audit-securite-ged.md) | Audit de sécurité + GED sécurisée | Méthodologie d'audit continue + GED sécurisée MOM-TECH (ateliers Word/Excel/PowerPoint) + Purview DLP et Entra PIM | C2, C5, C6, C8 |
+| [F (suite)](lot-f-demonstrateur-ged.md) | Réalisation de la GED sécurisée | Next.js + PostgreSQL : ateliers documentaires, RLS, TOTP, audit immuable, signature, courrier | C2, C5, C8 |
 | [G](lot-g-pra-pca.md) | PRA / PCA | Cluster VMware répliqué + Veeam, RPO/RTO définis | S1, S2, S8, C3 |
 | [H](lot-h-monitoring-ticketing.md) | Monitoring et ticketing | PRTG/Zabbix + GLPI | S6, S7 |
 | [I](lot-i-gestion-parc-maintenance.md) | Gestion de parc et contrat de maintenance | GLPI + contrat de maintenance MOM-TECH | S7, R6 |

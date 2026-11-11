@@ -988,8 +988,10 @@ individuellement, avec un fil conducteur cohérent :
   disponibilité répliqué entre les deux sites (socle du PRA/PCA).
 - **Identité, bureautique & sécurité applicative** : socle **Microsoft 365 E5 / Microsoft Entra ID**
   (ex-Azure AD) — bureautique, messagerie, IAM/MFA, EDR (Defender for Endpoint), protection des
-  données (Purview DLP) et GED sécurisée s'appuient sur la **même plateforme**, ce qui simplifie
-  l'administration, réduit le nombre d'éditeurs et permet une intégration native avec le SOC.
+  données (Purview DLP) s'appuient sur la **même plateforme**, ce qui simplifie l'administration, réduit
+  le nombre d'éditeurs et permet une intégration native avec le SOC. La **GED sécurisée** est réalisée par
+  MOM-TECH (ateliers Word/Excel/PowerPoint intégrés) et s'appuie sur Entra ID pour la gouvernance des accès
+  privilégiés.
 - **Supervision & SOC** : **Microsoft Sentinel** (SIEM/SOAR avec détection assistée par IA — UEBA), au
   cœur de l'expertise IA de MOM-TECH, complété par PRTG/Zabbix pour la supervision infrastructure et
   GLPI pour la gestion de parc et le ticketing.
@@ -1007,8 +1009,8 @@ l'ensemble des exigences réglementaires (RGPD, ACPR, DSP2, PCI-DSS) identifiée
 | C | Bureautique Office 365 + identité | Microsoft 365 E5, Entra ID hybride, Conditional Access MFA | S5, C2 |
 | D | Antivirus/EDR centralisé | Microsoft Defender for Endpoint (XDR) | C4 |
 | E | Système de prévention d'intrusion | Fortinet IPS (FortiGate) + Defender complémentaire | R5, C1 |
-| F | Audit de sécurité + GED sécurisée | Méthodologie d'audit continue + Microsoft Purview (GED, DLP, PAM/PIM) | C2, C5, C6, C8 |
-| F (suite) | Démonstrateur exécutable de la GED sécurisée | Next.js + Supabase/PostgreSQL : RLS, TOTP, audit immuable, signature, courrier | C2, C5, C8 |
+| F | Audit de sécurité + GED sécurisée | Méthodologie d'audit continue + GED sécurisée MOM-TECH (ateliers Word/Excel/PowerPoint) + Purview DLP et Entra PIM | C2, C5, C6, C8 |
+| F (suite) | Réalisation de la GED sécurisée | Next.js + PostgreSQL : ateliers documentaires, RLS, TOTP, audit immuable, signature, courrier | C2, C5, C8 |
 | G | PRA / PCA | Cluster VMware répliqué + Veeam, RPO/RTO définis | S1, S2, S8, C3 |
 | H | Monitoring et ticketing | PRTG/Zabbix + GLPI | S6, S7 |
 | I | Gestion de parc et contrat de maintenance | GLPI + contrat de maintenance MOM-TECH | S7, R6 |
@@ -1277,56 +1279,86 @@ rapports de conformité) sont stockés sur un serveur de fichiers classique, san
 traçabilité des accès (constat **C5**). Cette lacune expose l'établissement à un risque de fuite de
 données et à une non-conformité RGPD/secret bancaire.
 
-#### Solution proposée
+#### Solution retenue : une GED sécurisée réalisée par MOM-TECH
 
-Mise en place d'une GED sécurisée s'appuyant sur **SharePoint Online / OneDrive Entreprise**
-(inclus dans le socle Microsoft 365 E5 du Lot C), enrichie par
-**Microsoft Purview** :
+MOM-TECH réalise et déploie une **GED sécurisée dédiée**, construite avec des outils libres (application web
+Next.js, base PostgreSQL). Elle ne se limite pas au stockage : elle permet de **créer et de faire vivre les
+documents dans la plateforme**, avec des règles de sécurité appliquées par la base de données elle-même.
+Le détail de la réalisation est présenté au chapitre « Lot F (suite) — La GED sécurisée réalisée par
+MOM-TECH ».
 
-- **Classification des documents** par niveau de confidentialité (public interne / restreint / confidentiel)
-  via des étiquettes de sensibilité (*sensitivity labels*) appliquées automatiquement selon le contenu
-  détecté (ex. numéro de compte, IBAN, pièce d'identité) ;
-- **Contrôle d'accès basé sur les rôles (RBAC)**, aligné sur le modèle vu dans les projets de
-  dématérialisation documentaire comparables (rédacteur, validateur, administrateur, auditeur) ;
-- **Chiffrement au repos et en transit**, natif à la plateforme ;
-- **Data Loss Prevention (DLP)** : blocage ou alerte automatique en cas de tentative d'envoi externe
-  d'un document classé confidentiel ;
-- **Journal d'audit immuable** (Microsoft Purview Audit), consultable par les auditeurs internes et
-  externalisable vers le SIEM pour investigation en cas d'incident ;
+- **Ateliers documentaires intégrés** : rédaction en ligne de documents texte (type **Word**), de tableurs (type **Excel**) et de
+  présentations (type **PowerPoint**), à partir de modèles bilingues (français / anglais), avec export au format
+  natif (.docx, .xlsx, .pptx) et en **PDF**. Les documents sont créés dans la GED : ils naissent classés,
+  référencés et tracés, sans passer par un poste de travail ni par un partage de fichiers.
+- **Classification des documents** par niveau de confidentialité (public interne / restreint /
+  confidentiel), appliquée par la base de données ;
+- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, administrateur, auditeur) et
+  cloisonnement par département, appliqués par PostgreSQL (*Row Level Security*) ;
 - **Workflow de validation** pour les documents sensibles (dépôt → vérification → validation →
-  publication), sur le même principe que les circuits de double validation documentaire.
+  publication) ;
+- **Journal d'audit immuable**, consultable par les auditeurs internes, qu'aucun profil ne peut modifier ;
+- **Authentification forte** : double authentification obligatoire (TOTP), imposée par la base ;
+- **Signature numérique du Directeur Général** (QR code, page publique de vérification) et **archivage
+  scellé** (empreinte SHA-256, lecture seule définitive) ;
+- **Chiffrement en transit** (HTTPS) et fichiers servis par des adresses signées de courte durée ;
+- **Messagerie interne** et **service du courrier physique** rattachés à la même plateforme.
+
+#### Compléments apportés par le socle Microsoft 365 E5
+
+La GED ne remplace pas le socle Microsoft 365 du Lot C : elle en reprend les
+compléments là où ils sont déjà licenciés.
+
+- **Microsoft Purview DLP** : blocage ou alerte en cas de tentative d'envoi externe d'un document classé
+  confidentiel par la **messagerie**, Teams ou OneDrive (la GED, elle, ne transmet aucun document à
+  l'extérieur sans action explicite d'un agent habilité) ;
+- **Microsoft Entra Privileged Identity Management (PIM)**, ci-dessous, pour les comptes à privilèges.
 
 #### Gestion des comptes à privilèges (PAM)
 
 Mise en place de **Microsoft Entra Privileged Identity Management (PIM)** : élévation de privilèges
 temporaire et justifiée pour les comptes administrateurs (réseau, systèmes, sécurité), avec approbation
-et journalisation systématiques — corrige **C8**.
+et journalisation systématiques — corrige **C8**. Dans la GED, le rôle d'administrateur est lui aussi
+tracé dans le journal d'audit, et aucun agent ne peut s'attribuer un rôle.
 
 ### Justification
 
-Ce choix évite de déployer une GED spécifique supplémentaire (coût, intégration, formation) en
-s'appuyant sur la plateforme Microsoft 365 déjà retenue pour la bureautique et l'identité : la
-classification, le DLP et l'audit documentaire héritent directement de l'IAM (Entra ID) et du SIEM
-(Sentinel) déjà en place, pour une cohérence d'ensemble et une charge d'exploitation réduite.
+Pourquoi une GED dédiée plutôt qu'un espace SharePoint :
+
+- **Les règles d'accès sont portées par la base de données** et non par une configuration à maintenir :
+  elles se testent, se rejouent et s'auditent ; un défaut de l'interface n'ouvre aucune donnée.
+- **Circuit réglementé de bout en bout** : création, validation, signature, archivage scellé et courrier
+  physique sont intégrés dans un même outil, ce qui répond à l'exigence de traçabilité du secret bancaire
+  et du contrôle ACPR.
+- **Maîtrise des coûts** : aucune licence supplémentaire pour la GED, qui s'appuie sur des composants libres.
+- **Réutilisabilité** : la même plateforme sert plusieurs organisations (cf. chapitre « Lot F (suite) »).
+- SharePoint Online / OneDrive restent disponibles pour la collaboration courante (Lot C), sans porter les
+  documents classés.
+
+Contrepartie assumée : MOM-TECH assure l'exploitation et les évolutions de cette plateforme dans le cadre du
+contrat de maintenance. Son hébergement (cluster de
+virtualisation du Lot G ou cloud) est une décision de la Direction Conformité &
+Sécurité de KHS Bank.
 
 ### Bénéfices attendus
 
 - Protection renforcée des documents bancaires sensibles, conforme RGPD et secret bancaire.
 - Traçabilité complète des accès et des modifications, exploitable en cas de contrôle ACPR.
+- Documents produits directement dans l'outil, donc classés et référencés dès leur création.
 - Réduction du risque d'abus de privilèges administrateur.
 
-## Lot F (suite) — Démonstrateur de la GED sécurisée
+## Lot F (suite) — La GED sécurisée réalisée par MOM-TECH
 
-### 1. Pourquoi un démonstrateur
+### 1. Du Lot F à la réalisation
 
-Le Lot F décrit une GED sécurisée fondée sur SharePoint Online et Microsoft Purview. Cette solution est
-la cible de production de KHS Bank (licences Microsoft 365 E5 du Lot C). Elle ne peut toutefois pas être
-montrée en situation sans tenant Microsoft ni budget de licences. MOM-TECH a donc réalisé un
-**démonstrateur exécutable** qui reproduit les mécanismes de sécurité du Lot F avec des outils libres :
-l'architecture, les règles d'accès et les preuves de traçabilité y sont réellement appliquées, et non
-simplement décrites.
+Le Lot F retient une **GED sécurisée dédiée**, réalisée par MOM-TECH avec des outils libres, qui permet de
+**créer, valider, signer et archiver** les documents de KHS Bank dans un même outil. Ce chapitre présente
+cette réalisation : elle est déployée et utilisable, et les règles de sécurité y sont réellement appliquées
+et testées, et non simplement décrites. Le socle Microsoft 365 E5 du Lot C
+reste en place pour les postes, la messagerie et l'identité, et apporte les compléments du Lot F (Purview
+DLP, Entra PIM).
 
-| Exigence du Lot F | Constat d'audit | Mécanisme du démonstrateur |
+| Exigence du Lot F | Constat d'audit | Mécanisme de la GED |
 |---|---|---|
 | Classification des documents (public interne / restreint / confidentiel) | C5 | Colonne `classification`, appliquée par la base de données (RLS) |
 | Contrôle d'accès par rôle (rédacteur, validateur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
@@ -1335,26 +1367,54 @@ simplement décrites.
 | Journal d'audit immuable | C5 | Table `audit_log` protégée par un déclencheur PostgreSQL |
 | Conservation et archivage réglementés | C17 | Archivage scellé (empreinte SHA-256), lecture seule définitive |
 | Authenticité des actes de la Direction | C5 | Signature numérique du Directeur Général, QR code et page publique de vérification |
+| Rédaction et édition intégrées | C5 | Ateliers Word, Excel et PowerPoint dans la plateforme, export natif et PDF |
 | Traçabilité du courrier physique | C5 | Service du courrier : registres numérotés, numérisation, décharge |
 
-Les fonctions propres à Microsoft 365 (étiquetage automatique par détection de contenu, DLP, Entra PIM)
-**ne sont pas reproduites** : elles restent propres à la solution de production et sont assumées comme
-hors périmètre du démonstrateur.
+Les fonctions propres à Microsoft 365 (étiquetage automatique par détection de contenu, DLP sur la
+messagerie, Entra PIM) sont **apportées par le socle Microsoft 365 E5** et non par la GED : la classification
+est posée par l'agent à la création du document et appliquée par la base.
 
-### 2. Choix techniques
+### 2. Les ateliers documentaires : Word, Excel et PowerPoint dans la GED
+
+Les agents **créent leurs documents directement dans la plateforme**, sans logiciel installé sur le poste :
+
+| Atelier | Usage | Contenu |
+|---|---|---|
+| **Texte** (Word) | Notes de service, comptes rendus, rapports, courriers | Éditeur de texte riche : titres, gras, italique, souligné, alignement, listes |
+| **Tableur** (Excel) | Budgets, pièces comptables, suivis | Feuilles de calcul avec formules de calcul |
+| **Présentation** (PowerPoint) | Présentations au comité, au conseil d'administration | Diapositives (titre, contenu, puces) |
+
+- **Modèles bilingues** (français / anglais) : note de service, compte rendu, rapport, etc., réservés à
+  l'organisation ou communs à toutes ; l'administrateur gère la bibliothèque de modèles.
+- **Export** au **format natif** (.docx, .xlsx, .pptx), pour un échange avec l'extérieur, et en **PDF**,
+  avec l'en-tête de l'organisation.
+- **Chaque document naît classé et tracé** : classification, nature (qui fixe la durée de conservation),
+  département, référence unique attribuée par la base (`KHS-2026-000123`), historique dans le journal d'audit.
+- **Brouillon privé** : seuls l'auteur et les personnes avec qui il est partagé le voient jusqu'au dépôt.
+- **Versions** : une correction d'un document publié ou archivé crée une nouvelle version (v2, v3…).
+- **Recherche plein texte** (titre, référence, description, contenu), limitée à ce que l'agent a le droit de
+  lire.
+- Il est aussi possible de **déposer un fichier existant** : il suit le même circuit
+  de validation et de classification.
+
+Le document rédigé dans la GED suit ensuite le circuit de validation, la signature du Directeur Général et
+l'archivage décrits plus loin. L'agent n'a donc ni à enregistrer un fichier sur un partage, ni à l'envoyer
+par messagerie pour le faire relire.
+
+### 3. Choix techniques
 
 | Couche | Choix | Justification |
 |---|---|---|
 | Application | **Next.js 16** (React 19, TypeScript) | Framework répandu, rendu côté serveur, un seul code pour l'interface et les actions serveur |
 | Données, authentification, fichiers | **Supabase** : PostgreSQL, Supabase Auth, Supabase Storage | Base relationnelle robuste, sécurité au niveau ligne native, authentification multi-facteurs intégrée |
-| Hébergement | **Vercel** | Déploiement continu depuis GitHub, HTTPS automatique, coût nul pour une démonstration |
+| Hébergement | **Vercel** (version déployée) | Déploiement continu depuis GitHub, HTTPS automatique ; hébergement sur l'infrastructure de KHS Bank possible |
 | Mise en forme | Tailwind CSS | Interface cohérente et bilingue (français / anglais) |
 
 Le choix d'outils libres et standards limite le verrouillage fournisseur : la base est une base
 PostgreSQL ordinaire, exportable et réinstallable ailleurs. Le rapatriement de l'hébergement vers une
-infrastructure maîtrisée par l'organisation est une évolution prévue (voir § 9).
+infrastructure maîtrisée par l'organisation est une évolution prévue (voir § 10).
 
-### 3. Architecture applicative
+### 4. Architecture applicative
 
 ```
   Navigateur (agent)                          Navigateur (tiers, sans compte)
@@ -1378,7 +1438,7 @@ Principe central : **la sécurité est portée par la base de données et non pa
 requête, qu'elle vienne de l'interface ou d'un accès direct à l'API, est filtrée par PostgreSQL selon
 l'identité, le rôle, le département et l'organisation de l'appelant.
 
-### 4. Contrôle d'accès par la base de données (RLS)
+### 5. Contrôle d'accès par la base de données (RLS)
 
 *Row Level Security* (RLS) attache à chaque table des règles évaluées par PostgreSQL à chaque lecture ou
 écriture. La règle de lecture d'un document, simplifiée, est la suivante :
@@ -1418,7 +1478,7 @@ des utilisateurs. L'accès est refusé. Le refus s'appuie sur trois niveaux de c
 version arbitraire et une date d'archivage obtient un document dont ces valeurs ont été remplacées par
 celles de la base ; un agent d'un autre département ou un lecteur reçoit une réponse « introuvable ».
 
-### 5. Double authentification obligatoire
+### 6. Double authentification obligatoire
 
 La GED exige un second facteur **TOTP** (code à 6 chiffres renouvelé toutes les 30 secondes, application
 Google Authenticator). Elle ne repose pas sur l'interface : sur **toutes les tables**, une règle
@@ -1429,7 +1489,7 @@ passe seul ne lit et ne modifie rien, **même en appelant directement l'API de l
 Cette mesure répond au constat C2 (absence de MFA) et à l'exigence de chaîne d'authentification forte
 pour la messagerie et les données (compétence C16).
 
-### 6. Traçabilité, intégrité et authenticité
+### 7. Traçabilité, intégrité et authenticité
 
 - **Journal d'audit immuable.** Chaque action (dépôt, transition, signature, archivage, courrier…) est
   inscrite dans `audit_log`. Un déclencheur `BEFORE UPDATE OR DELETE` refuse toute modification ou
@@ -1452,7 +1512,7 @@ pour la messagerie et les données (compétence C16).
 - **En-têtes HTTP de sécurité** : `nosniff`, interdiction d'affichage dans le cadre d'un autre site,
   politique de référent, restriction des API du navigateur et HSTS.
 
-### 7. Service du courrier physique
+### 8. Service du courrier physique
 
 Le service du courrier étend la GED au courrier papier, très présent dans un établissement bancaire
 (mises en demeure, courriers de l'autorité de supervision, pièces de dossiers).
@@ -1470,7 +1530,7 @@ Le service du courrier étend la GED au courrier papier, très présent dans un 
 - **Protection des plis personnels** : un pli signalé comme personnel n'est ni décrit ni numérisé.
 - Le chef du courrier est désigné par un administrateur ; personne ne peut s'attribuer ce rôle.
 
-### 8. Une plateforme, plusieurs organisations
+### 9. Une plateforme, plusieurs organisations
 
 Le même code et la même base servent plusieurs organisations (KHS Bank pour la soutenance, l'Agence de
 Promotion des Investissements du Cameroun pour un second cas d'usage réel). Le cloisonnement est
@@ -1482,7 +1542,7 @@ Le branding (nom, logo, couleurs, modules activés) est piloté par des variable
 `NEXT_PUBLIC_ORG_*` : redéployer pour une nouvelle organisation ne demande aucune modification du code.
 Les catégories de conservation du courrier sont paramétrées par organisation.
 
-### 9. Validation, limites et évolutions
+### 10. Validation, limites et évolutions
 
 **Vérifications réalisées :**
 - rejeu intégral des 33 migrations sur une base vierge, sans erreur ;
@@ -1493,8 +1553,11 @@ Les catégories de conservation du courrier sont paramétrées par organisation.
 - mise à niveau de sécurité du framework (Next.js 16.4.5) après audit des dépendances.
 
 **Limites assumées :**
-- pas de filtrage DLP ni d'étiquettes de sensibilité automatiques (spécifiques à Microsoft Purview) :
-  la classification est posée par l'agent et appliquée par la base ;
+- pas de filtrage DLP ni d'étiquettes de sensibilité automatiques dans la GED elle-même : le DLP sur les
+  flux sortants est assuré par Microsoft Purview (messagerie, Teams, OneDrive) ; dans la GED, la
+  classification est posée par l'agent et appliquée par la base ;
+- les ateliers couvrent la rédaction courante (texte, tableur, présentation) ; la mise en page très
+  élaborée reste du ressort des logiciels bureautiques, avec export et import au format natif ;
 - antivirus ciblé : les contrôles intégrés complètent un moteur externe sans remplacer une solution
   d'entreprise ;
 - une adresse e-mail correspond à un compte, l'authentification étant partagée entre organisations ;
@@ -1502,12 +1565,12 @@ Les catégories de conservation du courrier sont paramétrées par organisation.
   l'organisation fait l'objet de propositions d'architecture distinctes.
 
 **Évolutions :** intégration à l'annuaire de l'établissement (Entra ID) pour l'authentification unique,
-ajout d'un DLP sur les flux sortants, hébergement souverain, supervision des échecs d'authentification
+étiquetage automatique par détection de contenu, hébergement souverain, supervision des échecs d'authentification
 dans le SIEM.
 
-### 10. Compétences du référentiel mobilisées
+### 11. Compétences du référentiel mobilisées
 
-| Compétence | Apport du démonstrateur |
+| Compétence | Apport de la GED |
 |---|---|
 | C11 — Recenser les points de vulnérabilité | Audit de dépendances, correctifs de sécurité du framework, tests de falsification |
 | C12 — Scénarios d'attaque | Tentatives de contournement testées : falsification de références, accès direct à l'API sans second facteur, modification du journal, lecture inter-départements et inter-organisations |
@@ -2037,7 +2100,7 @@ régulateur bancaire sur l'application KHS-Core.
  Accès conditionné au périmètre (VLAN, cf. architecture réseau)
         │
         ├── VLAN 20 (KHS-Core) ──▶ Filtrage applicatif pare-feu + journalisation
-        ├── GED sécurisée (SharePoint/Purview) ──▶ Classification + DLP + audit immuable
+        ├── GED sécurisée MOM-TECH ─────────▶ Classification + audit immuable + signature
         └── Ressources internes via VPN ──▶ MFA obligatoire + bastion PAM (comptes à privilèges)
         │
         ▼
@@ -2105,7 +2168,7 @@ registre des risques).
 |---|:---:|:---:|:---:|---|---|
 | Contrôleur de domaine (AD/DNS/DHCP) — 1 par site | 4 | 8 Go | 80 Go (OS + data) | Windows Server 2022 | Niveau fonctionnel de forêt 2016 minimum |
 | Cluster SQL Server 2022 Always On (KHS-Core) — 2 nœuds | 8 | 32 Go | 500 Go SSD (tempdb séparé) | Windows Server 2022 + SQL Server 2022 Enterprise | Windows Server Failover Cluster (WSFC), témoin de quorum, .NET Framework 4.8 |
-| Serveur de fichiers / GED transitoire | 4 | 16 Go | 2 To | Windows Server 2022 | Rôle File Server, DFS-R le temps de la bascule vers SharePoint Online |
+| Serveur de fichiers / GED transitoire | 4 | 16 Go | 2 To | Windows Server 2022 | Rôle File Server, DFS-R le temps de la bascule vers la GED sécurisée (import des documents classés) |
 | Serveurs applicatifs Oracle 19c (gestion admin./paye) — 2 | 8 | 32 Go | 1 To | Oracle Linux 8 | Oracle Database 19c Enterprise, swap ≥ 16 Go |
 | Entra Connect (synchronisation AD ↔ Entra ID) | 2 | 4 Go | 100 Go | Windows Server 2022 | Compte de service dédié, SQL Server Express (embarqué) |
 | Collecteur Microsoft Sentinel (Azure Monitor Agent) | 2 | 8 Go | 100 Go (logs) | Windows Server 2022 | Connectivité sortante HTTPS 443 vers Azure |
@@ -2128,7 +2191,8 @@ registre des risques).
 |---|---|
 | Microsoft 365 E5 (bureautique, Entra ID, Defender, Purview) | Tenant Microsoft dédié KHS Bank, domaine vérifié, connectivité Internet stable |
 | Exchange Online | Migration hybride (coexistence temporaire avec Exchange 2013 le temps du basculement des boîtes) |
-| SharePoint Online / OneDrive (GED) | Politiques de rétention et de classification pré-configurées avant ouverture aux utilisateurs |
+| GED sécurisée MOM-TECH (ateliers Word/Excel/PowerPoint) | Base PostgreSQL et application déployées, rôles et départements créés, double authentification enrôlée, classification et durées de conservation configurées avant ouverture aux utilisateurs |
+| SharePoint Online / OneDrive | Collaboration courante uniquement (documents non classés) |
 | Microsoft Sentinel | Espace de travail Log Analytics dédié, connecteurs de données activés par source |
 | Microsoft Teams Phone | Numérotation SIP validée avec l'opérateur, SBC certifié |
 
@@ -2202,7 +2266,8 @@ MX une fois l'ensemble des boîtes migrées et validées.
 
 Déploiement de Microsoft Defender for Endpoint sur l'ensemble du parc. Connexion de l'ensemble des
 sources (pare-feu, EDR, identité, messagerie, GED) à **Microsoft Sentinel**. Activation des politiques
-Purview (classification, DLP) sur la GED. Déploiement du bastion PAM (Entra PIM) pour les comptes à
+Purview DLP sur la messagerie, Teams et OneDrive ; ouverture de la GED sécurisée aux utilisateurs
+(import des documents classés, enrôlement de la double authentification). Déploiement du bastion PAM (Entra PIM) pour les comptes à
 privilèges.
 
 ### Étape 6 — Application métier KHS-Core

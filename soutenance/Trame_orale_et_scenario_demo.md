@@ -34,7 +34,7 @@ Les mêmes textes figurent dans les notes du fichier PowerPoint (mode présentat
 | 9 | Architecture cible et migration en 7 étapes | « Coexistence progressive : zéro interruption. » |
 | 10 | Maquette Packet Tracer : deux sites, HSRP, VLAN, ASA, GRE | « Pour ne pas rester sur le papier, j'ai construit l'architecture réseau dans Packet Tracer, avec le même plan d'adressage que le dossier. » |
 | 11 | Tests de résilience et de sécurité ; simplifications assumées | « Je coupe le cœur actif pendant un ping continu : le second cœur prend le relais. C'est la fin du point de défaillance unique R1. » |
-| 12 | Lot F : production = SharePoint + Purview ; démonstrateur libre | « Je ne peux pas montrer Purview sans tenant. J'ai donc construit un démonstrateur qui applique les mêmes règles. » |
+| 12 | Lot F : une GED réalisée par MOM-TECH, avec ateliers Word/Excel/PowerPoint intégrés | « Les agents créent leurs documents directement dans la GED : ils naissent classés, référencés et tracés. Microsoft 365 reste le socle des postes et de l'identité. » |
 | 13 | La sécurité est dans la base, pas dans le code | « Même si l'application avait un défaut, la base refuserait l'accès. » |
 | 14 | Preuve en situation : un rédacteur refusé | « Voici le site déployé : un rédacteur force l'adresse d'administration. Refus à trois niveaux : menu, page, et surtout la base. » |
 | 15 | Annonce de la démonstration | « Cinq personnages, un document confidentiel, six étapes. » |
@@ -66,6 +66,7 @@ Le rôle « chef du courrier » et « agent du courrier » se désigne depuis la
 
 | # | Qui | Action | Ce que le jury doit voir | Durée |
 |---:|---|---|---|---:|
+| 0 | Rita | **Atelier** : créer un document depuis le modèle « Note de service » (ou un rapport), saisir quelques lignes, montrer l'export Word (.docx) et PDF | Le document est rédigé dans la GED, classé, avec sa référence ; pas de logiciel sur le poste | 1,5 min |
 | 1 | Rita | Ouvrir « Mes brouillons » et la fiche du rapport de conformité (classification **confidentiel**), cliquer « Déposer pour vérification » | Le statut passe à « En vérification » ; la référence `KHS-2026-…` est attribuée par la base | 1 min |
 | 2 | Léo | Ouvrir la liste des documents, puis tenter d'ouvrir l'adresse de la fiche | Liste sans le document ; la fiche répond « introuvable » : la base, pas l'interface, refuse | 1 min |
 | 3 | Victor | Saisir un commentaire, « Valider », puis « Publier » | Le circuit exige le validateur du département | 1 min |
@@ -119,11 +120,11 @@ Rallumer le cœur 1 en fin de test (la préemption lui rend le rôle actif). **P
 
 # 5. Questions probables du jury et éléments de réponse
 
-**1. Pourquoi ne pas avoir utilisé uniquement SharePoint et Purview ?**
-C'est bien la cible de production, incluse dans Microsoft 365 E5 (Lot C). Elle n'est pas démontrable sans tenant et sans licences. Le démonstrateur prouve que les règles décrites au Lot F (classification, rôles, circuit, audit immuable, MFA) sont réalisables et testables, avec des outils libres.
+**1. Pourquoi une GED dédiée plutôt que SharePoint ?**
+Pour porter les règles d'accès par la base de données (testables, auditables), intégrer dans un même outil la création, la validation, la signature, l'archivage scellé et le courrier physique, et ne pas ajouter de licence. SharePoint et OneDrive restent disponibles pour la collaboration courante (Lot C), sans porter les documents classés.
 
-**2. Qu'est-ce qui n'est pas reproduit ?**
-Le DLP automatique, les étiquettes de sensibilité posées par détection de contenu et Entra PIM. La classification est posée par l'agent et appliquée par la base. C'est une limite assumée et documentée.
+**2. Que fait Microsoft 365 dans ce dispositif ?**
+Il reste le socle des postes, de la messagerie et de l'identité (Lot C). Il apporte les compléments du Lot F : Purview DLP sur les flux sortants (messagerie, Teams, OneDrive) et Entra PIM pour les comptes à privilèges. La classification automatique par détection de contenu n'est pas dans la GED : l'agent classe, la base applique.
 
 **3. Pourquoi mettre la sécurité dans la base plutôt que dans l'application ?**
 Parce qu'un défaut applicatif (oubli d'un contrôle, nouvelle route) ne doit pas ouvrir de données. Avec la sécurité au niveau ligne (RLS), PostgreSQL filtre chaque requête, même un appel direct à l'API.
@@ -141,7 +142,7 @@ Le PDF porte un code unique et un QR. La page publique `/verifier` compare le co
 Minimisation (rôle `lecteur` par défaut), cloisonnement par département et par organisation, durées de conservation par nature de document, journal d'accès, aucune destruction automatique du courrier, fichiers servis par URL signées de 5 minutes. L'hébergement actuel est cloud ; le rapatriement vers une infrastructure maîtrisée est une évolution prévue.
 
 **8. Que se passe-t-il si Supabase ou Vercel est indisponible ?**
-Le démonstrateur n'a pas vocation à porter la continuité bancaire. En production, la continuité est assurée par les Lots A et G (HA, PRA/PCA, RPO/RTO). La base PostgreSQL est exportable et réinstallable ailleurs.
+La GED ne porte pas seule la continuité bancaire. La continuité est assurée par les Lots A et G (HA, PRA/PCA, RPO/RTO). La base PostgreSQL est exportable et réinstallable ailleurs.
 
 **9. Comment avez-vous testé ?**
 Rejeu des 33 migrations sur base vierge ; tests SQL (169 sur le courrier de l'Agence, 15 sur celui de KHS, circuit documentaire, visibilité, signature, archivage) ; parcours automatisé dans un navigateur (42 contrôles) ; compilation de production ; audit des dépendances et mise à niveau de Next.js vers la version corrigée (16.4.5).

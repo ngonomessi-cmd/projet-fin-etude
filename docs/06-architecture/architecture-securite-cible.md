@@ -14,7 +14,7 @@
  Accès conditionné au périmètre (VLAN, cf. architecture réseau)
         │
         ├── VLAN 20 (KHS-Core) ──▶ Filtrage applicatif pare-feu + journalisation
-        ├── GED sécurisée (SharePoint/Purview) ──▶ Classification + DLP + audit immuable
+        ├── GED sécurisée MOM-TECH ─────────▶ Classification + audit immuable + signature
         └── Ressources internes via VPN ──▶ MFA obligatoire + bastion PAM (comptes à privilèges)
         │
         ▼

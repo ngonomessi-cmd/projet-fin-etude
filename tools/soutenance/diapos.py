@@ -139,7 +139,7 @@ text(s, 0.8, 6.3, 8, 0.4, "Julien Junior NGONO MESSI · IEF2I", size=16, color=W
 text(s, 0.8, 6.7, 8, 0.4, "16 décembre 2026", size=14, color=GREY)
 s.notes_slide.notes_text_frame.text = ("Bonjour. Je vais vous présenter le projet de migration et de sécurisation du système d'information de KHS Bank, "
     "réalisé pour le compte de MOM-TECH. Je suivrai le plan attendu : les acteurs, le cahier des charges, les actions réalisées, puis la conclusion. "
-    "Je terminerai par une démonstration d'un démonstrateur de GED sécurisée que j'ai développé.")
+    "Je terminerai par une démonstration en direct de la GED sécurisée que MOM-TECH a réalisée, et dans laquelle les agents créent eux-mêmes leurs documents Word, Excel et PowerPoint.")
 
 # ---------------------------------------------------------------- 2. Plan
 s = slide("Plan de la présentation", "Introduction",
@@ -148,7 +148,7 @@ s = slide("Plan de la présentation", "Introduction",
 items = [("1", "Les acteurs", "KHS Bank, client · MOM-TECH, prestataire"),
          ("2", "Le cahier des charges", "objectifs, contraintes, résultats attendus, délais"),
          ("3", "Les actions réalisées", "gestion de projet, audit, solutions, maquette Packet Tracer, migration"),
-         ("4", "Focus : la GED sécurisée", "démonstrateur et démonstration en direct"),
+         ("4", "Focus : la GED sécurisée", "ateliers Word/Excel/PowerPoint, sécurité, démonstration"),
          ("5", "Synthèse et conclusion", "bilan financier, recette, perspectives")]
 for i, (n, t1, t2) in enumerate(items):
     y = 1.6 + i * 1.05
@@ -288,17 +288,19 @@ text(s, 0.9, 5.8, 11.6, 1.1, ["Simplifications assumées : un pare-feu par site 
 # ---------------------------------------------------------------- 10. Focus GED
 s = slide("Focus : la GED sécurisée (Lot F)", "4 · Focus GED",
           "Le constat C5 : les documents sensibles, dossiers de crédit, pièces KYC, rapports de conformité, sont sur un serveur de fichiers sans classification ni traçabilité. "
-          "En production, la solution est SharePoint Online avec Microsoft Purview, incluse dans le socle Microsoft 365 E5. "
-          "Comme on ne peut pas montrer cette solution sans tenant ni licences, j'ai développé un démonstrateur exécutable avec des outils libres, "
-          "qui reproduit les mécanismes de sécurité. Ce qui est propre à Microsoft, le DLP automatique et le PIM, n'est pas reproduit, et je l'assume.")
-table(s, 0.7, 1.5, 12.0, [("Exigence du Lot F", 2.6), ("Constat", 0.8), ("Mécanisme du démonstrateur", 3.4)], [
-    ["Classification (public interne / restreint / confidentiel)", "C5", "Colonne classification, appliquée par la base (RLS)"],
+          "La réponse du Lot F est une GED sécurisée réalisée par MOM-TECH avec des outils libres. Ce n'est pas un simple espace de stockage : les agents y créent leurs documents "
+          "directement, dans des ateliers Word, Excel et PowerPoint intégrés, avec des modèles bilingues et un export au format natif ou en PDF. "
+          "Chaque document naît classé, référencé et tracé. Les règles de sécurité sont appliquées par la base de données. "
+          "Le socle Microsoft 365 reste en place pour les postes, la messagerie et l'identité, et apporte le DLP de Purview sur les flux sortants et Entra PIM pour les comptes à privilèges.")
+table(s, 0.7, 1.45, 12.0, [("Exigence du Lot F", 2.6), ("Constat", 0.8), ("Mécanisme de la GED", 3.4)], [
+    ["Création de documents sans poste ni partage de fichiers", "C5", "Ateliers Word, Excel, PowerPoint ; export .docx .xlsx .pptx et PDF"],
+    ["Classification (public interne / restreint / confidentiel)", "C5", "Appliquée par la base de données (RLS)"],
     ["Accès par rôle (rédacteur, validateur, admin, auditeur)", "C5, C8", "Règles RLS par rôle et par département"],
     ["Authentification forte", "C2", "Double authentification TOTP obligatoire"],
     ["Workflow dépôt → vérification → validation → publication", "C5", "Fonction transactionnelle côté base"],
     ["Journal d'audit immuable", "C5", "Déclencheur PostgreSQL : aucune modification possible"],
-    ["Archivage réglementé", "C17", "Scellé SHA-256, lecture seule définitive"]], size=15, hsize=15, rowh=0.62)
-text(s, 0.7, 6.3, 12, 0.5, "Production : SharePoint + Purview   ·   Démonstrateur : Next.js + Supabase/PostgreSQL + Vercel", size=14, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
+    ["Archivage réglementé", "C17", "Scellé SHA-256, lecture seule définitive"]], size=14, hsize=14, rowh=0.58)
+text(s, 0.7, 6.15, 12, 0.8, ["GED : Next.js + PostgreSQL, réalisée par MOM-TECH", "Compléments Microsoft 365 E5 : Purview DLP (flux sortants) · Entra PIM (comptes à privilèges)"], size=14, bold=True, color=GOLD, align=PP_ALIGN.CENTER, spacing=2)
 
 # ---------------------------------------------------------------- 11. Architecture démonstrateur
 s = slide("Principe : la sécurité est dans la base de données", "4 · Focus GED",
@@ -309,7 +311,7 @@ rect(s, 0.7, 1.6, 3.2, 2.4, fill=GOLDL, line=LINE)
 text(s, 0.8, 1.7, 3.0, 0.4, "Navigateur", size=18, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
 text(s, 0.8, 2.2, 3.0, 1.7, ["Agent connecté", "ou tiers sans compte", "(page /verifier)"], size=16, color=GREY, align=PP_ALIGN.CENTER)
 rect(s, 5.0, 1.6, 3.3, 2.4, fill=NAVY2)
-text(s, 5.1, 1.7, 3.1, 0.4, "Application Next.js · Vercel", size=16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+text(s, 5.1, 1.7, 3.1, 0.4, "Application Next.js", size=16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 text(s, 5.1, 2.2, 3.1, 1.7, ["Aucune règle d'autorisation", "dans le code", "En-têtes HTTP de sécurité"], size=16, color=GOLDL, align=PP_ALIGN.CENTER)
 rect(s, 9.4, 1.6, 3.3, 2.4, fill=NAVY)
 text(s, 9.5, 1.7, 3.1, 0.4, "Supabase", size=18, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
@@ -397,7 +399,7 @@ text(s, 0.7, 5.95, 12, 0.8, "12 tests en extrait, tous conformes · procès-verb
 # ---------------------------------------------------------------- 16. Conclusion
 s = slide("Conclusion et perspectives", "5 · Synthèse",
           "En synthèse : le projet a répondu aux 14 constats critiques, sans interruption de service, dans le budget. "
-          "Le démonstrateur montre que les principes de sécurité du Lot F peuvent être appliqués par la base de données elle-même. "
+          "La GED montre que les principes de sécurité du Lot F sont appliqués par la base de données elle-même, et que les agents peuvent créer leurs documents directement dans l'outil. "
           "Perspectives : étendre la détection par IA du SOC à la lutte anti-fraude, évaluer un cloud souverain, "
           "et pour la GED, l'authentification unique avec Entra ID, un DLP sur les flux sortants et un hébergement maîtrisé. "
           "Merci de votre attention, je suis à votre disposition pour vos questions.")
