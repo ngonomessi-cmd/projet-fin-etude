@@ -6,7 +6,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 DOCS = REPO + "/docs"
 
-LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]*\.md[^)]*\)")
+LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\((?!https?:)[^)]*\)")
 HEADING_RE = re.compile(r"^(#{1,6})(\s.*)?$")
 FENCE_RE = re.compile(r"^\s*```")
 
@@ -50,6 +50,7 @@ def load(relpath: str, shift: int = 1) -> str:
         text = f.read()
     text = strip_md_links(text)
     # Images référencées par un simple nom de fichier : chemin relatif au dépôt une fois fusionné.
+    text = re.sub(r"\]\((?:\.\./)+figures/", "](docs/figures/", text)
     dossier = os.path.dirname(relpath)
     text = re.sub(r"(!\[[^\]]*\]\()([^)/:]+\.(?:png|jpg|jpeg))\)", lambda m: f"{m.group(1)}docs/{dossier}/{m.group(2)})", text)
     text = shift_headings(text, shift)

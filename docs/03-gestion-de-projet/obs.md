@@ -3,24 +3,7 @@
 L'OBS identifie qui, côté KHS Bank et côté MOM-TECH, porte la responsabilité de chaque grande famille
 de tâches du WBS.
 
-```
-                          Projet Migration & Sécurisation SI KHS Bank
-                                            │
-              ┌─────────────────────────────┴─────────────────────────────┐
-              │                                                             │
-        KHS Bank (MOA)                                              MOM-TECH (MOE)
-              │                                                             │
-     ┌────────┴────────┐                                     ┌─────────────┴─────────────┐
-Direction des        Direction                          Direction de projet          Direction de projet
-Systèmes             Conformité                          MOM-TECH                     (Chef de projet)
-d'Information         & Sécurité (RSSI)                        │
-     │                    │                     ┌───────────────┴───────────────┐
-Responsable          Référent RGPD /       Équipe Architecture Système    Équipe Réseau & Sécurité
-Infrastructure        conformité                    │                              │
-& Réseau                                  Ingénieur Systèmes &            Ingénieur Réseaux &
-                                           Virtualisation, Ingénieur IA    Cybersécurité, Ingénieur
-                                                                            Cybersécurité / SOC
-```
+![OBS : organisation des responsabilités du projet](../figures/obs.png)
 
 ## Répartition des responsabilités par domaine
 

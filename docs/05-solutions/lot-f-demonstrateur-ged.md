@@ -67,23 +67,7 @@ infrastructure maîtrisée par l'organisation est une évolution prévue (voir �
 
 ## 4. Architecture applicative
 
-```
-  Navigateur (agent)                          Navigateur (tiers, sans compte)
-        |  HTTPS                                      |  HTTPS
-        v                                             v
-  +------------------------------------------------------------+
-  |  Vercel : application Next.js (pages + actions serveur)    |
-  |  - aucune règle d'autorisation dans le code                |
-  |  - en-têtes de sécurité HTTP, cookies de session           |
-  +------------------------------------------------------------+
-        |  jeton de session (JWT, niveau aal2 après TOTP)
-        v
-  +------------------------------------------------------------+
-  |  Supabase                                                  |
-  |   Auth (TOTP)  ->  PostgreSQL : RLS + fonctions + audit    |
-  |                    Storage : fichiers, URL signées 5 min   |
-  +------------------------------------------------------------+
-```
+![Architecture applicative de la GED sécurisée](../figures/ged-architecture.png)
 
 Principe central : **la sécurité est portée par la base de données et non par l'application**. Chaque
 requête, qu'elle vienne de l'interface ou d'un accès direct à l'API, est filtrée par PostgreSQL selon

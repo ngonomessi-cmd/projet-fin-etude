@@ -36,17 +36,7 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 ## Organisation de l'équipe projet
 
-```
-                        Direction de projet MOM-TECH
-                                    │
-                 ┌──────────────────┴──────────────────┐
-                 │                                       │
-     Équipe Architecture Système                Équipe Réseau & Sécurité
-                 │                                       │
-   ┌─────────────┴─────────────┐          ┌──────────────┴──────────────┐
-Ingénieur Systèmes         Ingénieur      Ingénieur Réseaux &      Ingénieur
-& Virtualisation            IA / Data      Cybersécurité            Cybersécurité / SOC
-```
+![Organisation de l'équipe projet MOM-TECH](../figures/organigramme-momtech.png)
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|

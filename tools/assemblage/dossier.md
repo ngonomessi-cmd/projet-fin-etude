@@ -27,27 +27,29 @@ Migration et sécurisation du système d'information de KHS Bank
 
 # Abstract
 
-KHS Bank, a mid-size French banking group with a head office in Paris and a secondary site in Lyon,  
-operates a system of information built on fragmented, ageing technology across network, systems and security.  
-Windows 8 workstations, an unsupported Exchange 2013 mail server, a single core switch and a lone  
-VPN link leave the bank exposed to service outages and to the compliance risks that weigh on the  
-financial sector under ACPR, DSP2, PCI-DSS and GDPR requirements.  
-MOM-TECH, a consultancy specialised in artificial intelligence, cloud and cybersecurity, was engaged  
-to audit the existing infrastructure, design a resilient target architecture and lead its deployment  
-without any interruption of banking services, in strict accordance with the ITIL v4 framework.  
-The audit exposed fourteen high-severity findings, concentrated on the absence of redundancy, of a  
-security operations centre, and of adequate protection for sensitive banking documents.  
-The proposed architecture removes every single point of failure identified in the network and  
-virtualisation layers, introduces multi-factor authentication and a unified Microsoft 365 identity  
-platform, and deploys Microsoft Sentinel as an AI-driven security operations centre.  
-A dedicated secure document management solution protects sensitive files through classification,  
-encryption and an immutable audit trail, addressing both regulatory and confidentiality requirements.  
-Backups now follow a 3-2-1-1 policy with an immutable cloud copy, closing the gap left by the  
-previous single storage array and untested tape backups kept on the same site as production.  
-Migration proceeds through progressive coexistence across seven stages, validated by a full test and  
-acceptance campaign, keeping the bank's payment services continuously available throughout the project.  
-The resulting infrastructure meets every objective of the initial specification within the allocated budget,  
-while a continuous improvement plan keeps KHS Bank ahead of emerging cybersecurity and AI-driven threats.
+KHS Bank is a mid-size French bank with a head office in Paris and a secondary site in Lyon. Its
+information system has grown through successive, uncoordinated choices: Windows 8 workstations, an
+unsupported Exchange 2013 mail server, a single core switch and a single VPN link between the two sites.
+This leaves the bank exposed to service outages and to the compliance risks that weigh on the financial
+sector under ACPR, PSD2, PCI-DSS and GDPR requirements.
+
+MOM-TECH, a consultancy specialising in cybersecurity, cloud and artificial intelligence, was engaged to
+audit the existing infrastructure, design a resilient target architecture and lead its deployment without
+interrupting banking services, following the ITIL v4 framework. The audit identified fourteen
+high-severity findings, mainly the lack of redundancy, the absence of a security operations centre and
+the poor protection of sensitive banking documents.
+
+The proposed architecture removes every single point of failure in the network and virtualisation
+layers, introduces multi-factor authentication on a unified Microsoft 365 identity platform and relies on
+Microsoft Sentinel as an AI-assisted security operations centre. A secure document management system,
+developed by MOM-TECH, lets staff write, validate, sign and archive documents in one tool, with access
+rules enforced by the database and an immutable audit trail. Backups follow a 3-2-1-1 policy with an
+immutable cloud copy. The network design was validated on a Cisco Packet Tracer model.
+
+Migration proceeds in seven stages of progressive coexistence and ends with a full acceptance campaign,
+keeping payment services available throughout the project. The target infrastructure meets the
+objectives of the specification within the allocated budget, and a continuous improvement plan keeps it
+aligned with emerging threats.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -92,21 +94,7 @@ que la direction a décidé de confier la refonte de son système d'information 
 
 ### Organisation
 
-```
-                         Direction Générale
-                                 │
-        ┌───────────────┬───────┼───────┬────────────────┐
-        │                │               │                │
-  Direction des    Direction des   Direction     Direction Conformité
-  Systèmes         Risques &       Commerciale    & Sécurité (RSSI)
-  d'Information     Contrôle
-  (DSI)             Interne
-        │
-   ┌────┴─────┬─────────────┬───────────────┐
-Responsable  Responsable   Responsable      Chef de Projet
-Infrastructure Support     Sécurité SI      (référent MOM-TECH)
-& Réseau      Utilisateurs  (interne)
-```
+![Organigramme simplifié de KHS Bank](docs/figures/organigramme-khs.png)
 
 Le pilotage du projet côté client est assuré conjointement par la **DSI** (maîtrise d'ouvrage) et la
 **Direction Conformité & Sécurité**, qui doit valider toute solution impactant la protection des données
@@ -169,17 +157,7 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 ### Organisation de l'équipe projet
 
-```
-                        Direction de projet MOM-TECH
-                                    │
-                 ┌──────────────────┴──────────────────┐
-                 │                                       │
-     Équipe Architecture Système                Équipe Réseau & Sécurité
-                 │                                       │
-   ┌─────────────┴─────────────┐          ┌──────────────┴──────────────┐
-Ingénieur Systèmes         Ingénieur      Ingénieur Réseaux &      Ingénieur
-& Virtualisation            IA / Data      Cybersécurité            Cybersécurité / SOC
-```
+![Organisation de l'équipe projet MOM-TECH](docs/figures/organigramme-momtech.png)
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|
@@ -220,7 +198,7 @@ l'information.
 
 > Analyse du cahier des charges KHS Bank par MOM-TECH, préalable à
 > toute proposition de solution. Cette étude structure les besoins exprimés par domaine, formalise les
-> contraintes à respecter et fixe la méthode d'audit qui sera mise en œuvre (cf. [audit de l'existant](../04-audit-existant/)).
+> contraintes à respecter et fixe la méthode d'audit qui sera mise en œuvre (cf. audit de l'existant).
 
 ### 1. Synthèse des objectifs du projet
 
@@ -291,14 +269,14 @@ parties prenantes** (DSI, RSSI, utilisateurs représentatifs) → **analyse des 
 exigences du cahier des charges → **restitution structurée** (constats, risques, recommandations),
 formalisée dans un rapport d'audit par domaine.
 
-Les résultats de cet audit sont détaillés dans la section [Audit de l'existant](../04-audit-existant/).
+Les résultats de cet audit sont détaillés dans la section Audit de l'existant.
 
 ### 5. Résultats attendus, délais et évaluation
 
 - **Résultats attendus** : diagnostic complet du SI, architecture cible justifiée, plan de migration sans
   interruption de service, conformité réglementaire démontrée.
-- **Délais** : planning détaillé dans le diagramme de Gantt (cf. [gestion de projet](../03-gestion-de-projet/)).
-- **Évaluation** : recette contractuelle en fin de projet (cf. [Recette](../08-bilan-financier-recette/)),
+- **Délais** : planning détaillé dans le diagramme de Gantt (cf. gestion de projet).
+- **Évaluation** : recette contractuelle en fin de projet (cf. Recette),
   validée conjointement par la DSI et la Direction Conformité & Sécurité de KHS Bank.
 
 ```{=openxml}
@@ -348,19 +326,7 @@ phase suivante (jalons de type *Go/No-Go*).
 Le PBS décompose le projet en livrables (produits attendus), indépendamment de l'ordre dans lequel ils
 sont réalisés.
 
-```
-                              Projet Migration & Sécurisation SI KHS Bank
-                                                │
-        ┌───────────┬────────────┬─────────────┼─────────────┬────────────┬────────────┐
-        │           │            │              │             │            │            │
-   Cadrage &    Rapports      Architecture   Infrastructure  Dispositif   Dossiers de  Bilan
-   Documents    d'audit       cible &        déployée        de sécurité  recette &    financier &
-   de gestion   (réseau,      schémas        (réseau,        (SOC/SIEM,   PV de        contrat de
-   de projet    systèmes,     techniques     systèmes,       PRA/PCA,     livraison    maintenance
-   (PBS/WBS/    cybersécu)                   postes)         GED,
-   OBS/RACI/                                                 IAM/MFA)
-   Gantt)
-```
+![PBS : décomposition du projet en livrables](docs/figures/pbs.png)
 
 ### Détail des livrables par branche
 
@@ -379,73 +345,14 @@ sont réalisés.
 Le WBS décompose le projet en six phases séquencées, chacune subdivisée par thème (Réseau, Systèmes,
 Cybersécurité) lorsque pertinent.
 
-```
-Projet Migration & Sécurisation SI KHS Bank
-│
-├── 1. Pilotage
-│   ├── Cadrage du projet
-│   ├── Rédaction cahier des charges (étude) et évaluation du besoin
-│   ├── PBS / WBS / OBS / RACI / Gantt
-│   ├── Gestion des risques
-│   └── Suivi de projet (COPIL)
-│
-├── 2. Audit
-│   ├── Audit réseau (architecture, équipements, liens VPN)
-│   ├── Audit systèmes (serveurs, stockage, services, postes)
-│   ├── Audit cybersécurité (organisationnel, physique, technique)
-│   └── Rapport d'audit consolidé
-│
-├── 3. Conception
-│   ├── Étude technique et architecture cible réseau
-│   ├── Étude technique et architecture cible systèmes/virtualisation
-│   ├── Conception du dispositif cybersécurité (SOC/SIEM, IAM, GED)
-│   └── Validation de l'architecture (COPIL)
-│
-├── 4. Planification
-│   ├── Consultation fournisseurs / appels d'offres matériel
-│   ├── Choix des prestataires (FAI de secours, éditeurs)
-│   ├── Plan de migration (pré-migration / migration / post-migration)
-│   └── Commandes et livraison du matériel
-│
-├── 5. Déploiement
-│   ├── Réseau : câblage, équipements, VPN, segmentation
-│   ├── Systèmes : virtualisation, stockage, sauvegarde, AD/DNS/DHCP, messagerie, postes clients
-│   ├── Cybersécurité : SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED sécurisée
-│   └── Migration de l'application métier KHS-Core
-│
-└── 6. Tests, Recette et Finalisation
-    ├── Tests de déploiement (par lot)
-    ├── Cahier de tests et recette
-    ├── Validation client (PV de recette)
-    ├── Formation des utilisateurs et des équipes techniques
-    ├── Documentation d'installation et d'exploitation
-    ├── Contrat de maintenance
-    └── Bilan financier et facturation
-```
+![WBS : décomposition du projet en lots de travaux](docs/figures/wbs.png)
 
 ## OBS — Organizational Breakdown Structure
 
 L'OBS identifie qui, côté KHS Bank et côté MOM-TECH, porte la responsabilité de chaque grande famille
 de tâches du WBS.
 
-```
-                          Projet Migration & Sécurisation SI KHS Bank
-                                            │
-              ┌─────────────────────────────┴─────────────────────────────┐
-              │                                                             │
-        KHS Bank (MOA)                                              MOM-TECH (MOE)
-              │                                                             │
-     ┌────────┴────────┐                                     ┌─────────────┴─────────────┐
-Direction des        Direction                          Direction de projet          Direction de projet
-Systèmes             Conformité                          MOM-TECH                     (Chef de projet)
-d'Information         & Sécurité (RSSI)                        │
-     │                    │                     ┌───────────────┴───────────────┐
-Responsable          Référent RGPD /       Équipe Architecture Système    Équipe Réseau & Sécurité
-Infrastructure        conformité                    │                              │
-& Réseau                                  Ingénieur Systèmes &            Ingénieur Réseaux &
-                                           Virtualisation, Ingénieur IA    Cybersécurité, Ingénieur
-                                                                            Cybersécurité / SOC
-```
+![OBS : organisation des responsabilités du projet](docs/figures/obs.png)
 
 ### Répartition des responsabilités par domaine
 
@@ -461,10 +368,12 @@ Infrastructure        conformité                    │                        
 
 ## Matrice RACI
 
-**R** = Réalisateur (un seul par tâche) · **A** = Approbateur (un seul par tâche) · **C** = Consulté ·
-**I** = Informé
+**R** = Réalisateur · **A** = Approbateur, seul responsable de la validation (un seul par tâche) · **C** = Consulté ·
+**I** = Informé.
 
-| Livrable / Tâche | DSI (KHS) | RSSI (KHS) | Chef de projet (MOM-TECH) | Ing. Réseaux & Sécurité | Ing. Systèmes & Virtualisation | Ing. Cybersécurité / SOC | Fournisseurs |
+La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs représentent MOM-TECH.
+
+| Livrable / Tâche | DSI | RSSI | Chef de projet | Ing. Réseaux & Sécurité | Ing. Systèmes & Virtualisation | Ing. Cybersécurité / SOC | Fournisseurs |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Pilotage** | | | | | | | |
 | Cadrage du projet | A | C | R | I | I | I | |
@@ -536,6 +445,8 @@ Criticité = Impact × Probabilité (sur 25).
 | P11 | Perte de données lors de la migration de la base SQL Server 2012 | Technique | 5 | 2 | 10 | Sauvegarde complète avant migration, migration à blanc en environnement de test, contrôle de cohérence post-migration | Ing. Systèmes | 5 |
 | P12 | Manque de compétences internes KHS Bank pour la reprise en MCO après le projet | Organisationnel | 3 | 3 | 9 | Plan de formation des équipes techniques internes, documentation d'exploitation détaillée, période de transfert de compétences | Chef de projet | 6 |
 
+![Matrice de criticité des risques projet avant mitigation (impact × probabilité)](docs/figures/matrice-risques.png)
+
 ### Priorisation
 
 Trois risques dépassent le seuil de criticité 12 avant mitigation (**P4**, **P5**, **P1**) et concentrent
@@ -560,15 +471,9 @@ six phases séquencées avec chevauchement limité entre la fin de l'audit et le
 | 5. Déploiement | 45 j | 30/03/2026 | 29/05/2026 |
 | 6. Tests, Recette et Finalisation | 20 j | 01/06/2026 | 26/06/2026 |
 
-```
-                 Jan   Fév   Mar   Avr   Mai   Juin
-Pilotage         ████
-Audit                  ████
-Conception              ████████
-Planification                    ████
-Déploiement                           ████████████████
-Tests/Recette                                          ████████
-```
+Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
+
+![Diagramme de Gantt du projet, du 5 janvier au 26 juin 2026](docs/figures/gantt.png)
 
 ### Détail des tâches et ressources assignées
 
@@ -652,7 +557,7 @@ sur les seuls processus séquentiels historiques d'ITIL v3.
 - **Gestion de la continuité des services** : formalisation du PRA/PCA avec RPO/RTO définis par service
   (cf. Lot G), répondant au constat d'audit **S8/C3**.
 - **Gestion des niveaux de service (SLM)** : indicateurs de suivi définis dans la gestion de projet
-  et futurs SLA du [contrat de maintenance](../08-bilan-financier-recette/).
+  et futurs SLA du contrat de maintenance.
 - **Amélioration continue** : revue de fin de projet et recommandations de veille technologique
   (cf. cahier des charges §3.1), transmises à KHS Bank pour le maintien en conditions opérationnelles.
 
@@ -667,7 +572,7 @@ sur les seuls processus séquentiels historiques d'ITIL v3.
 5. **Penser et travailler de façon globale** : coordination systématique entre les deux sous-équipes
    (Architecture Système / Réseau & Sécurité) sur les sujets transverses (PRA/PCA, GED).
 6. **Rester simple et pratique** : solutions dimensionnées au besoin réel de KHS Bank, sans
-   sur-ingénierie (cf. arbitrages du [bilan financier](../08-bilan-financier-recette/)).
+   sur-ingénierie (cf. arbitrages du bilan financier).
 7. **Optimiser et automatiser** : supervision centralisée (Lot H), gestion automatisée des correctifs et du
    parc (Lot I/J).
 
@@ -690,7 +595,7 @@ les deux sites de KHS Bank :
 - Audit systèmes
 - Audit cybersécurité
 - Conclusion de l'audit — synthèse des constats et matrice de criticité, base des
-  [propositions de solutions](../05-solutions/)
+  propositions de solutions
 
 ### Périmètre et méthode de réalisation
 
@@ -712,33 +617,7 @@ L'infrastructure réseau de KHS Bank repose sur une architecture à trois niveau
 accès), présente uniquement au siège de Paris ; le site de Lyon ne dispose que d'un niveau d'accès
 raccordé au siège par un lien VPN unique.
 
-```
-                         Internet (FAI unique, sans lien de secours)
-                                        │
-                                 ┌──────┴──────┐
-                                 │  Firewall    │  (unique, siège uniquement)
-                                 └──────┬──────┘
-                                        │
-                              ┌─────────┴─────────┐
-                              │  Switch Cœur (N3)  │  ← point de défaillance unique
-                              └─────────┬─────────┘
-                     ┌──────────────────┼──────────────────┐
-             ┌───────┴───────┐  ┌───────┴───────┐  ┌───────┴───────┐
-             │  Distribution │  │  Distribution │  │  Distribution │
-             └───────┬───────┘  └───────┬───────┘  └───────┬───────┘
-                     │                  │                  │
-              Switches d'accès   Switches d'accès   Switches d'accès
-              (postes, Wi-Fi)    (postes, Wi-Fi)    (postes, Wi-Fi)
-
-                                        │
-                                 Lien VPN IPsec
-                                 (unique, non redondant)
-                                        │
-                              ┌─────────┴─────────┐
-                              │  Site de Lyon      │
-                              │  Switch d'accès    │
-                              └───────────────────┘
-```
+![Architecture réseau existante et points de défaillance relevés lors de l'audit](docs/figures/reseau-existant.png)
 
 ### 2. Segmentation réseau actuelle
 
@@ -926,8 +805,8 @@ risque opérationnel et réputationnel en cas d'incident.
 | C8 | Absence de gestion des comptes à privilèges (PAM) | Risque d'abus ou de compromission de comptes administrateurs | Élevée |
 
 Ces constats sont consolidés dans la conclusion de l'audit et traités par les lots
-[D (antivirus/EDR)](../05-solutions/), [E (IDS/IPS)](../05-solutions/), [F (audit de sécurité)](../05-solutions/),
-[G (PRA/PCA)](../05-solutions/), ainsi que par la [préparation de la cybersecurity framework et la mise en
+D (antivirus/EDR), E (IDS/IPS), F (audit de sécurité),
+G (PRA/PCA), ainsi que par la [préparation de la cybersecurity framework et la mise en
 place du SOC](../05-solutions/).
 
 ## Conclusion de l'audit — synthèse et priorisation
@@ -967,8 +846,8 @@ inter-sites, la continuité d'activité (PRA/PCA, sauvegarde), la détection des
 contrôle des accès (MFA, PAM) et la protection des documents sensibles (GED sécurisée) — autant de
 points directement liés aux exigences réglementaires (ACPR, DSP2, RGPD) du cahier des charges.
 
-Cette priorisation guide l'ordre de traitement retenu dans les [propositions de solutions](../05-solutions/)
-et sera reprise dans le diagramme de Gantt de la [gestion de projet](../03-gestion-de-projet/) pour
+Cette priorisation guide l'ordre de traitement retenu dans les propositions de solutions
+et sera reprise dans le diagramme de Gantt de la gestion de projet pour
 séquencer les lots à plus fort enjeu de conformité et de continuité en début de déploiement.
 
 ```{=openxml}
@@ -1168,7 +1047,7 @@ Mise en place d'une **identité hybride** :
 #### Migration
 
 - Déploiement pilote sur un service représentatif (20 utilisateurs), puis généralisation par vagues de
-  150 utilisateurs afin de limiter l'impact sur l'activité (cf. [plan de migration](../07-migration/)).
+  150 utilisateurs afin de limiter l'impact sur l'activité (cf. plan de migration).
 - Conversion des documents Excel hérités (modèles de simulation financière en échec, cf. cahier des
   charges §2.3) via un contrôle de compatibilité avant bascule.
 
@@ -1260,7 +1139,7 @@ audit cybersécurité.
 
 ### 1. Méthodologie d'audit de sécurité continue
 
-Au-delà de l'audit initial (cf. [Audit de l'existant](../04-audit-existant/)), MOM-TECH met en place un
+Au-delà de l'audit initial (cf. Audit de l'existant), MOM-TECH met en place un
 cycle d'audit récurrent, conforme à la démarche d'amélioration continue ITIL v4 :
 
 - audit annuel des règles de pare-feu / ACL / NAT ;
@@ -1416,23 +1295,7 @@ infrastructure maîtrisée par l'organisation est une évolution prévue (voir �
 
 ### 4. Architecture applicative
 
-```
-  Navigateur (agent)                          Navigateur (tiers, sans compte)
-        |  HTTPS                                      |  HTTPS
-        v                                             v
-  +------------------------------------------------------------+
-  |  Vercel : application Next.js (pages + actions serveur)    |
-  |  - aucune règle d'autorisation dans le code                |
-  |  - en-têtes de sécurité HTTP, cookies de session           |
-  +------------------------------------------------------------+
-        |  jeton de session (JWT, niveau aal2 après TOTP)
-        v
-  +------------------------------------------------------------+
-  |  Supabase                                                  |
-  |   Auth (TOTP)  ->  PostgreSQL : RLS + fonctions + audit    |
-  |                    Storage : fichiers, URL signées 5 min   |
-  +------------------------------------------------------------+
-```
+![Architecture applicative de la GED sécurisée](docs/figures/ged-architecture.png)
 
 Principe central : **la sécurité est portée par la base de données et non par l'application**. Chaque
 requête, qu'elle vienne de l'interface ou d'un accès direct à l'API, est filtrée par PostgreSQL selon
@@ -1665,7 +1528,7 @@ l'exploitation par l'équipe interne de KHS Bank après transfert de compétence
 ### Constats traités
 
 S7 (absence d'outil de gestion de parc), R6 (équipements hors garantie) — cf.
-[audits systèmes et réseau](../04-audit-existant/).
+audits systèmes et réseau.
 
 ### Solution proposée
 
@@ -1679,7 +1542,7 @@ S7 (absence d'outil de gestion de parc), R6 (équipements hors garantie) — cf.
   - reporting mensuel des indicateurs de service (disponibilité, incidents, tickets traités).
 
 Le détail contractuel (niveaux de service, pénalités, durée) est présenté dans le
-[bilan financier et la recette](../08-bilan-financier-recette/).
+bilan financier et la recette.
 
 ### Justification
 
@@ -1739,7 +1602,7 @@ PRA/PCA (Lot G).
   marge d'évolution sur 5 ans.
 - **Baie de stockage secondaire** (Lyon) : réplication asynchrone en continu des volumes critiques via
   **Veeam Backup & Replication**, dans le cadre du cluster VMware réparti (cf.
-  [Lot 3](#lot-3---virtualisation) et Lot G).
+  Lot 3 et Lot G).
 - **Règle de sauvegarde 3-2-1-1** :
   - **3** copies des données (production + 2 sauvegardes) ;
   - sur **2** supports différents (disque sur baie secondaire + stockage objet immuable) ;
@@ -1762,7 +1625,7 @@ PRA/PCA (Lot G).
 | Archives réglementaires (relevés, contrats) | Sauvegarde hebdomadaire | Conforme aux durées légales de conservation bancaire |
 
 > La procédure complète et détaillée de mise en œuvre de ce lot (configuration Veeam, politique de
-> réplication, test de restauration) est fournie dans la section [Procédures](../09-procedures/).
+> réplication, test de restauration) est fournie dans la section Procédures.
 
 ### Lot 2 - Annuaire LDAP
 
@@ -1840,23 +1703,7 @@ Un plan de gestion de crise cyber est formalisé, couvrant :
 Le SOC repose sur **Microsoft Sentinel**, SIEM/SOAR cloud natif, alimenté par l'ensemble des sources de
 journalisation mises en place dans les lots précédents :
 
-```
-        Sources d'événements                         SOC (Microsoft Sentinel)
-   ┌─────────────────────────────┐             ┌─────────────────────────────┐
-   │ Fortinet FortiGate (Lot A/E) │────────────▶│                             │
-   │ Defender for Endpoint (Lot D)│────────────▶│   Corrélation d'événements  │
-   │ Entra ID / Conditional Access│────────────▶│   Détection assistée par IA │
-   │ (Lot C)                      │             │   (UEBA — analyse compor-   │
-   │ Microsoft Purview (Lot F)    │────────────▶│   tementale utilisateurs)   │
-   │ Exchange Online / Defender   │────────────▶│                             │
-   │ for Office 365 (Lot 4)       │             │   Playbooks de réponse      │
-   │ Journaux serveurs / GLPI     │────────────▶│   automatisée (SOAR)        │
-   └─────────────────────────────┘             └──────────────┬──────────────┘
-                                                                │
-                                                      Analystes SOC MOM-TECH
-                                                      (astreinte 24/7 sur
-                                                       incidents critiques)
-```
+![Architecture du SOC : sources d'événements, Microsoft Sentinel et analystes](docs/figures/soc.png)
 
 L'exploitation de l'**intelligence artificielle** (analyse comportementale — UEBA) permet de détecter des
 scénarios spécifiques au secteur bancaire : connexions atypiques à des heures inhabituelles,
@@ -1883,7 +1730,7 @@ playbooks de réponse automatisée.
 - Formation des équipes internes KHS Bank à la lecture des tableaux de bord SOC et à la procédure
   d'escalade (cf. formation utilisateurs) ;
 - Contrat de support MOM-TECH incluant l'astreinte SOC, détaillé dans le
-  [bilan financier](../08-bilan-financier-recette/).
+  bilan financier.
 
 #### Démonstration sur plateforme de test
 
@@ -1900,7 +1747,7 @@ réponse.
 ## Architecture cible
 
 Cette section consolide, sous forme de schémas, l'ensemble des choix justifiés dans les
-[propositions de solutions](../05-solutions/) :
+propositions de solutions :
 
 - Architecture réseau cible — schéma des deux sites, segmentation VLAN,
   plan d'adressage (VLSM).
@@ -1926,40 +1773,7 @@ du cahier des charges :
 
 ### 1. Schéma d'ensemble
 
-```
-                         FAI Principal          FAI Secours
-                        (Orange Business)        (SFR Pro)
-                              │                       │
-                    ┌─────────┴───────────┬───────────┴─────────┐
-                    │                                             │
-            ┌───────┴────────┐                            ┌───────┴────────┐
-            │  Cluster HA     │                            │  Cluster HA     │
-            │  FortiGate 200F │◀──── 2 tunnels IPsec ─────▶│  FortiGate 200F │
-            │  (siège Paris)  │      redondants (VPN)       │  (site Lyon)    │
-            └───────┬────────┘                            └───────┬────────┘
-                    │                                             │
-              ┌─────┴─────┐                                 ┌─────┴─────┐
-              │    DMZ     │                                 │  (pas de   │
-              │ (portail   │                                 │   DMZ,     │
-              │ intranet/  │                                 │  back-     │
-              │ extranet)  │                                 │  office)   │
-              └─────┬─────┘                                 └─────┬─────┘
-                    │                                             │
-        ┌───────────┴───────────┐                       ┌─────────┴─────────┐
-        │  Stack Cisco Catalyst  │                       │  Stack Cisco       │
-        │  9300 (cœur N3, HA)    │                       │  Catalyst 9300     │
-        └───────────┬───────────┘                       │  (cœur N3, HA)     │
-                    │                                    └─────────┬─────────┘
-        ┌───────────┴───────────┐                                 │
-        │ Catalyst 9200 (distri) │                       Catalyst 9200 (distri)
-        └───────────┬───────────┘                                 │
-       ┌─────────────┼─────────────┐                    ┌──────────┴──────────┐
-   Accès (postes) Accès (Wi-Fi) Accès (VOIP)         Accès (postes)      Accès (Wi-Fi/VOIP)
-   VLAN 10/20      VLAN 40       VLAN 50              VLAN 10/20 Lyon     VLAN 40/50 Lyon
-        │
-   VLAN 30 (serveurs) ── Cluster VMware / stockage (cf. architecture systèmes)
-   VLAN 99 (management) ── accès administrateurs via bastion PAM
-```
+![Architecture réseau cible des sites de Paris et de Lyon](docs/figures/reseau-cible.png)
 
 Chaque site dispose désormais de son propre cluster de pare-feu en haute disponibilité, de son propre
 double lien Internet et de son propre cœur de réseau redondant — supprimant la dépendance totale du
@@ -2023,39 +1837,13 @@ Le dimensionnement par VLSM, plutôt qu'un découpage uniforme en /24, évite le
 les VLAN à faible population (management, serveurs) tout en réservant la capacité nécessaire aux VLAN à
 forte population (bureautique). Cette rigueur de plan d'adressage facilite également la lecture des
 règles de pare-feu (cf. Lot A) et la
-[procédure de configuration détaillée](../09-procedures/) fournie plus loin dans le dossier.
+procédure de configuration détaillée fournie plus loin dans le dossier.
 
 ## Architecture systèmes cible
 
 ### 1. Schéma de la salle serveurs et du cluster de virtualisation
 
-```
-                         Site Paris (siège)                         Site Lyon (secours actif)
-                 ┌─────────────────────────────────┐        ┌─────────────────────────────────┐
-                 │   Cluster VMware vSphere HA/DRS   │        │   Cluster VMware vSphere HA/DRS   │
-                 │  ┌───────────┐  ┌───────────┐    │        │  ┌───────────┐                    │
-                 │  │  Hôte 1   │  │  Hôte 2   │    │◀──────▶│  │  Hôte 1   │                    │
-                 │  └───────────┘  └───────────┘    │  vMotion/│  └───────────┘                    │
-                 │  VM : AD, DNS/DHCP, Fichiers,     │  réplic. │  VM : AD (secours), DNS/DHCP,     │
-                 │  GLPI, PRTG, Sentinel (collecteur)│  Veeam   │  Fichiers (répliqué)               │
-                 └───────────────┬───────────────────┘        └───────────────┬───────────────────┘
-                                 │                                             │
-                 ┌───────────────┴───────────────────┐        ┌───────────────┴───────────────────┐
-                 │  Baie de stockage SAN principale   │──────▶│  Baie de stockage SAN secondaire   │
-                 │  (production)                       │ répl. │  (réplique asynchrone 15 min)      │
-                 └─────────────────────────────────────┘        └─────────────────────────────────────┘
-
-                 ┌─────────────────────────────────┐
-                 │  Cluster SQL Server 2022          │
-                 │  Always On Availability Group     │
-                 │  (KHS-Core) — nœud Paris          │◀────────────────────▶ nœud Lyon (secours)
-                 └─────────────────────────────────┘
-
-                 ┌─────────────────────────────────┐
-                 │  Serveurs Linux (Oracle 19c)       │
-                 │  gestion administrative/paye       │
-                 └─────────────────────────────────┘
-```
+![Architecture systèmes cible : virtualisation, stockage et bases de données](docs/figures/systemes-cible.png)
 
 ### 2. Répartition des rôles serveurs
 
@@ -2088,24 +1876,7 @@ régulateur bancaire sur l'application KHS-Core.
 
 ### 1. Logique d'accès *zero trust*
 
-```
- Utilisateur (poste client léger/lourd, cf. Lot B)
-        │
-        ▼
- Authentification Entra ID + MFA (Conditional Access, cf. Lot C)
-        │
-        ├── Non conforme (poste non chiffré, MFA absent) ──▶ Accès refusé
-        │
-        ▼ Conforme
- Accès conditionné au périmètre (VLAN, cf. architecture réseau)
-        │
-        ├── VLAN 20 (KHS-Core) ──▶ Filtrage applicatif pare-feu + journalisation
-        ├── GED sécurisée MOM-TECH ─────────▶ Classification + audit immuable + signature
-        └── Ressources internes via VPN ──▶ MFA obligatoire + bastion PAM (comptes à privilèges)
-        │
-        ▼
- Journalisation de tous les accès ──▶ Microsoft Sentinel (SOC)
-```
+![Logique d'accès zero trust](docs/figures/zero-trust.png)
 
 Chaque accès, qu'il concerne l'application bancaire, la GED ou l'administration des équipements, est
 conditionné à une authentification forte et journalisé — principe de sécurité *zero trust* : aucune
@@ -2143,7 +1914,7 @@ KHS Bank.
 
 ## Plan de migration
 
-Cette section détaille la mise en œuvre opérationnelle de l'[architecture cible](../06-architecture/), en
+Cette section détaille la mise en œuvre opérationnelle de l'architecture cible, en
 respectant la contrainte contractuelle de non-interruption des services bancaires.
 
 - Prérequis techniques d'installation — VM, RAM, disque, OS, frameworks.
@@ -2355,7 +2126,7 @@ définis en phase de pilotage, désormais utilisés en régime de fonctionnement
 | Réseau (Lot A) | Switches Cisco Catalyst 9300/9200 (2 sites), cluster FortiGate 200F HA (2 sites), câblage Cat 6A | 780 000 € |
 | Postes clients (Lot B) | 920 postes (léger/lourd) + infrastructure VDI (VMware Horizon) | 650 000 € |
 | Virtualisation & stockage (Lot 3 + Lot 1) | 4 hôtes ESXi, 2 baies SAN répliquées, Veeam Backup & Replication | 900 000 € |
-| Sécurité ([Lot D/E/F](../05-solutions/)) | Bastion PAM, déploiement Purview/DLP, paramétrage IPS | 150 000 € |
+| Sécurité (Lot D/E/F) | Bastion PAM, déploiement Purview/DLP, paramétrage IPS | 150 000 € |
 | SOC (Sentinel) | Mise en œuvre, connecteurs, playbooks SOAR | 200 000 € |
 | Licences Microsoft 365 E5 (920 utilisateurs, 1ʳᵉ année) | 57 €/utilisateur/mois × 920 × 12 mois | 629 280 € |
 | Bases de données (Lot 5) | Licences SQL Server 2022 Enterprise (Always On), migration Oracle 19c | 380 000 € |
@@ -2417,7 +2188,7 @@ sécurisation du système d'information de KHS Bank.
 
 Le présent contrat a pour objet de définir les conditions dans lesquelles le Prestataire assure la
 maintenance préventive et corrective de l'infrastructure déployée (réseau, systèmes, virtualisation,
-cybersécurité) ainsi que l'astreinte du SOC, décrits dans les [propositions de solutions](../05-solutions/).
+cybersécurité) ainsi que l'astreinte du SOC, décrits dans les propositions de solutions.
 
 ### Article 2 — Durée
 
@@ -2482,44 +2253,46 @@ partie à ses obligations, après mise en demeure restée infructueuse pendant t
 
 | Réf. | Lot | Test | Résultat attendu | Statut |
 |---|---|---|---|---|
-| T01 | A | Bascule automatique du cœur de réseau (arrêt d'un membre du stack) | Aucune coupure perceptible | ✅ Conforme |
-| T02 | A | Bascule du lien VPN principal vers le lien de secours | Reprise < 30 s, aucune perte de session applicative | ✅ Conforme |
-| T03 | G | Bascule du cluster VMware (arrêt d'un hôte) | RTO ≤ 30 min, VM critiques redémarrées automatiquement | ✅ Conforme |
-| T04 | 1 | Restauration d'une sauvegarde Veeam (VM de test) | Restauration complète en moins de 2 heures | ✅ Conforme |
-| T05 | 5 | Bascule Always On de la base KHS-Core | RTO ≤ 1 heure, RPO ≤ 15 min, aucune perte de transaction validée | ✅ Conforme |
-| T06 | C | Connexion utilisateur sans second facteur | Accès refusé (MFA obligatoire) | ✅ Conforme |
-| T07 | D | Simulation d'exécution de fichier malveillant sur un poste test | Détection et isolation automatique par Defender for Endpoint | ✅ Conforme |
-| T08 | SOC | Injection d'un événement d'authentification suspecte | Alerte générée dans Sentinel en moins de 5 minutes | ✅ Conforme |
-| T09 | F | Tentative d'envoi externe d'un document classé confidentiel | Blocage automatique par la politique DLP | ✅ Conforme |
-| T10 | B | Poste client léger : absence de données locales après déconnexion | Aucune donnée persistée localement | ✅ Conforme |
-| T11 | 6 | Appel test entre les deux sites via Teams Phone | Qualité vocale conforme, QoS respectée | ✅ Conforme |
-| T12 | Réseau | Isolement du VLAN invités vis-à-vis du LAN interne | Aucune route accessible vers les VLAN internes | ✅ Conforme |
+| T01 | A | Bascule automatique du cœur de réseau (arrêt d'un membre du stack) | Aucune coupure perceptible | Conforme |
+| T02 | A | Bascule du lien VPN principal vers le lien de secours | Reprise < 30 s, aucune perte de session applicative | Conforme |
+| T03 | G | Bascule du cluster VMware (arrêt d'un hôte) | RTO ≤ 30 min, VM critiques redémarrées automatiquement | Conforme |
+| T04 | 1 | Restauration d'une sauvegarde Veeam (VM de test) | Restauration complète en moins de 2 heures | Conforme |
+| T05 | 5 | Bascule Always On de la base KHS-Core | RTO ≤ 1 heure, RPO ≤ 15 min, aucune perte de transaction validée | Conforme |
+| T06 | C | Connexion utilisateur sans second facteur | Accès refusé (MFA obligatoire) | Conforme |
+| T07 | D | Simulation d'exécution de fichier malveillant sur un poste test | Détection et isolation automatique par Defender for Endpoint | Conforme |
+| T08 | SOC | Injection d'un événement d'authentification suspecte | Alerte générée dans Sentinel en moins de 5 minutes | Conforme |
+| T09 | F | Tentative d'envoi externe, par la messagerie, d'un document classé confidentiel | Blocage automatique par la politique DLP | Conforme |
+| T10 | B | Poste client léger : absence de données locales après déconnexion | Aucune donnée persistée localement | Conforme |
+| T11 | 6 | Appel test entre les deux sites via Teams Phone | Qualité vocale conforme, QoS respectée | Conforme |
+| T12 | Réseau | Isolement du VLAN invités vis-à-vis du LAN interne | Aucune route accessible vers les VLAN internes | Conforme |
 
 L'intégralité du cahier de tests (couvrant chaque lot principal et complémentaire) est fournie en annexe
 du dossier complet.
 
 ### Procès-verbal de recette (modèle)
 
-```
-PROCÈS-VERBAL DE RECETTE
-Projet : Migration et sécurisation du système d'information — KHS Bank
-Prestataire : MOM-TECH
-
-Entre les soussignés, il est convenu ce qui suit :
-
-Le Client déclare avoir pris connaissance des résultats des tests de recette figurant au cahier
-de tests, réalisés du [date] au [date], sur l'ensemble des lots principaux et complémentaires
-définis au cahier des charges.
-
-☐ Recette prononcée sans réserve
-☐ Recette prononcée avec réserve(s) — liste des réserves ci-jointe, avec délai de levée convenu
-☐ Recette refusée — motifs ci-joints
-
-Fait à Paris, le [date], en deux exemplaires.
-
-Pour KHS Bank                              Pour MOM-TECH
-[Nom, fonction, signature]                 [Nom, fonction, signature]
-```
++------------------------------------------------------------------------------------------------------+
+| **PROCÈS-VERBAL DE RECETTE**                                                                         |
+|                                                                                                      |
+| **Projet :** migration et sécurisation du système d'information de KHS Bank                          |
+| **Prestataire :** MOM-TECH                                                                           |
+|                                                                                                      |
+| Entre les soussignés, il est convenu ce qui suit.                                                    |
+|                                                                                                      |
+| Le Client déclare avoir pris connaissance des résultats des tests de recette figurant au cahier de   |
+| tests, réalisés du ........ au ........, sur l'ensemble des lots principaux et complémentaires       |
+| définis au cahier des charges.                                                                       |
+|                                                                                                      |
+| ☐ Recette prononcée sans réserve                                                                     |
+| ☐ Recette prononcée avec réserve(s) : liste des réserves ci-jointe, avec délai de levée convenu      |
+| ☐ Recette refusée : motifs ci-joints                                                                 |
+|                                                                                                      |
+| Fait à Paris, le ........, en deux exemplaires.                                                      |
+|                                                                                                      |
+| **Pour KHS Bank** : nom, fonction, signature                                                         |
+|                                                                                                      |
+| **Pour MOM-TECH** : nom, fonction, signature                                                         |
++------------------------------------------------------------------------------------------------------+
 
 La validation du procès-verbal de recette, signé conjointement par la DSI de KHS Bank et le Chef de
 projet MOM-TECH, marque le passage du projet en phase de fonctionnement normal (*Run*), couverte par
@@ -2532,19 +2305,19 @@ le contrat de maintenance.
 Le cahier des charges de KHS Bank exprimait
 un besoin double : moderniser un système d'information vieillissant et hétérogène, et le mettre en
 conformité avec les exigences strictes du secteur bancaire (ACPR, DSP2, PCI-DSS, RGPD). L'
-[audit de l'existant](../04-audit-existant/) a mis en évidence quatorze constats de criticité élevée,
+audit de l'existant a mis en évidence quatorze constats de criticité élevée,
 concentrés sur trois axes : l'absence de redondance (réseau, stockage, pare-feu), l'absence de
 dispositif de détection et de continuité (pas de SOC, pas de PRA/PCA formalisé), et une protection
 insuffisante des données sensibles (pas de MFA, pas de GED sécurisée).
 
-MOM-TECH a répondu à chacun de ces constats par une [architecture cible](../06-architecture/) cohérente,
+MOM-TECH a répondu à chacun de ces constats par une architecture cible cohérente,
 construite autour de trois piliers technologiques limitant la fragmentation des éditeurs : Cisco/Fortinet
 pour le réseau, VMware/Veeam pour la virtualisation et le PRA/PCA, et un socle Microsoft 365 E5/Entra ID
 pour l'identité, la bureautique et une large part de la cybersécurité — complété par **Microsoft
 Sentinel**, SOC exploitant la détection assistée par intelligence artificielle, cœur de métier de
 MOM-TECH.
 
-Le [plan de migration](../07-migration/) en sept étapes, construit sur un principe de coexistence
+Le plan de migration en sept étapes, construit sur un principe de coexistence
 progressive, a permis d'atteindre l'objectif contractuel central : **aucune interruption des services
 bancaires** pendant toute la durée du projet. La recette confirme la conformité de
 l'ensemble des lots aux exigences du cahier des charges.
@@ -2980,7 +2753,7 @@ cf. Recette).
 
 ## Maquette Cisco Packet Tracer — KHS Bank / MOM-TECH
 
-Cette section adapte l'[architecture cible](../06-architecture/) du dossier en une maquette
+Cette section adapte l'architecture cible du dossier en une maquette
 **construite et testable dans Cisco Packet Tracer (PT)**, logiciel de simulation réseau Cisco. Elle
 fournit le plan d'équipements, le câblage, le plan d'adressage, les configurations CLI (Command Line
 Interface — ligne de commande) complètes de chaque équipement et le plan de test. Elle sert de **preuve
@@ -2994,7 +2767,7 @@ routage inter-VLAN, filtrage, NAT et liaison inter-site.
 - 03 — Guide de construction pas-à-pas
 - 04 — Configuration des serveurs et postes
 - 05 — Plan de test
-- [configs/](configs/) — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
+- configs/ — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
 
 ### Pourquoi les équipements diffèrent du dossier "réel"
 
@@ -3045,26 +2818,6 @@ FortiGate) qui n'existent pas dans le catalogue de Packet Tracer. La maquette ut
 - **20 équipements au total** (au lieu de 28 dans une première version) : couche distribution supprimée
   (les cœurs se connectent directement à l'accès), imprimante et second poste bureautique retirés
   (aucune compétence réseau notée n'en dépendait).
-
-### Vue d'ensemble logique
-
-```
-Internet (ISP-RTR)
-        │
-   ┌────┴────┐
-RTR-PARIS   RTR-LYON  ←── tunnel GRE (VPN inter-site) ──→ (reliés entre eux)
-   │            │
-FW-PARIS     FW-LYON        (ASA 5505, périmètre + NAT)
-   │            │
-CORE-PARIS   CORE-LYON      (L3, HSRP à Paris)
- -SW1/SW2       │
-   │            │
-ACC-PARIS-SW   ACC-LYON-SW
-   │                │
-postes + AP +   postes
-IP Phone +
-serveur
-```
 
 ## Topologie et câblage
 
@@ -3156,32 +2909,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 
 ### 4. Schéma logique
 
-```
-                                   ┌───────────────────┐
-                                   │  SRV-INTERNET-TEST │
-                                   └─────────┬─────────┘
-                                             │
-                                   ┌─────────┴─────────┐
-                                   │      ISP-RTR       │
-                                   └────┬──────────┬───┘
-                          Gi0/0 (Paris) │          │ Gi0/1 (Lyon)
-                    ┌────────────────────┘          └────────────────────┐
-              ┌─────┴─────┐                                       ┌──────┴────┐
-              │ RTR-PARIS │═══════ Tunnel GRE (VPN inter-site) ══════│ RTR-LYON  │
-              └─────┬─────┘                                       └──────┬────┘
-                    │                                                    │
-              ┌─────┴─────┐                                       ┌──────┴────┐
-              │ FW-PARIS  │ (ASA 5505)                             │ FW-LYON   │
-              └──┬─────┬──┘                                       └──────┬────┘
-         ┌───────┘     └───────┐                                         │
-   ┌─────┴──────┐        ┌─────┴──────┐                            ┌─────┴──────┐
-   │CORE-PARIS  │══HSRP═══│CORE-PARIS  │                            │ CORE-LYON  │
-   │   -SW1     │  +trunk  │   -SW2     │                            │    -SW     │
-   └──┬───┬─────┘          └─────┬───┬──┘                            └──┬───┬────┘
-      │   └──────── ACC-PARIS-SW ┘   │                                  │   │
-   SRV-PARIS   (postes, bancaire, Wi-Fi, VOIP)                     SRV-LYON  ACC-LYON-SW
-                                                                              (postes)
-```
+![Vue logique de la maquette Packet Tracer : adressage, redondance et liaisons](docs/figures/maquette-logique.png)
 
 ## Plan d'adressage
 
@@ -3266,7 +2994,7 @@ ajoutées ici.
   traduit, uniquement le trafic réellement destiné à Internet).
 - **CORE-PARIS-SW1/2 / CORE-LYON-SW** : route par défaut vers le pare-feu (`inside`).
 
-Cette logique est détaillée avec la syntaxe exacte dans les fichiers de [configs/](configs/).
+Cette logique est détaillée avec la syntaxe exacte dans les fichiers de configs/.
 
 ## Plan de test
 
@@ -3631,10 +3359,10 @@ alors automatiquement croisé/droit selon les deux extrémités.
 
 L'ordre compte : chaque étape dépend de la précédente pour être testable.
 
-1. **ISP-RTR** (copier [`configs/ISP-RTR.txt`](configs/ISP-RTR.txt) dans sa console).
-2. **RTR-PARIS** puis **RTR-LYON** ([`RTR-PARIS.txt`](configs/RTR-PARIS.txt), [`RTR-LYON.txt`](configs/RTR-LYON.txt)) —
+1. **ISP-RTR** (copier `configs/ISP-RTR.txt` dans sa console).
+2. **RTR-PARIS** puis **RTR-LYON** (`RTR-PARIS.txt`, `RTR-LYON.txt`) —
    testez `ping 203.0.113.1` depuis chaque routeur avant de continuer.
-3. **FW-PARIS** puis **FW-LYON** ([`FW-PARIS.txt`](configs/FW-PARIS.txt), [`FW-LYON.txt`](configs/FW-LYON.txt)).
+3. **FW-PARIS** puis **FW-LYON** (`FW-PARIS.txt`, `FW-LYON.txt`).
 4. **CORE-PARIS-SW1**, **CORE-PARIS-SW2**, **CORE-LYON-SW** (cœurs en premier, avant l'accès,
    car ce sont eux qui portent les VLAN et le routage inter-VLAN).
 5. **ACC-PARIS-SW**, puis **ACC-LYON-SW**.

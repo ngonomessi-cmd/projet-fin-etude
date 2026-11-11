@@ -88,29 +88,4 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 
 ## 4. Schéma logique
 
-```
-                                   ┌───────────────────┐
-                                   │  SRV-INTERNET-TEST │
-                                   └─────────┬─────────┘
-                                             │
-                                   ┌─────────┴─────────┐
-                                   │      ISP-RTR       │
-                                   └────┬──────────┬───┘
-                          Gi0/0 (Paris) │          │ Gi0/1 (Lyon)
-                    ┌────────────────────┘          └────────────────────┐
-              ┌─────┴─────┐                                       ┌──────┴────┐
-              │ RTR-PARIS │═══════ Tunnel GRE (VPN inter-site) ══════│ RTR-LYON  │
-              └─────┬─────┘                                       └──────┬────┘
-                    │                                                    │
-              ┌─────┴─────┐                                       ┌──────┴────┐
-              │ FW-PARIS  │ (ASA 5505)                             │ FW-LYON   │
-              └──┬─────┬──┘                                       └──────┬────┘
-         ┌───────┘     └───────┐                                         │
-   ┌─────┴──────┐        ┌─────┴──────┐                            ┌─────┴──────┐
-   │CORE-PARIS  │══HSRP═══│CORE-PARIS  │                            │ CORE-LYON  │
-   │   -SW1     │  +trunk  │   -SW2     │                            │    -SW     │
-   └──┬───┬─────┘          └─────┬───┬──┘                            └──┬───┬────┘
-      │   └──────── ACC-PARIS-SW ┘   │                                  │   │
-   SRV-PARIS   (postes, bancaire, Wi-Fi, VOIP)                     SRV-LYON  ACC-LYON-SW
-                                                                              (postes)
-```
+![Vue logique de la maquette Packet Tracer : adressage, redondance et liaisons](../figures/maquette-logique.png)

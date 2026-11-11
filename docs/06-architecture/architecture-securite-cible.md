@@ -2,24 +2,7 @@
 
 ## 1. Logique d'accès *zero trust*
 
-```
- Utilisateur (poste client léger/lourd, cf. Lot B)
-        │
-        ▼
- Authentification Entra ID + MFA (Conditional Access, cf. Lot C)
-        │
-        ├── Non conforme (poste non chiffré, MFA absent) ──▶ Accès refusé
-        │
-        ▼ Conforme
- Accès conditionné au périmètre (VLAN, cf. architecture réseau)
-        │
-        ├── VLAN 20 (KHS-Core) ──▶ Filtrage applicatif pare-feu + journalisation
-        ├── GED sécurisée MOM-TECH ─────────▶ Classification + audit immuable + signature
-        └── Ressources internes via VPN ──▶ MFA obligatoire + bastion PAM (comptes à privilèges)
-        │
-        ▼
- Journalisation de tous les accès ──▶ Microsoft Sentinel (SOC)
-```
+![Logique d'accès zero trust](../figures/zero-trust.png)
 
 Chaque accès, qu'il concerne l'application bancaire, la GED ou l'administration des équipements, est
 conditionné à une authentification forte et journalisé — principe de sécurité *zero trust* : aucune

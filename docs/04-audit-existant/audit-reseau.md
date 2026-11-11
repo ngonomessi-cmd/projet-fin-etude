@@ -6,33 +6,7 @@ L'infrastructure réseau de KHS Bank repose sur une architecture à trois niveau
 accès), présente uniquement au siège de Paris ; le site de Lyon ne dispose que d'un niveau d'accès
 raccordé au siège par un lien VPN unique.
 
-```
-                         Internet (FAI unique, sans lien de secours)
-                                        │
-                                 ┌──────┴──────┐
-                                 │  Firewall    │  (unique, siège uniquement)
-                                 └──────┬──────┘
-                                        │
-                              ┌─────────┴─────────┐
-                              │  Switch Cœur (N3)  │  ← point de défaillance unique
-                              └─────────┬─────────┘
-                     ┌──────────────────┼──────────────────┐
-             ┌───────┴───────┐  ┌───────┴───────┐  ┌───────┴───────┐
-             │  Distribution │  │  Distribution │  │  Distribution │
-             └───────┬───────┘  └───────┬───────┘  └───────┬───────┘
-                     │                  │                  │
-              Switches d'accès   Switches d'accès   Switches d'accès
-              (postes, Wi-Fi)    (postes, Wi-Fi)    (postes, Wi-Fi)
-
-                                        │
-                                 Lien VPN IPsec
-                                 (unique, non redondant)
-                                        │
-                              ┌─────────┴─────────┐
-                              │  Site de Lyon      │
-                              │  Switch d'accès    │
-                              └───────────────────┘
-```
+![Architecture réseau existante et points de défaillance relevés lors de l'audit](../figures/reseau-existant.png)
 
 ## 2. Segmentation réseau actuelle
 

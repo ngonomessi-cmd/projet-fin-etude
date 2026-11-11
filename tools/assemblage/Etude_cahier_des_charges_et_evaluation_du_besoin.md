@@ -38,7 +38,7 @@ Migration et sécurisation du système d'information de KHS Bank
 
 > Analyse du cahier des charges KHS Bank par MOM-TECH, préalable à
 > toute proposition de solution. Cette étude structure les besoins exprimés par domaine, formalise les
-> contraintes à respecter et fixe la méthode d'audit qui sera mise en œuvre (cf. [audit de l'existant](../04-audit-existant/)).
+> contraintes à respecter et fixe la méthode d'audit qui sera mise en œuvre (cf. audit de l'existant).
 
 ## 1. Synthèse des objectifs du projet
 
@@ -109,14 +109,14 @@ parties prenantes** (DSI, RSSI, utilisateurs représentatifs) → **analyse des 
 exigences du cahier des charges → **restitution structurée** (constats, risques, recommandations),
 formalisée dans un rapport d'audit par domaine.
 
-Les résultats de cet audit sont détaillés dans la section [Audit de l'existant](../04-audit-existant/).
+Les résultats de cet audit sont détaillés dans la section Audit de l'existant.
 
 ## 5. Résultats attendus, délais et évaluation
 
 - **Résultats attendus** : diagnostic complet du SI, architecture cible justifiée, plan de migration sans
   interruption de service, conformité réglementaire démontrée.
-- **Délais** : planning détaillé dans le diagramme de Gantt (cf. [gestion de projet](../03-gestion-de-projet/)).
-- **Évaluation** : recette contractuelle en fin de projet (cf. [Recette](../08-bilan-financier-recette/)),
+- **Délais** : planning détaillé dans le diagramme de Gantt (cf. gestion de projet).
+- **Évaluation** : recette contractuelle en fin de projet (cf. Recette),
   validée conjointement par la DSI et la Direction Conformité & Sécurité de KHS Bank.
 
 ```{=openxml}

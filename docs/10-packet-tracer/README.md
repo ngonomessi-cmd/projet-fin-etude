@@ -65,23 +65,3 @@ FortiGate) qui n'existent pas dans le catalogue de Packet Tracer. La maquette ut
 - **20 équipements au total** (au lieu de 28 dans une première version) : couche distribution supprimée
   (les cœurs se connectent directement à l'accès), imprimante et second poste bureautique retirés
   (aucune compétence réseau notée n'en dépendait).
-
-## Vue d'ensemble logique
-
-```
-Internet (ISP-RTR)
-        │
-   ┌────┴────┐
-RTR-PARIS   RTR-LYON  ←── tunnel GRE (VPN inter-site) ──→ (reliés entre eux)
-   │            │
-FW-PARIS     FW-LYON        (ASA 5505, périmètre + NAT)
-   │            │
-CORE-PARIS   CORE-LYON      (L3, HSRP à Paris)
- -SW1/SW2       │
-   │            │
-ACC-PARIS-SW   ACC-LYON-SW
-   │                │
-postes + AP +   postes
-IP Phone +
-serveur
-```

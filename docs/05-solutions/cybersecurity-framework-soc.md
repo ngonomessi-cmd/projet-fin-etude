@@ -37,23 +37,7 @@ Un plan de gestion de crise cyber est formalisé, couvrant :
 Le SOC repose sur **Microsoft Sentinel**, SIEM/SOAR cloud natif, alimenté par l'ensemble des sources de
 journalisation mises en place dans les lots précédents :
 
-```
-        Sources d'événements                         SOC (Microsoft Sentinel)
-   ┌─────────────────────────────┐             ┌─────────────────────────────┐
-   │ Fortinet FortiGate (Lot A/E) │────────────▶│                             │
-   │ Defender for Endpoint (Lot D)│────────────▶│   Corrélation d'événements  │
-   │ Entra ID / Conditional Access│────────────▶│   Détection assistée par IA │
-   │ (Lot C)                      │             │   (UEBA — analyse compor-   │
-   │ Microsoft Purview (Lot F)    │────────────▶│   tementale utilisateurs)   │
-   │ Exchange Online / Defender   │────────────▶│                             │
-   │ for Office 365 (Lot 4)       │             │   Playbooks de réponse      │
-   │ Journaux serveurs / GLPI     │────────────▶│   automatisée (SOAR)        │
-   └─────────────────────────────┘             └──────────────┬──────────────┘
-                                                                │
-                                                      Analystes SOC MOM-TECH
-                                                      (astreinte 24/7 sur
-                                                       incidents critiques)
-```
+![Architecture du SOC : sources d'événements, Microsoft Sentinel et analystes](../figures/soc.png)
 
 L'exploitation de l'**intelligence artificielle** (analyse comportementale — UEBA) permet de détecter des
 scénarios spécifiques au secteur bancaire : connexions atypiques à des heures inhabituelles,

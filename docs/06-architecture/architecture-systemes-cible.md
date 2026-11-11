@@ -2,33 +2,7 @@
 
 ## 1. Schéma de la salle serveurs et du cluster de virtualisation
 
-```
-                         Site Paris (siège)                         Site Lyon (secours actif)
-                 ┌─────────────────────────────────┐        ┌─────────────────────────────────┐
-                 │   Cluster VMware vSphere HA/DRS   │        │   Cluster VMware vSphere HA/DRS   │
-                 │  ┌───────────┐  ┌───────────┐    │        │  ┌───────────┐                    │
-                 │  │  Hôte 1   │  │  Hôte 2   │    │◀──────▶│  │  Hôte 1   │                    │
-                 │  └───────────┘  └───────────┘    │  vMotion/│  └───────────┘                    │
-                 │  VM : AD, DNS/DHCP, Fichiers,     │  réplic. │  VM : AD (secours), DNS/DHCP,     │
-                 │  GLPI, PRTG, Sentinel (collecteur)│  Veeam   │  Fichiers (répliqué)               │
-                 └───────────────┬───────────────────┘        └───────────────┬───────────────────┘
-                                 │                                             │
-                 ┌───────────────┴───────────────────┐        ┌───────────────┴───────────────────┐
-                 │  Baie de stockage SAN principale   │──────▶│  Baie de stockage SAN secondaire   │
-                 │  (production)                       │ répl. │  (réplique asynchrone 15 min)      │
-                 └─────────────────────────────────────┘        └─────────────────────────────────────┘
-
-                 ┌─────────────────────────────────┐
-                 │  Cluster SQL Server 2022          │
-                 │  Always On Availability Group     │
-                 │  (KHS-Core) — nœud Paris          │◀────────────────────▶ nœud Lyon (secours)
-                 └─────────────────────────────────┘
-
-                 ┌─────────────────────────────────┐
-                 │  Serveurs Linux (Oracle 19c)       │
-                 │  gestion administrative/paye       │
-                 └─────────────────────────────────┘
-```
+![Architecture systèmes cible : virtualisation, stockage et bases de données](../figures/systemes-cible.png)
 
 ## 2. Répartition des rôles serveurs
 
