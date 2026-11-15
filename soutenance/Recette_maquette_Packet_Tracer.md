@@ -29,7 +29,7 @@ promis. Elle a été menée le 15 novembre 2026 sur la maquette réelle. Ce docu
 
 1. les notions indispensables pour lire un résultat (« Comment lire un résultat ») ;
 2. chaque test : son objectif, la commande tapée, le résultat obtenu et son interprétation (« Les tests un par un ») ;
-3. les anomalies trouvées pendant la recette et leur correction ;
+3. les onze anomalies trouvées pendant la recette et leur correction ;
 4. les limites connues de la maquette ;
 5. le procès-verbal de synthèse ;
 6. les questions probables du jury, avec des réponses ;
@@ -172,6 +172,28 @@ grâce au relais DHCP des cœurs de réseau. »
 - `S* 0.0.0.0 via 10.10.254.1` : tout ce qui n'est pas connu part vers RTR-PARIS (Internet) ;
 - `S 10.10.0.0 255.255.0.0 via 10.10.254.12, inside` : le retour vers le réseau interne passe par l'adresse
   virtuelle HSRP des deux cœurs. C'est ce qui permet au pare-feu de continuer à joindre le LAN si SW1 tombe.
+
+## PT03 — Un poste bancaire joint le serveur (routage entre VLAN)
+
+**Objectif.** Les VLAN séparent les flux, mais certains échanges doivent rester possibles : un poste bancaire
+(VLAN 20) doit joindre le serveur (VLAN 30). C'est le cœur de réseau qui route entre les deux.
+
+**Commande.** Sur PC-BANCAIRE-PARIS-1 : `ping -n 10 10.10.4.70`.
+
+**Résultat obtenu.** `Reply from 10.10.4.70 … TTL=127`.
+
+**Interprétation.** `TTL=127` = un seul équipement routé (SW1, qui passe du VLAN 20 au VLAN 30), le chemin le
+plus court possible.
+
+**Ce que ce test a révélé.** Exécuté juste après la panne simulée de SW1 (PT11/PT12), il échouait de façon
+intermittente. La configuration du PC et du serveur était correcte ; SW1 joignait le serveur à 100 %. Deux
+causes : le VLAN 100 n'était pas autorisé sur le lien direct SW1 ↔ SW2, si bien que les deux cœurs ne se
+voyaient plus sur ce VLAN après la panne (anomalie A11) ; et les commutateurs avaient gardé en mémoire des
+tables (adresses MAC, correspondances ARP) datant de la panne. Après ajout du VLAN 100 au trunk et vidage des
+tables (`clear mac address-table dynamic`, `clear arp-cache`), le test est conforme.
+
+**À dire au jury.** « Après une bascule, il faut vérifier que tout revient à l'état nominal : c'est ce
+contrôle qui nous a fait découvrir que le VLAN de transit manquait sur le lien entre les deux cœurs. »
 
 ## PT06 — Sortie vers Internet et traduction d'adresse (NAT)
 
@@ -369,15 +391,9 @@ tombe et la route vers Lyon disparaît ; le réseau le signale aussitôt (« des
 laisser les paquets se perdre. C'est le comportement attendu, et la raison pour laquelle la cible du dossier
 prévoit un second fournisseur d'accès et un second tunnel (Lot A).
 
-## Tests non exécutés à ce jour
-
-| Test | Procédure (2 minutes) | Résultat attendu |
-|---|---|---|
-| PT03 — Inter-VLAN autorisé | Sur PC-BANCAIRE-PARIS-1 : `ping 10.10.4.70` (SRV-PARIS) | Réponses, `TTL=127` (un seul routage, par SW1) |
-
 # Anomalies détectées pendant la recette et corrections
 
-Une recette qui ne trouve rien est suspecte. Celle-ci a trouvé **dix anomalies**, toutes corrigées. Elles sont
+Une recette qui ne trouve rien est suspecte. Celle-ci a trouvé **onze anomalies**, toutes corrigées. Elles sont
 réparties en trois familles.
 
 ## Écarts entre le câblage réel et la configuration
@@ -404,6 +420,7 @@ réparties en trois familles.
 | **A8** — Trunks refusés sur les cœurs 3560 | Sur un 3560, `switchport mode trunk` exige de préciser l'encapsulation | `switchport trunk encapsulation dot1q` avant `switchport mode trunk` |
 | **A9** — FW-LYON garde l'adresse d'usine `192.168.1.1/24` côté interne | Configuration interne de l'ASA de Lyon jamais appliquée | Interface interne en `10.20.254.5/30` et route de retour vers `10.20.0.0/16` |
 | **A10** — `NATIVE_VLAN_MISMATCH` entre ACC-PARIS-SW et SW2 | VLAN natif 999 non appliqué sur le trunk de SW2 | `switchport trunk native vlan 999` sur SW2 Fa0/3 |
+| **A11** — Après la panne de SW1, Vl100 reste en Standby `unknown` ; échecs intermittents vers le serveur (PT03) | VLAN 100 absent du trunk direct SW1 ↔ SW2 : les deux cœurs ne s'entendaient que par les ports du pare-feu | `switchport trunk allowed vlan add 100` sur Fa0/2 des deux cœurs, puis vidage des tables MAC et ARP |
 
 **Méthode suivie à chaque fois :** observer le symptôme → isoler le segment en panne (ping de proche en proche,
 `show ip interface brief`, survol des câbles) → identifier la cause → corriger → **refaire le test** →
@@ -426,7 +443,7 @@ qui fonctionne réellement.
 |---|---|---|---|
 | PT01 | Connectivité locale (passerelle) | `10.10.0.2` répond (1er saut du tracert) | Conforme |
 | PT02 | Attribution DHCP Paris et Lyon | `10.10.0.11/22` et `10.20.0.10/24`, passerelles et DNS corrects | Conforme |
-| PT03 | Inter-VLAN autorisé | — | Non exécuté |
+| PT03 | Inter-VLAN autorisé (bancaire → serveur) | Réponses, TTL=127 | Conforme après correction (A11) |
 | PT04 | Isolation des invités | 0/4, « Destination host unreachable » par l'ACL | Conforme après correction (A3) |
 | PT05 | Internet pour les invités | 3/4, TTL=124 | Conforme |
 | PT06 | Sortie Internet et NAT | 3/4 ; traductions `10.10.4.10 → 203.0.113.2` | Conforme après correction (A6) |
@@ -438,8 +455,7 @@ qui fonctionne réellement.
 | PT12 | Redondance vers le pare-feu et préemption | Internet joignable via SW2 ; SW1 redevient Active à son retour | Conforme |
 | PT13 | Panne du lien inter-site | 0/4, « Destination host unreachable » : sans lien Internet, plus de tunnel | Conforme (limite connue) |
 
-**Bilan : 11 tests conformes sur 11 exécutés ; 10 anomalies détectées et corrigées ; 2 tests restant à
-exécuter.**
+**Bilan : 13 tests sur 13 exécutés et conformes ; 11 anomalies détectées et corrigées.**
 
 # Questions probables du jury
 

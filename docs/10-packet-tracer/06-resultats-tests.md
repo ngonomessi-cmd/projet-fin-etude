@@ -6,6 +6,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 |---|---|---|---|
 | PT02 | Attribution DHCP (PC-BUR-PARIS-1) | `10.10.0.11/22`, passerelle `10.10.0.1`, DNS `10.10.4.70` (relais `ip helper-address`) | Conforme |
 | PT02 (Lyon) | Attribution DHCP (PC-BUR-LYON-1, `ipconfig /renew`) | `10.20.0.10/24`, passerelle `10.20.0.1`, DNS `10.20.1.40` (SRV-LYON) | Conforme |
+| PT03 | Inter-VLAN : PC-BANCAIRE-PARIS-1 (VLAN 20) → SRV-PARIS `10.10.4.70` (VLAN 30) | Réponses `TTL=127` (un seul routage, par SW1). Échecs intermittents juste après la panne simulée de SW1, résolus par la remise en paire HSRP du VLAN 100 et le vidage des tables MAC/ARP | Conforme |
 | — | HSRP des VLAN utilisateurs | SW1 Active (priorité 110), SW2 Standby (priorité 90) sur Vl10/20/30/40/50/99 | Conforme |
 | — | Transit cœur ↔ pare-feu (VLAN 100) | SW1 → `10.10.254.9` : 4/5 ; SW2 → `10.10.254.9` : 4/5 ; HSRP Vl100 SW1 Active / SW2 Standby, VIP `10.10.254.12` | Conforme |
 | — | Table de routage FW-PARIS | `S* 0.0.0.0/0 via 10.10.254.1` (outside) ; `S 10.10.0.0/16 via 10.10.254.12` (inside) | Conforme |
