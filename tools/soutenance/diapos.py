@@ -73,7 +73,9 @@ def icone(c, nom, couleur, x, y, taille):
 # ---------------------------------------------------------------- formes de base
 def ombre(forme, alpha=16):
     spPr = forme._element.spPr
-    eff = etree.SubElement(spPr, qn("a:effectLst"))
+    eff = spPr.find(qn("a:effectLst"))  # shadow.inherit = False a déjà créé un effectLst vide : un seul autorisé
+    if eff is None:
+        eff = etree.SubElement(spPr, qn("a:effectLst"))
     sh = etree.SubElement(eff, qn("a:outerShdw"), blurRad="88900", dist="28575", dir="5400000", algn="t", rotWithShape="0")
     clr = etree.SubElement(sh, qn("a:srgbClr"), val="0B1220")
     etree.SubElement(clr, qn("a:alpha"), val=str(alpha * 1000))
