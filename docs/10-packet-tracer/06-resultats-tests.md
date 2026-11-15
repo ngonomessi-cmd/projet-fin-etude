@@ -16,6 +16,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT07 | Inter-site PC-BUR-PARIS-1 (`10.10.0.11`) → PC-BUR-LYON-1 (`10.20.0.10`) | `ping -n 10` : 10/10, 0 % de perte, TTL=122 (6 sauts routés) | Conforme |
 | PT07 (chemin) | `tracert 10.20.0.10` | 1 `10.10.0.2` (SW1) · 2 `10.10.254.9` (FW-PARIS) · 3-4 `*` (RTR-PARIS et extrémité GRE de RTR-LYON : leurs messages ICMP « TTL expiré » sont filtrés par l'ACL `OUTSIDE-IN` de FW-PARIS, qui n'admet que les sources `10.20.0.0/16`) · 5 `10.20.254.2` (FW-LYON) · 6 `10.20.254.6` (CORE-LYON-SW) · 7 `10.20.0.10` | Conforme |
 | PT08 | Exemption de NAT inter-site : `show ip nat translations` sur RTR-PARIS juste après PT07 | Table vide : aucune traduction pour `10.20.0.10` (le flux inter-site emprunte le tunnel GRE sans NAT, grâce à la ligne `deny` de l'ACL 100) | Conforme |
+| PT10 | Filtrage entrant : depuis RTR-PARIS (outside), `ping 10.10.254.2` et `ping 10.10.0.11` | 0/5 et 0/5. Le routage est pourtant en place (même chemin que PT07) : seule la source diffère (`10.10.254.1` au lieu de `10.20.0.0/16`), c'est donc bien l'ACL `OUTSIDE-IN` de l'ASA qui bloque. L'interface outside ne répond pas non plus au ping (pare-feu « furtif » côté Internet) | Conforme |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
