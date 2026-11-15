@@ -35,8 +35,8 @@ sector under ACPR, PSD2, PCI-DSS and GDPR requirements.
 
 MOM-TECH, a consultancy specialising in cybersecurity, cloud and artificial intelligence, was engaged to
 audit the existing infrastructure, design a resilient target architecture and lead its deployment without
-interrupting banking services, following the ITIL v4 framework. The audit identified fourteen
-high-severity findings, mainly the lack of redundancy, the absence of a security operations centre and
+interrupting banking services, following the ITIL v4 framework. The audit identified seventeen
+high-severity findings (out of 23), mainly the lack of redundancy, the absence of a security operations centre and
 the poor protection of sensitive banking documents.
 
 The proposed architecture removes every single point of failure in the network and virtualisation
@@ -846,7 +846,8 @@ place du SOC](../05-solutions/).
 
 ### Priorisation
 
-Quatorze constats sont classés en criticité **élevée** : ils concernent en priorité la résilience du réseau
+Sur les 23 constats relevés, dix-sept sont classés en criticité **élevée** (5 pour le réseau, 6 pour les
+systèmes, 6 pour la cybersécurité) et six en criticité moyenne. Les constats élevés concernent en priorité la résilience du réseau
 inter-sites, la continuité d'activité (PRA/PCA, sauvegarde), la détection des incidents (SOC/SIEM), le
 contrôle des accès (MFA, PAM) et la protection des documents sensibles (GED sécurisée) — autant de
 points directement liés aux exigences réglementaires (ACPR, DSP2, RGPD) du cahier des charges.
@@ -2337,7 +2338,7 @@ recette »).
 Le cahier des charges de KHS Bank exprimait
 un besoin double : moderniser un système d'information vieillissant et hétérogène, et le mettre en
 conformité avec les exigences strictes du secteur bancaire (ACPR, DSP2, PCI-DSS, RGPD). L'
-audit de l'existant a mis en évidence quatorze constats de criticité élevée,
+audit de l'existant a mis en évidence dix-sept constats de criticité élevée (sur 23 relevés),
 concentrés sur trois axes : l'absence de redondance (réseau, stockage, pare-feu), l'absence de
 dispositif de détection et de continuité (pas de SOC, pas de PRA/PCA formalisé), et une protection
 insuffisante des données sensibles (pas de MFA, pas de GED sécurisée).

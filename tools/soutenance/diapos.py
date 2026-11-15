@@ -461,11 +461,12 @@ for (y, l) in [(2.6, "PBS · WBS · OBS · RACI · Gantt"), (4.07, "Registre év
 anime(s, [f, pic] + t)
 
 # ---------------------------------------------------------------- 8. Audit
-s = slide("L'audit de l'existant : 14 constats critiques", 3, "audit")
-t = [tuile(s, 0.6, 1.65, 3.95, 4.05, "network", "Réseau (R1–R5)", "Switch cœur unique\nPare-feu unique, absent à Lyon\nVPN inter-sites unique\nFAI unique par site\nAucune segmentation / DMZ", accent=RED, size=16),
-     tuile(s, 4.72, 1.65, 3.95, 4.05, "server-crash", "Systèmes (S1–S8)", "Baie de stockage unique\nSauvegardes sans copie externe\nSQL 2012, Exchange 2013 en fin de support\nWindows 8 sur les postes\nAucun RPO/RTO formalisé", accent=RED, size=16),
-     tuile(s, 8.84, 1.65, 3.95, 4.05, "shield-alert", "Cybersécurité (C1–C8)", "Pas de SOC/SIEM ni d'EDR\nPas de MFA (DSP2)\nPas de PRA/PCA\nDocuments sensibles non classifiés\nComptes à privilèges non gérés", accent=RED, size=16)]
-b = bandeau(s, 5.95, "3 axes : redondance · détection et continuité · protection des données sensibles", nom_icone="target")
+s = slide("L'audit de l'existant : 17 constats critiques", 3, "audit")
+t = [tuile(s, 0.6, 1.6, 3.95, 4.05, "network", "Réseau · 5", "R1 Switch cœur unique\nR2 Pare-feu unique, absent à Lyon\nR3 VPN inter-sites unique\nR4 FAI unique par site\nR5 Aucune segmentation / DMZ", accent=RED, size=15),
+     tuile(s, 4.72, 1.6, 3.95, 4.05, "server-crash", "Systèmes · 6", "S1 Baie de stockage unique\nS2 Sauvegardes sans copie externe\nS3 SQL Server 2012 en fin de support\nS4 Exchange 2013 obsolète\nS5 Windows 8 sur les postes\nS8 Aucun RPO/RTO formalisé", accent=RED, size=15),
+     tuile(s, 8.84, 1.6, 3.95, 4.05, "shield-alert", "Cybersécurité · 6", "C1 Pas de SOC/SIEM\nC2 Pas de MFA (DSP2)\nC3 Pas de PRA/PCA\nC4 Pas d'EDR centralisé\nC5 Documents non classifiés, sans GED\nC8 Comptes à privilèges non gérés", accent=RED, size=15)]
+t.append(text(s, 0.6, 5.7, 12.2, 0.35, "17 constats de criticité élevée sur 23 relevés · les 6 autres, de criticité moyenne (R6, R7, S6, S7, C6, C7), sont traités dans les mêmes lots", size=13, color=GREY, italic=True, align=PP_ALIGN.CENTER))
+b = bandeau(s, 6.15, "3 axes : redondance · détection et continuité · protection des données sensibles", nom_icone="target")
 anime(s, t + [b])
 
 # ---------------------------------------------------------------- 9. Solutions
@@ -695,7 +696,7 @@ icone(s, "message-circle-question", NAVY3, 9.2, 0.5, 3.6)
 text(s, 0.8, 2.6, 11.7, 1.2, "Merci de votre attention", size=48, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 rect(s, 5.85, 3.95, 1.6, 0.07, fill=GOLD)
 text(s, 0.8, 4.25, 11.7, 0.6, "Questions du jury", size=26, color=GOLDL, align=PP_ALIGN.CENTER)
-text(s, 0.8, 6.4, 11.7, 0.5, "14 constats critiques traités · 0 interruption de service · une GED sécurisée en production", size=16, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
+text(s, 0.8, 6.4, 11.7, 0.5, "17 constats critiques traités · 0 interruption de service · une GED sécurisée en production", size=16, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
 s.notes_slide.notes_text_frame.text = NOTES["merci"]
 transition(s)
 

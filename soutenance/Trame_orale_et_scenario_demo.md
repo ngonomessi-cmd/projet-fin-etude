@@ -47,7 +47,7 @@ Les mêmes textes figurent dans les notes du fichier PowerPoint (mode présentat
 | 8 | Cinq objectifs, contraintes fortes, 26 semaines | « Le point dur : aucune interruption des services bancaires. » |
 | 9 | Intercalaire : Partie 3, les actions réalisées | « Passons aux actions réalisées. » |
 | 10 | Pilotage : PBS, WBS, OBS, RACI, risques, Gantt, ITIL v4 | « Six phases, du 5 janvier au 26 juin 2026. » |
-| 11 | Audit : 14 constats critiques en 3 axes | « Redondance, détection et continuité, protection des données sensibles. » |
+| 11 | Audit : 17 constats critiques (sur 23) en 3 axes | « Redondance, détection et continuité, protection des données sensibles. » |
 | 12 | Trois piliers pour limiter la fragmentation des éditeurs | « Moins d'éditeurs, moins de failles d'intégration. » |
 | 13 | Architecture cible et migration en 7 étapes | « Coexistence progressive : zéro interruption. » |
 | 14 | Maquette Packet Tracer : deux sites, HSRP, VLAN, ASA, GRE | « Pour ne pas rester sur le papier, j'ai construit l'architecture réseau dans Packet Tracer, avec le même plan d'adressage que le dossier. » |
@@ -61,7 +61,7 @@ Les mêmes textes figurent dans les notes du fichier PowerPoint (mode présentat
 | 22 | Intercalaire : Partie 5, la synthèse | « Pour finir, la synthèse. » |
 | 23 | ≈ 4,8 M€ d'investissement, ≈ 1,5 M€/an, ≈ 11 % du budget | « Le coût récurrent laisse de la marge sur le budget de 14 M€. » |
 | 24 | Recette : tous les tests de l'extrait sont conformes | « Chaque exigence critique a un test et un résultat attendu. » |
-| 25 | Objectifs atteints, perspectives | « 14 constats traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
+| 25 | Objectifs atteints, perspectives | « 17 constats critiques traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
 | 26 | Remerciements | « Je suis à votre disposition pour vos questions. » |
 
 # 4. Scénario de démonstration (8 à 10 minutes)
