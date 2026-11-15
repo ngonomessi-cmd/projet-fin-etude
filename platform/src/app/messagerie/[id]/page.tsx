@@ -187,7 +187,7 @@ export default async function PageConversation({ params }: { params: Promise<{ i
             }))}
             utilisateurId={user.id}
             peutPublier={maParticipation.peut_publier}
-            peutUrgent={profil.role === "administrateur" || profil.role === "validateur"}
+            peutUrgent={profil.role === "administrateur" || profil.role === "validateur" || profil.role === "superviseur"}
             nomsParId={nomsParId}
             nombreAutresParticipants={participants.length - 1}
             conversationsCibles={conversationsCibles}

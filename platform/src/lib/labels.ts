@@ -13,18 +13,20 @@ export const LABEL_ROLE: Record<RoleUtilisateur, string> = {
   lecteur: "Lecteur",
   redacteur: "Rédacteur",
   validateur: "Validateur",
+  superviseur: "Superviseur",
   administrateur: "Administrateur",
   auditeur: "Auditeur",
 };
 
 // Rôles qui produisent des documents (créer, éditer, partager). Le lecteur
 // consulte ; l'auditeur contrôle sans produire (séparation des pouvoirs).
-export const ROLES_PRODUCTEURS: RoleUtilisateur[] = ["redacteur", "validateur", "administrateur"];
+export const ROLES_PRODUCTEURS: RoleUtilisateur[] = ["redacteur", "validateur", "superviseur", "administrateur"];
 
 export const DESCRIPTION_ROLE: Record<RoleUtilisateur, string> = {
   lecteur: "Consulte les documents qui lui sont accessibles.",
   redacteur: "Crée, rédige et partage des documents, puis les soumet à validation.",
   validateur: "Comme le rédacteur, et valide ou publie les documents de son département.",
+  superviseur: "Rédige, valide, publie et archive dans tous les départements, et consulte le journal d'audit ; sans accès aux réglages.",
   administrateur: "Gère les comptes, les modèles et le site ; valide et publie partout.",
   auditeur: "Consulte tous les documents et le journal d'audit, sans en produire.",
 };
@@ -162,6 +164,7 @@ const LABEL_ROLE_EN: Record<RoleUtilisateur, string> = {
   lecteur: "Reader",
   redacteur: "Author",
   validateur: "Approver",
+  superviseur: "Supervisor",
   administrateur: "Administrator",
   auditeur: "Auditor",
 };
@@ -170,6 +173,7 @@ const DESCRIPTION_ROLE_EN: Record<RoleUtilisateur, string> = {
   lecteur: "Reads the documents available to them.",
   redacteur: "Creates, writes and shares documents, then submits them for approval.",
   validateur: "Same as an author, and approves or publishes their department's documents.",
+  superviseur: "Writes, approves, publishes and archives in every department, and reads the audit log; no access to settings.",
   administrateur: "Manages accounts, templates and the website; approves and publishes everywhere.",
   auditeur: "Reads every document and the audit log, without producing any.",
 };

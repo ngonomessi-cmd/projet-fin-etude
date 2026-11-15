@@ -10,7 +10,7 @@ import type { Traduire } from "@/lib/i18n/plateforme";
 const liensNavigation = (t: Traduire): Lien[] => [
   { href: "/documents", label: "Documents", icone: "documents" },
   { href: "/messagerie", label: t("Messagerie", "Messaging"), icone: "messagerie" },
-  { href: "/signatures", label: t("Signatures", "Signatures"), roles: ["redacteur", "validateur", "administrateur", "auditeur"], icone: "signatures" },
+  { href: "/signatures", label: t("Signatures", "Signatures"), roles: ["redacteur", "validateur", "superviseur", "administrateur", "auditeur"], icone: "signatures" },
   // Service du courrier : seulement sur un déploiement qui l'active (KHS Bank inchangé).
   ...(COURRIER_ACTIF ? ([{ href: "/courrier", label: t("Courrier", "Mail"), icone: "courrier" }] satisfies Lien[]) : []),
   { href: "/audit", label: t("Journal d'audit", "Audit log"), icone: "audit" },

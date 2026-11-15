@@ -38,7 +38,12 @@ export default async function MonCourrier({ searchParams }: Props) {
   // — et, pour un validateur, au courrier ordinaire de son département (hors plis personnels).
   if (ctx.role) {
     const departement = ctx.profil.departement.replace(/["\\]/g, "");
-    const parDepartement = ctx.profil.role === "validateur" && departement ? `,and(departement.eq."${departement}",caractere.neq.personnel)` : "";
+    const parDepartement =
+      ctx.profil.role === "superviseur"
+        ? ",caractere.neq.personnel"
+        : ctx.profil.role === "validateur" && departement
+          ? `,and(departement.eq."${departement}",caractere.neq.personnel)`
+          : "";
     requete = requete.or(`destinataire_id.eq.${ctx.userId},affecte_a.eq.${ctx.userId}${parDepartement}`);
   }
   if (vue === "a-retirer") requete = requete.eq("statut", "recu");

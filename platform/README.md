@@ -44,6 +44,7 @@ de l'Agence peut le modifier.
 | `lecteur` | Consulter les documents publiés auxquels il a droit |
 | `redacteur` | Déposer, rédiger et faire évoluer des documents de son département |
 | `validateur` | Vérifier, valider, publier et archiver les documents de son département |
+| `superviseur` | Rédiger, valider, publier et archiver dans tous les départements, consulter le journal d'audit ; aucun accès aux réglages |
 | `administrateur` | Gérer les agents et leurs rôles, le site public, les modèles, l'archivage, les signatures |
 | `auditeur` | Consulter le journal d'audit et vérifier les documents, sans jamais les modifier |
 
@@ -117,7 +118,7 @@ Un agent de l'Agence ne voit jamais les données d'une autre organisation.
 
 ### 5.1 Supabase (projet partagé)
 1. Dans le projet Supabase existant, ouvrir **SQL Editor** et exécuter dans l'ordre les fichiers de
-   `supabase/migrations/` (`0001` à `0033`). Ne rejouer que ceux qui manquent.
+   `supabase/migrations/` (`0001` à `0035`). Ne rejouer que ceux qui manquent.
 2. **Authentication → URL Configuration → Redirect URLs** : ajouter l'adresse du site de l'Agence
    (`https://api-cameroun-ged.vercel.app/**`) à côté de celle des autres organisations.
 3. **Authentication → Multi-Factor** : « TOTP (App Authenticator) » activé.
