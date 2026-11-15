@@ -71,7 +71,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | FastEthernet0/1 |
 | FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | FastEthernet0/1 |
 | RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
-| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
+| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | FastEthernet0/1 |
 | CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | CORE-PARIS-SW2 | FastEthernet0/2 |
 | CORE-PARIS-SW1 | FastEthernet0/3 | Automatique | SRV-PARIS | FastEthernet0 |
 | CORE-PARIS-SW1 | FastEthernet0/4 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
@@ -82,7 +82,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | ACC-PARIS-SW | FastEthernet0/6 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/7 | Automatique | IPPHONE-PARIS-1 | Port Switch |
 | CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
-| CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
+| CORE-LYON-SW | FastEthernet0/3 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
 | ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
 | ACC-LYON-SW | FastEthernet0/3 | Automatique | PC-BANCAIRE-LYON-1 | FastEthernet0 |
 

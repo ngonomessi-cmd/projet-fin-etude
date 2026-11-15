@@ -12,6 +12,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | — | FW-PARIS → RTR-PARIS `10.10.254.1` (outside) | 4/5 | Conforme |
 | PT06 | Sortie Internet (PC-BANCAIRE-PARIS-1 → `203.0.113.10`) | 3/4 réponses, TTL=124 (4 sauts routés : cœur, ASA, RTR-PARIS, ISP), après ajout de la route de retour | Conforme |
 | PT06 (NAT) | `show ip nat translations` sur RTR-PARIS | 4 entrées `icmp 203.0.113.2:9-12 ↔ 10.10.4.10:9-12` vers `203.0.113.10` (PAT sur l'adresse publique de Gi0/0) | Conforme |
+| — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
 
@@ -23,3 +24,5 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | Pas de retour du pare-feu vers le LAN | Route de retour absente sur l'ASA | `route inside 10.10.0.0 255.255.0.0 10.10.254.12` (VIP HSRP) |
 | PT06 : ping Internet en échec, aucune traduction NAT | Pas de route de retour vers `10.10.0.0/16` sur RTR-PARIS (idem `10.20.0.0/16` sur RTR-LYON) | `ip route 10.10.0.0 255.255.0.0 10.10.254.2` (et `10.20.0.0/16 → 10.20.254.2` à Lyon) |
 | Flux inter-site bloqué à l'entrée des pare-feu (anticipé pour PT07) | L'ASA refuse par défaut tout trafic entrant de niveau 0 vers 100 | ACL `OUTSIDE-IN` limitée au LAN de l'autre site sur chaque ASA |
+| FW-LYON avec l'adresse d'usine `192.168.1.1/24` côté inside | Configuration inside de l'ASA de Lyon jamais appliquée | `Vlan1` inside en `10.20.254.5/30` + `route inside 10.20.0.0/16 → 10.20.254.6` |
+| CORE-LYON-SW ne joint pas le pare-feu (0/5) ; `NATIVE_VLAN_MISMATCH` sur Fa0/3 | Câblage réel décalé : pare-feu sur Fa0/1 (et non Gi0/1), accès sur Fa0/3 (trunk avec VLAN natif 1 au lieu de 999) | Lien routé `10.20.254.6/30` déplacé sur Fa0/1 ; Fa0/3 en trunk dot1q, VLAN natif 999 |
