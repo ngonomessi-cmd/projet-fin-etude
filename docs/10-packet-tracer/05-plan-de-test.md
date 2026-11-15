@@ -16,7 +16,7 @@ est concrètement observable dans la maquette Packet Tracer.
 | PT07 | Connectivité inter-site | `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1 | Réponse OK, via le tunnel GRE |
 | PT08 | Exemption de NAT inter-site | `show ip nat translations` sur RTR-PARIS après PT07 | **Aucune** entrée pour la destination 10.20.x.x |
 | PT09 | Téléphonie | Sur IPPHONE-PARIS-1, vérifier l'obtention d'une IP dans `10.10.10.0/23` | Voice VLAN fonctionnel |
-| PT10 | Filtrage du pare-feu | Depuis ISP-RTR, tenter `ping 10.10.254.9` (IP inside de FW-PARIS) | **Échoue** (aucune règle n'autorise l'entrant depuis l'extérieur) |
+| PT10 | Filtrage du pare-feu | Depuis RTR-PARIS (zone *outside*), `ping 10.10.254.2` puis `ping 10.10.0.11` (PC-BUR-PARIS-1) | Le 1er réussit (interface outside de l'ASA) ; le 2nd **échoue** : l'ACL `OUTSIDE-IN` n'admet en entrée que le LAN de Lyon |
 
 ## Tests de résilience (les plus importants pour la soutenance)
 

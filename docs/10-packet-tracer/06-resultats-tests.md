@@ -15,6 +15,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT06 (NAT) | `show ip nat translations` sur RTR-PARIS | 4 entrées `icmp 203.0.113.2:9-12 ↔ 10.10.4.10:9-12` vers `203.0.113.10` (PAT sur l'adresse publique de Gi0/0) | Conforme |
 | PT07 | Inter-site PC-BUR-PARIS-1 (`10.10.0.11`) → PC-BUR-LYON-1 (`10.20.0.10`) | `ping -n 10` : 10/10, 0 % de perte, TTL=122 (6 sauts routés) | Conforme |
 | PT07 (chemin) | `tracert 10.20.0.10` | 1 `10.10.0.2` (SW1) · 2 `10.10.254.9` (FW-PARIS) · 3-4 `*` (RTR-PARIS et extrémité GRE de RTR-LYON : leurs messages ICMP « TTL expiré » sont filtrés par l'ACL `OUTSIDE-IN` de FW-PARIS, qui n'admet que les sources `10.20.0.0/16`) · 5 `10.20.254.2` (FW-LYON) · 6 `10.20.254.6` (CORE-LYON-SW) · 7 `10.20.0.10` | Conforme |
+| PT08 | Exemption de NAT inter-site : `show ip nat translations` sur RTR-PARIS juste après PT07 | Table vide : aucune traduction pour `10.20.0.10` (le flux inter-site emprunte le tunnel GRE sans NAT, grâce à la ligne `deny` de l'ACL 100) | Conforme |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
