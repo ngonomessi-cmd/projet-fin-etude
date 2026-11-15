@@ -19,6 +19,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT10 | Filtrage entrant : depuis RTR-PARIS (outside), `ping 10.10.254.2` et `ping 10.10.0.11` | 0/5 et 0/5. Le routage est pourtant en place (même chemin que PT07) : seule la source diffère (`10.10.254.1` au lieu de `10.20.0.0/16`), c'est donc bien l'ACL `OUTSIDE-IN` de l'ASA qui bloque. L'interface outside ne répond pas non plus au ping (pare-feu « furtif » côté Internet) | Conforme |
 | PT04 | Isolation des invités : LAPTOP-WIFI-PARIS-1 (`10.10.8.10/24`, passerelle `10.10.8.1`) → `ping 10.10.0.11` | 0/4 — « Destination host unreachable » renvoyé par `10.10.8.2` (SVI VLAN 40 de SW1) : l'ACL `ACL-INVITES` rejette le paquet dès l'entrée du routage | Conforme (après correction) |
 | PT05 | Accès Internet des invités : `ping 203.0.113.10` | 3/4, TTL=124 (1er paquet perdu = ARP) : l'ACL bloque le LAN interne, pas Internet | Conforme |
+| PT09 | Téléphonie : IPPHONE-PARIS-1 (Cisco 7960) sur ACC-PARIS-SW Fa0/7 | `Vlan50` up, `10.10.10.10/23`, passerelle `10.10.10.1` (VIP HSRP du VLAN voix) : le téléphone a reconnu la voice VLAN 50 annoncée par le commutateur | Conforme |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
