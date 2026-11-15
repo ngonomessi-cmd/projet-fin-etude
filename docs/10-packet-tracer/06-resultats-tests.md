@@ -23,6 +23,8 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT11 (état initial) | `show standby brief` sur CORE-PARIS-SW1 | 7 groupes HSRP Active, priorité 110, préemption (P) : Vl10 → VIP `10.10.0.1`, Vl20 → `10.10.4.1`, Vl30 → `10.10.4.65`, Vl40 → `10.10.8.1`, Vl50 → `10.10.10.1`, Vl99 → `10.10.12.1`, Vl100 → `10.10.254.12` ; Standby = SW2 sur chaque VLAN. `ping -t 203.0.113.10` stable (TTL=124) | Conforme |
 | PT11 | Panne de CORE-PARIS-SW1 (tous ses ports en `shutdown` = perte totale de l'équipement ; le 3560 de PT n'a pas d'interrupteur) pendant `ping -t 203.0.113.10` | 6 « Request timed out » consécutifs (≈ 6 s, temps de détection HSRP), puis reprise automatique des réponses sans aucune intervention | Conforme |
 | PT12 | Redondance de l'uplink cœur → pare-feu (même ping, SW1 hors service) | Le trafic Internet reprend via SW2 → FW-PARIS (Et0/2) : la VIP `10.10.254.12` (route de retour de l'ASA) a basculé sur SW2 avec les VIP des VLAN utilisateurs | Conforme |
+| PT11 (bascule) | `show standby brief` sur CORE-PARIS-SW2 pendant la panne | Messages `%HSRP-6-STATECHANGE … Standby -> Active` pour les 7 groupes ; état Active, priorité 90, Standby `unknown` (SW1 absent), VIP inchangées | Conforme |
+| Observation | Interface Vlan30 (serveurs) de SW2 passe `down` pendant la panne | SRV-PARIS (DHCP/DNS/fichiers) n'est raccordé qu'à SW1 (Fa0/3) : point de défaillance unique résiduel de la maquette. Dans la cible du dossier, les serveurs sont virtualisés en cluster avec double attachement réseau (Lot B) | Limite connue, documentée |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
