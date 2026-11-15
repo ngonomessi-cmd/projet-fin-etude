@@ -33,6 +33,8 @@ exit
 ! --- Routage ---
 ip route 0.0.0.0 0.0.0.0 203.0.113.5
 ip route 10.10.0.0 255.255.0.0 172.16.0.1
+! --- Route de retour vers le LAN de Lyon, via l'interface outside de FW-LYON ---
+ip route 10.20.0.0 255.255.0.0 10.20.254.2
 
 ! --- NAT : exemption du trafic inter-site ---
 access-list 100 deny   ip 10.20.0.0 0.0.255.255 10.10.0.0 0.0.255.255

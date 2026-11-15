@@ -58,6 +58,10 @@ policy-map global_policy
   inspect dns
 
 service-policy global_policy global
+! --- Flux inter-site entrant : seul le LAN de Lyon (via le tunnel GRE) est autorisé à entrer ;
+!     tout autre trafic initié depuis l'extérieur reste bloqué (cf. PT10) ---
+access-list OUTSIDE-IN extended permit ip 10.20.0.0 255.255.0.0 10.10.0.0 255.255.0.0
+access-group OUTSIDE-IN in interface outside
 
 ! --- Comptes et accès de gestion ---
 username admmomtech password Cisco123!
