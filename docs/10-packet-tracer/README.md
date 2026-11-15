@@ -14,6 +14,8 @@ routage inter-VLAN, filtrage, NAT et liaison inter-site.
 - [03 — Guide de construction pas-à-pas](03-guide-construction.md)
 - [04 — Configuration des serveurs et postes](04-configuration-serveurs-et-postes.md)
 - [05 — Plan de test](05-plan-de-test.md)
+- [06 — Résultats de la recette](06-resultats-recette.md) — procès-verbal, anomalies corrigées, limites
+- [07 — Journal brut de la recette](07-journal-de-recette.md)
 - [configs/](configs/) — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
 
 ## Pourquoi les équipements diffèrent du dossier "réel"

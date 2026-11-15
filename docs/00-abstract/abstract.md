@@ -8,8 +8,8 @@ sector under ACPR, PSD2, PCI-DSS and GDPR requirements.
 
 MOM-TECH, a consultancy specialising in cybersecurity, cloud and artificial intelligence, was engaged to
 audit the existing infrastructure, design a resilient target architecture and lead its deployment without
-interrupting banking services, following the ITIL v4 framework. The audit identified fourteen
-high-severity findings, mainly the lack of redundancy, the absence of a security operations centre and
+interrupting banking services, following the ITIL v4 framework. The audit identified seventeen
+high-severity findings (out of 23), mainly the lack of redundancy, the absence of a security operations centre and
 the poor protection of sensitive banking documents.
 
 The proposed architecture removes every single point of failure in the network and virtualisation

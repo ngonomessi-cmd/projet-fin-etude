@@ -30,7 +30,8 @@
 
 ## Priorisation
 
-Quatorze constats sont classés en criticité **élevée** : ils concernent en priorité la résilience du réseau
+Sur les 23 constats relevés, dix-sept sont classés en criticité **élevée** (5 pour le réseau, 6 pour les
+systèmes, 6 pour la cybersécurité) et six en criticité moyenne. Les constats élevés concernent en priorité la résilience du réseau
 inter-sites, la continuité d'activité (PRA/PCA, sauvegarde), la détection des incidents (SOC/SIEM), le
 contrôle des accès (MFA, PAM) et la protection des documents sensibles (GED sécurisée) — autant de
 points directement liés aux exigences réglementaires (ACPR, DSP2, RGPD) du cahier des charges.

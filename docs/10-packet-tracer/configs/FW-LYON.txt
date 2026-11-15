@@ -27,6 +27,8 @@ interface Ethernet0/1
 exit
 
 route outside 0.0.0.0 0.0.0.0 10.20.254.1
+! Retour vers les réseaux internes du site par le cœur de Lyon.
+route inside 10.20.0.0 255.255.0.0 10.20.254.6
 
 ! (la classe "inspection_default" n'existe pas par défaut sur l'ASA de Packet Tracer, contrairement
 !  à une ASA réelle : il faut la créer avant de l'utiliser.)
@@ -41,6 +43,9 @@ policy-map global_policy
   inspect dns
 
 service-policy global_policy global
+! --- Flux inter-site entrant : seul le LAN de Paris (via le tunnel GRE) est autorisé à entrer ---
+access-list OUTSIDE-IN extended permit ip 10.10.0.0 255.255.0.0 10.20.0.0 255.255.0.0
+access-group OUTSIDE-IN in interface outside
 
 username admmomtech password Cisco123!
 ! (le mot-clé "privilege" sur "username" n'est pas supporté par l'ASA de Packet Tracer :

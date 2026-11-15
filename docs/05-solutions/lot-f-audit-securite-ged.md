@@ -41,7 +41,7 @@ MOM-TECH ».
   référencés et tracés, sans passer par un poste de travail ni par un partage de fichiers.
 - **Classification des documents** par niveau de confidentialité (public interne / restreint /
   confidentiel), appliquée par la base de données ;
-- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, administrateur, auditeur) et
+- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, superviseur, administrateur, auditeur) et
   cloisonnement par département, appliqués par PostgreSQL (*Row Level Security*) ;
 - **Workflow de validation** pour les documents sensibles (dépôt → vérification → validation →
   publication) ;

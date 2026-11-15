@@ -137,6 +137,7 @@ PARTS = [
         "10-packet-tracer/01-topologie-et-cablage.md",
         "10-packet-tracer/02-plan-adressage.md",
         "10-packet-tracer/05-plan-de-test.md",
+        "10-packet-tracer/06-resultats-recette.md",
     ]),
 ]
 

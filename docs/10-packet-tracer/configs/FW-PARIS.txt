@@ -9,7 +9,7 @@ hostname FW-PARIS
 interface Vlan1
  nameif inside
  security-level 100
- ip address 10.10.254.5 255.255.255.248
+ ip address 10.10.254.9 255.255.255.248
 exit
 
 interface Vlan2
@@ -40,6 +40,9 @@ exit
 ! Par défaut : tout ce qui n'est pas local part vers le routeur (Internet ET site distant,
 ! RTR-PARIS sait ensuite distinguer via sa route spécifique vers le tunnel).
 route outside 0.0.0.0 0.0.0.0 10.10.254.1
+! Retour vers les réseaux internes : adresse virtuelle HSRP des deux cœurs (VLAN 100),
+! portée par SW1 et reprise par SW2 si SW1 tombe.
+route inside 10.10.0.0 255.255.0.0 10.10.254.12
 
 ! --- Inspection stateful : autoriser explicitement ICMP pour les tests de ping ---
 ! (contrairement à une ASA réelle, celle de Packet Tracer ne définit pas la classe
@@ -55,6 +58,10 @@ policy-map global_policy
   inspect dns
 
 service-policy global_policy global
+! --- Flux inter-site entrant : seul le LAN de Lyon (via le tunnel GRE) est autorisé à entrer ;
+!     tout autre trafic initié depuis l'extérieur reste bloqué (cf. PT10) ---
+access-list OUTSIDE-IN extended permit ip 10.20.0.0 255.255.0.0 10.10.0.0 255.255.0.0
+access-group OUTSIDE-IN in interface outside
 
 ! --- Comptes et accès de gestion ---
 username admmomtech password Cisco123!

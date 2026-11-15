@@ -35,6 +35,9 @@ exit
 ip route 0.0.0.0 0.0.0.0 203.0.113.1
 ! Route spécifique vers le site de Lyon, via le tunnel GRE
 ip route 10.20.0.0 255.255.0.0 172.16.0.2
+! --- Route de retour vers le LAN de Paris, via l'interface outside de FW-PARIS (sans elle, les
+!     réponses Internet dé-traduites par le NAT repartent vers l'ISP) ---
+ip route 10.10.0.0 255.255.0.0 10.10.254.2
 
 ! --- NAT (Network Address Translation) : seul le trafic réellement destiné à
 !     Internet est traduit ; le trafic inter-site (via le tunnel) est exempté. ---

@@ -5,7 +5,7 @@
 Le [cahier des charges](../02-cahier-des-charges/cahier-des-charges-khs-bank.md) de KHS Bank exprimait
 un besoin double : moderniser un système d'information vieillissant et hétérogène, et le mettre en
 conformité avec les exigences strictes du secteur bancaire (ACPR, DSP2, PCI-DSS, RGPD). L'
-[audit de l'existant](../04-audit-existant/) a mis en évidence quatorze constats de criticité élevée,
+[audit de l'existant](../04-audit-existant/) a mis en évidence dix-sept constats de criticité élevée (sur 23 relevés),
 concentrés sur trois axes : l'absence de redondance (réseau, stockage, pare-feu), l'absence de
 dispositif de détection et de continuité (pas de SOC, pas de PRA/PCA formalisé), et une protection
 insuffisante des données sensibles (pas de MFA, pas de GED sécurisée).

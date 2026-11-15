@@ -40,8 +40,9 @@ exit
 ! --- Liaison vers CORE-PARIS-SW2 (trunk direct, porte HSRP + toutes les VLAN) ---
 interface FastEthernet0/2
  description LIEN-VERS-CORE-PARIS-SW2
+ switchport trunk encapsulation dot1q
  switchport mode trunk
- switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk allowed vlan 10,20,30,40,50,99,100
  switchport trunk native vlan 999
 exit
 
@@ -59,6 +60,7 @@ exit
 ! --- Liaison vers l'unique switch d'accès (l'autre lien redondant part de SW2) ---
 interface FastEthernet0/4
  description LIEN-VERS-ACC-PARIS-SW
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999
@@ -115,14 +117,17 @@ interface Vlan99
  standby 99 preempt
 exit
 
-! --- VLAN de transit vers le pare-feu (pas d'HSRP ici : chaque cœur utilise
-!     directement sa propre route vers l'ASA, présent sur le même segment L2) ---
+! --- VLAN de transit vers le pare-feu (10.10.254.8/29) : HSRP groupe 100,
+!     VIP 10.10.254.12 = next-hop de la route de retour de l'ASA ---
 interface Vlan100
- ip address 10.10.254.6 255.255.255.248
+ ip address 10.10.254.10 255.255.255.248
+ standby 100 ip 10.10.254.12
+ standby 100 priority 110
+ standby 100 preempt
 exit
 
 ! --- Routage : tout ce qui sort du site part par le pare-feu ---
-ip route 0.0.0.0 0.0.0.0 10.10.254.5
+ip route 0.0.0.0 0.0.0.0 10.10.254.9
 
 ! --- ACL d'isolement du VLAN invités (reprise du dossier, constat R5) : aucun accès
 !     aux réseaux internes de KHS Bank, seule la sortie vers Internet est autorisée. ---

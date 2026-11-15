@@ -35,8 +35,8 @@ sector under ACPR, PSD2, PCI-DSS and GDPR requirements.
 
 MOM-TECH, a consultancy specialising in cybersecurity, cloud and artificial intelligence, was engaged to
 audit the existing infrastructure, design a resilient target architecture and lead its deployment without
-interrupting banking services, following the ITIL v4 framework. The audit identified fourteen
-high-severity findings, mainly the lack of redundancy, the absence of a security operations centre and
+interrupting banking services, following the ITIL v4 framework. The audit identified seventeen
+high-severity findings (out of 23), mainly the lack of redundancy, the absence of a security operations centre and
 the poor protection of sensitive banking documents.
 
 The proposed architecture removes every single point of failure in the network and virtualisation
@@ -362,7 +362,8 @@ de tâches du WBS.
 | Conformité réglementaire (RGPD, ACPR, DSP2) | Direction Conformité & Sécurité / RSSI | Ingénieur Cybersécurité |
 | Réseau et infrastructure | Responsable Infrastructure & Réseau | Ingénieur Réseaux & Sécurité |
 | Systèmes et virtualisation | Responsable Infrastructure & Réseau | Ingénieur Systèmes & Virtualisation |
-| Cybersécurité (SOC, PRA/PCA, GED) | RSSI | Ingénieur Cybersécurité / SOC |
+| Cybersécurité (SOC, PRA/PCA) | RSSI | Ingénieur Cybersécurité / SOC |
+| GED sécurisée (Lot F) | Direction Conformité & Sécurité / RSSI | Chef de projet |
 | Formation et accompagnement des utilisateurs | Direction des Ressources Humaines | Ingénieur Systèmes & Déploiement |
 | Recette et validation | DSI + Direction Conformité & Sécurité | Chef de projet |
 
@@ -389,7 +390,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Conception** | | | | | | | |
 | Architecture réseau cible | C | I | A | R | C | C | |
 | Architecture systèmes cible | C | I | A | C | R | C | |
-| Conception cybersécurité (SOC/SIEM, IAM, GED) | I | C | A | C | C | R | |
+| Conception cybersécurité (SOC/SIEM, IAM) | I | C | A | C | C | R | |
+| Conception de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
 | Validation de l'architecture (COPIL) | A | C | R | I | I | I | |
 | **Planification** | | | | | | | |
 | Consultation fournisseurs / appel d'offres | I | I | R | C | C | I | C |
@@ -399,7 +401,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Déploiement** | | | | | | | |
 | Déploiement réseau (câblage, équipements, VPN) | I | I | A | R | I | I | |
 | Déploiement systèmes (virtualisation, stockage, AD, messagerie, postes) | I | I | A | I | R | I | |
-| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | I | C | A | I | I | R | |
+| Réalisation de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
+| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | I | C | A | I | I | R | |
 | Migration de l'application métier KHS-Core | C | I | A | I | R | C | |
 | **Tests, Recette et Finalisation** | | | | | | | |
 | Tests de déploiement par lot | I | I | A | R | R | R | |
@@ -471,7 +474,7 @@ six phases séquencées avec chevauchement limité entre la fin de l'audit et le
 | 5. Déploiement | 45 j | 30/03/2026 | 29/05/2026 |
 | 6. Tests, Recette et Finalisation | 20 j | 01/06/2026 | 26/06/2026 |
 
-Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
+Le diagramme de Gantt ci-dessous détaille les 25 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
 
 ![Diagramme de Gantt du projet, du 5 janvier au 26 juin 2026](docs/figures/gantt.png)
 
@@ -488,14 +491,16 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 | Audit | Rapport d'audit consolidé | 4 j | 03/02/2026 | 06/02/2026 | Chef de projet |
 | Conception | Architecture réseau cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Réseaux & Sécurité |
 | Conception | Architecture systèmes cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Systèmes & Virtualisation |
-| Conception | Conception cybersécurité (SOC/SIEM, IAM, GED) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception cybersécurité (SOC/SIEM, IAM) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception de la GED sécurisée (Lot F) | 10 j | 09/02/2026 | 20/02/2026 | Chef de projet |
 | Conception | Validation architecture (COPIL) | 3 j | 04/03/2026 | 06/03/2026 | Chef de projet, DSI, RSSI |
 | Planification | Consultation fournisseurs / appel d'offres | 8 j | 09/03/2026 | 18/03/2026 | Chef de projet |
 | Planification | Plan de migration | 5 j | 19/03/2026 | 25/03/2026 | Ing. Réseaux, Ing. Systèmes |
 | Planification | Commande et livraison du matériel | 2 j | 26/03/2026 | 27/03/2026 | Chef de projet |
 | Déploiement | Réseau (câblage, équipements, VPN, segmentation) | 15 j | 30/03/2026 | 17/04/2026 | Ing. Réseaux & Sécurité |
 | Déploiement | Systèmes (virtualisation, stockage, AD, messagerie, postes) | 20 j | 30/03/2026 | 24/04/2026 | Ing. Systèmes & Virtualisation |
-| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
+| Déploiement | Réalisation de la GED sécurisée (Lot F) | 30 j | 30/03/2026 | 08/05/2026 | Chef de projet |
+| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
 | Déploiement | Migration de KHS-Core | 10 j | 18/05/2026 | 29/05/2026 | Ing. Systèmes, Chef de projet |
 | Tests/Recette | Tests de déploiement par lot | 8 j | 01/06/2026 | 10/06/2026 | Équipe complète |
 | Tests/Recette | Cahier de tests et recette | 4 j | 11/06/2026 | 16/06/2026 | Chef de projet |
@@ -507,9 +512,9 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 
 | Ressource | Rôle | Charge estimée sur le projet |
 |---|---|:---:|
-| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, recette | 100 % |
+| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, conception et réalisation de la GED sécurisée, recette | 100 % |
 | Ing. Réseaux & Sécurité | Audit et déploiement réseau, PRA/PCA réseau | 90 % |
-| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM, GED | 95 % |
+| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM | 95 % |
 | Ing. Systèmes & Déploiement | Audit et déploiement systèmes, postes clients, formation | 90 % |
 
 Le déploiement (phase 5, 45 jours) concentre la charge la plus forte et le plus grand nombre de tâches en
@@ -841,7 +846,8 @@ place du SOC](../05-solutions/).
 
 ### Priorisation
 
-Quatorze constats sont classés en criticité **élevée** : ils concernent en priorité la résilience du réseau
+Sur les 23 constats relevés, dix-sept sont classés en criticité **élevée** (5 pour le réseau, 6 pour les
+systèmes, 6 pour la cybersécurité) et six en criticité moyenne. Les constats élevés concernent en priorité la résilience du réseau
 inter-sites, la continuité d'activité (PRA/PCA, sauvegarde), la détection des incidents (SOC/SIEM), le
 contrôle des accès (MFA, PAM) et la protection des documents sensibles (GED sécurisée) — autant de
 points directement liés aux exigences réglementaires (ACPR, DSP2, RGPD) du cahier des charges.
@@ -1172,7 +1178,7 @@ MOM-TECH ».
   référencés et tracés, sans passer par un poste de travail ni par un partage de fichiers.
 - **Classification des documents** par niveau de confidentialité (public interne / restreint /
   confidentiel), appliquée par la base de données ;
-- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, administrateur, auditeur) et
+- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, superviseur, administrateur, auditeur) et
   cloisonnement par département, appliqués par PostgreSQL (*Row Level Security*) ;
 - **Workflow de validation** pour les documents sensibles (dépôt → vérification → validation →
   publication) ;
@@ -1240,7 +1246,7 @@ DLP, Entra PIM).
 | Exigence du Lot F | Constat d'audit | Mécanisme de la GED |
 |---|---|---|
 | Classification des documents (public interne / restreint / confidentiel) | C5 | Colonne `classification`, appliquée par la base de données (RLS) |
-| Contrôle d'accès par rôle (rédacteur, validateur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
+| Contrôle d'accès par rôle (rédacteur, validateur, superviseur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
 | Authentification forte | C2 | Double authentification TOTP obligatoire (Google Authenticator) |
 | Workflow dépôt → vérification → validation → publication | C5 | Fonction transactionnelle `transition_statut_document` |
 | Journal d'audit immuable | C5 | Table `audit_log` protégée par un déclencheur PostgreSQL |
@@ -1307,12 +1313,32 @@ l'identité, le rôle, le département et l'organisation de l'appelant.
 écriture. La règle de lecture d'un document, simplifiée, est la suivante :
 
 - le **propriétaire** lit toujours son document ;
-- l'**administrateur** et l'**auditeur** lisent tout document sorti du brouillon ;
+- l'**administrateur**, le **superviseur** et l'**auditeur** lisent tout document sorti du brouillon ;
 - un document **publié** est lu selon sa classification : *public interne* par toute l'organisation,
   *restreint* par le département concerné, *confidentiel* par le seul validateur du département
   (en plus du propriétaire, de l'administrateur et de l'auditeur) ;
 - un document **en vérification, validé ou rejeté** est lu par le validateur du département ;
 - un **brouillon** reste privé : seuls son auteur et les personnes avec qui il est partagé le voient.
+
+**Les six rôles.** Chaque agent a un rôle, attribué par un administrateur ; la base de données en
+déduit ce qu'il peut lire et faire.
+
+| Rôle | Ce qu'il peut faire | Ce qu'il ne peut pas faire |
+|---|---|---|
+| Lecteur | Consulter les documents publiés qui lui sont accessibles | Produire ou modifier un document |
+| Rédacteur | Créer, rédiger et partager des documents, les soumettre à validation | Valider ou publier |
+| Validateur | Comme le rédacteur ; vérifier, valider, publier et archiver les documents de **son** département | Agir hors de son département |
+| Superviseur | Rédiger, valider, publier, archiver, classer et partager dans **tous** les départements ; consulter le journal d'audit | Modifier un réglage |
+| Administrateur | Tout ce que fait le superviseur, plus les réglages : comptes et rôles, modèles, archivage, signatures, site public | Lire les brouillons des autres |
+| Auditeur | Consulter tous les documents sortis du brouillon et le journal d'audit | Produire ou modifier quoi que ce soit |
+
+Le rôle **superviseur** a été ajouté pour les personnes qui doivent superviser l'ensemble des
+contenus sans administrer la plateforme : membres de l'équipe projet, jury, direction. Il
+sépare deux responsabilités que l'administrateur cumulait : agir sur les documents de tous les
+départements, et régler la plateforme. Les réglages (rôles et profils, double authentification des
+agents, modèles, actualités, courrier du public, paramètres d'archivage et de messagerie,
+signataires et délégations, canaux) restent refusés au superviseur par la base de données elle-même,
+et non par l'interface.
 
 Autres dispositions qui renforcent le modèle :
 
@@ -1411,6 +1437,8 @@ Les catégories de conservation du courrier sont paramétrées par organisation.
 - rejeu intégral des 33 migrations sur une base vierge, sans erreur ;
 - tests SQL de la sécurité : 169 tests sur le courrier de l'Agence et 15 sur celui de KHS Bank, auxquels
   s'ajoutent les tests du circuit documentaire, de la visibilité, de la signature et de l'archivage ;
+- 20 tests du rôle superviseur : droits sur les contenus de tous les départements, refus de chaque
+  réglage, et non-régression des autres rôles ;
 - parcours de bout en bout dans un navigateur automatisé (42 contrôles sur le courrier) ;
 - compilation de production (`next build`) et typage TypeScript sans erreur ;
 - mise à niveau de sécurité du framework (Next.js 16.4.5) après audit des dépendances.
@@ -2298,6 +2326,11 @@ La validation du procès-verbal de recette, signé conjointement par la DSI de K
 projet MOM-TECH, marque le passage du projet en phase de fonctionnement normal (*Run*), couverte par
 le contrat de maintenance.
 
+En complément, la conception réseau du Lot A a été vérifiée sur la maquette Cisco Packet Tracer : 13 tests
+exécutés et conformes, dont la bascule de la passerelle HSRP (6 secondes de coupure), et 11 anomalies
+détectées puis corrigées pendant la recette (voir la partie consacrée à la maquette, « Résultats de la
+recette »).
+
 ## Conclusion
 
 ### Synthèse du projet
@@ -2305,7 +2338,7 @@ le contrat de maintenance.
 Le cahier des charges de KHS Bank exprimait
 un besoin double : moderniser un système d'information vieillissant et hétérogène, et le mettre en
 conformité avec les exigences strictes du secteur bancaire (ACPR, DSP2, PCI-DSS, RGPD). L'
-audit de l'existant a mis en évidence quatorze constats de criticité élevée,
+audit de l'existant a mis en évidence dix-sept constats de criticité élevée (sur 23 relevés),
 concentrés sur trois axes : l'absence de redondance (réseau, stockage, pare-feu), l'absence de
 dispositif de détection et de continuité (pas de SOC, pas de PRA/PCA formalisé), et une protection
 insuffisante des données sensibles (pas de MFA, pas de GED sécurisée).
@@ -2767,6 +2800,8 @@ routage inter-VLAN, filtrage, NAT et liaison inter-site.
 - 03 — Guide de construction pas-à-pas
 - 04 — Configuration des serveurs et postes
 - 05 — Plan de test
+- 06 — Résultats de la recette — procès-verbal, anomalies corrigées, limites
+- 07 — Journal brut de la recette
 - configs/ — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
 
 ### Pourquoi les équipements diffèrent du dossier "réel"
@@ -2892,7 +2927,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | FastEthernet0/1 |
 | FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | FastEthernet0/1 |
 | RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
-| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
+| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | FastEthernet0/1 |
 | CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | CORE-PARIS-SW2 | FastEthernet0/2 |
 | CORE-PARIS-SW1 | FastEthernet0/3 | Automatique | SRV-PARIS | FastEthernet0 |
 | CORE-PARIS-SW1 | FastEthernet0/4 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
@@ -2903,7 +2938,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | ACC-PARIS-SW | FastEthernet0/6 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/7 | Automatique | IPPHONE-PARIS-1 | Port Switch |
 | CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
-| CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
+| CORE-LYON-SW | FastEthernet0/3 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
 | ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
 | ACC-LYON-SW | FastEthernet0/3 | Automatique | PC-BANCAIRE-LYON-1 | FastEthernet0 |
 
@@ -2946,7 +2981,7 @@ ajoutées ici.
 |---|---|---|---|
 | RTR-PARIS ↔ ISP-RTR | 203.0.113.0/30 | RTR-PARIS Gi0/0 = .2 | ISP-RTR Gi0/0 = .1 |
 | RTR-PARIS ↔ FW-PARIS | 10.10.254.0/30 | RTR-PARIS Gi0/1 = .1 | FW-PARIS Eth0/0 (outside) = .2 |
-| FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.4/29 | FW-PARIS Eth0/1+0/2 (inside) = .5 | CORE-PARIS-SW1 = .6 · CORE-PARIS-SW2 = .7 |
+| FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.8/29 | FW-PARIS Eth0/1+0/2 (inside) = .9 | CORE-PARIS-SW1 = .10 · CORE-PARIS-SW2 = .11 · adresse virtuelle HSRP = .12 |
 | CORE-PARIS-SW1 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/1 |
 | CORE-PARIS-SW2 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/2 |
 | Tunnel GRE Paris (Tunnel0) | 172.16.0.0/30 | RTR-PARIS = .1 | (RTR-LYON = .2) |
@@ -3014,7 +3049,7 @@ est concrètement observable dans la maquette Packet Tracer.
 | PT07 | Connectivité inter-site | `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1 | Réponse OK, via le tunnel GRE |
 | PT08 | Exemption de NAT inter-site | `show ip nat translations` sur RTR-PARIS après PT07 | **Aucune** entrée pour la destination 10.20.x.x |
 | PT09 | Téléphonie | Sur IPPHONE-PARIS-1, vérifier l'obtention d'une IP dans `10.10.10.0/23` | Voice VLAN fonctionnel |
-| PT10 | Filtrage du pare-feu | Depuis ISP-RTR, tenter `ping 10.10.254.5` (IP inside de FW-PARIS) | **Échoue** (aucune règle n'autorise l'entrant depuis l'extérieur) |
+| PT10 | Filtrage du pare-feu | Depuis RTR-PARIS (zone *outside*), `ping 10.10.254.2` (interface outside de l'ASA) puis `ping 10.10.0.11` (PC-BUR-PARIS-1) | Les deux **échouent** : l'ASA reste muet côté Internet et l'ACL `OUTSIDE-IN` n'admet en entrée que le LAN de Lyon — alors que la route existe (`10.10.0.0/16 via 10.10.254.2`, utilisée avec succès par PT07) |
 
 ### Tests de résilience (les plus importants pour la soutenance)
 
@@ -3022,8 +3057,9 @@ est concrètement observable dans la maquette Packet Tracer.
 
 1. Lancer un `ping -t 10.10.0.1` en continu depuis PC-BUR-PARIS-1 (onglet Desktop → Command Prompt).
 2. Sur CORE-PARIS-SW1, exécuter `show standby brief` pour confirmer qu'il est **Active**.
-3. Éteindre CORE-PARIS-SW1 (clic droit → Turn Off, ou simplement `shutdown` sur son interface Vlan10
-   depuis sa console avant l'extinction).
+3. Mettre CORE-PARIS-SW1 hors service : le 3560 de Packet Tracer n'a pas d'interrupteur, on coupe donc
+   tous ses ports (`interface range FastEthernet0/1 - 24 , GigabitEthernet0/1 - 2` puis `shutdown`),
+   ce qui équivaut, vu du réseau, à une perte totale de l'équipement.
 4. Observer le ping : quelques paquets perdus puis reprise automatique — CORE-PARIS-SW2 devient actif.
 5. Vérifier avec `show standby brief` sur CORE-PARIS-SW2 qu'il est passé à l'état **Active**.
 
@@ -3061,6 +3097,80 @@ nécessaire — démontre la suppression du point de défaillance unique identif
 | `show interfaces trunk` | Tous les switches | VLAN autorisés cohérents avec le plan |
 | `show port-security` | Switches d'accès | Nombre d'adresses MAC autorisées par port |
 | `show crypto session` *(si IPsec ajouté en option)* | RTR-PARIS, RTR-LYON | Tunnel IPsec établi au-dessus du GRE |
+
+## Résultats de la recette de la maquette
+
+La recette de la maquette a été menée le 15 novembre 2026 en suivant le plan de test.
+Chaque test a été exécuté sur la maquette réelle ; les résultats ci-dessous sont ceux relevés à l'écran (le
+relevé chronologique complet figure dans le journal de recette).
+
+### Procès-verbal
+
+| Test | Intitulé | Résultat obtenu | Statut |
+|---|---|---|---|
+| PT01 | Connectivité locale | La passerelle du VLAN 10 répond (`10.10.0.2`, premier saut du traceroute) | Conforme |
+| PT02 | Attribution DHCP | Paris : `10.10.0.11/22`, passerelle `10.10.0.1`, DNS `10.10.4.70` ; Lyon : `10.20.0.10/24`, passerelle `10.20.0.1`, DNS `10.20.1.40` | Conforme |
+| PT03 | Routage inter-VLAN (bancaire → serveurs) | Réponses de `10.10.4.70`, TTL=127 (un seul routage, par le cœur) | Conforme après correction (A11) |
+| PT04 | Isolement du VLAN invités | 0/4, « Destination host unreachable » renvoyé par le cœur : l'ACL des invités rejette le paquet | Conforme après correction (A3) |
+| PT05 | Accès Internet des invités | 3/4, TTL=124 | Conforme |
+| PT06 | Sortie Internet et NAT | 3/4, TTL=124 ; traductions `10.10.4.10 → 203.0.113.2` (PAT) sur RTR-PARIS | Conforme après correction (A6) |
+| PT07 | Paris ↔ Lyon par le tunnel GRE | 10/10, 0 % de perte, TTL=122 ; chemin vérifié par traceroute | Conforme après corrections (A2, A7, A9) |
+| PT08 | Pas de NAT entre les sites | Aucune traduction pour le trafic vers Lyon | Conforme |
+| PT09 | VLAN voix | Téléphone IP en `10.10.10.10/23` sur le VLAN 50 | Conforme après correction (A3) |
+| PT10 | Filtrage entrant du pare-feu | 0/5 depuis la zone extérieure, alors que la route existe : seule l'ACL bloque | Conforme |
+| PT11 | Bascule HSRP | Coupure de **6 secondes** sur un ping continu, puis reprise automatique ; le cœur 2 devient actif sur les 7 groupes | Conforme |
+| PT12 | Redondance vers le pare-feu et préemption | Internet reste joignable par le cœur 2 ; au retour du cœur 1, il reprend le rôle actif | Conforme |
+| PT13 | Panne du lien Internet | Paris ↔ Lyon injoignable (« destination injoignable »), reprise automatique au rebranchement | Conforme (limite connue) |
+
+**Bilan : 13 tests sur 13 exécutés et conformes ; 11 anomalies détectées et corrigées pendant la recette.**
+
+### Lecture des résultats clés
+
+- **TTL.** Chaque routeur traversé retire 1 au compteur TTL d'un paquet (128 au départ d'un poste) : TTL=127
+  signifie un routage, TTL=124 quatre. Pour PT07, TTL=122 compte six équipements routés ; le routeur du
+  fournisseur d'accès n'est pas compté, car le paquet le traverse encapsulé dans le tunnel GRE : c'est la
+  preuve que le trafic emprunte le tunnel.
+- **Traceroute de PT07.** `10.10.0.2` (cœur 1) → `10.10.254.9` (FW-PARIS) → `*` → `*` → `10.20.254.2`
+  (FW-LYON) → `10.20.254.6` (cœur de Lyon) → `10.20.0.10`. Les deux sauts muets sont les routeurs de bordure :
+  leurs messages « TTL expiré » sont filtrés par la règle d'entrée du pare-feu de Paris, qui n'admet que le
+  réseau de Lyon.
+- **Bascule HSRP.** Le cœur 2 attend de ne plus recevoir les messages du cœur 1 pendant le délai de détention
+  (10 s par défaut) avant de reprendre l'adresse virtuelle ; la coupure mesurée, 6 secondes, est conforme. Les
+  postes conservent leur passerelle : seul l'équipement qui la porte change. Le constat R1 de l'audit (cœur
+  unique, point de défaillance unique) est levé.
+- **Filtrage.** Le pare-feu ne répond pas aux pings venus de l'extérieur, même sur sa propre interface : il
+  reste invisible à un balayage d'adresses.
+
+### Anomalies détectées et corrections
+
+| N° | Symptôme | Cause | Correction |
+|---|---|---|---|
+| A1 | Postes en adresse APIPA (`169.254.x.x`) | Port du serveur resté dans le VLAN 1 | Ports d'accès réaffectés selon le plan de câblage |
+| A2 | Cœur de Lyon sans lien avec son pare-feu | Câblage réel décalé (pare-feu sur Fa0/1, accès sur Fa0/3) | Configuration alignée sur le câblage réel |
+| A3 | Portable invité placé dans le VLAN bureautique | Ports du portable et du téléphone inversés | Fa0/6 en VLAN 40, Fa0/7 en VLAN 10 + voix 50 |
+| A4 | `Bad mask /29` sur le transit | `.7` est l'adresse de diffusion de `10.10.254.0/29` | Transit renuméroté en `10.10.254.8/29` |
+| A5 | Pare-feu sans retour vers le LAN | Route de retour absente | Route vers `10.10.0.0/16` via l'adresse virtuelle HSRP `10.10.254.12` |
+| A6 | Pas d'accès Internet, table NAT vide | Routeurs de bordure sans route de retour vers leur LAN | Routes `10.10.0.0/16` et `10.20.0.0/16` via les pare-feu |
+| A7 | Flux inter-site refusé par les pare-feu | Un ASA refuse par défaut l'entrant | ACL `OUTSIDE-IN` limitée au réseau de l'autre site |
+| A8 | Trunks refusés sur les 3560 | Encapsulation à déclarer explicitement | `switchport trunk encapsulation dot1q` |
+| A9 | Pare-feu de Lyon à l'adresse d'usine | Configuration interne jamais appliquée | Interface interne `10.20.254.5/30` et route de retour |
+| A10 | Incohérence de VLAN natif | VLAN natif 999 absent d'un trunk | `switchport trunk native vlan 999` |
+| A11 | Après bascule, cœurs désappariés sur le VLAN de transit | VLAN 100 absent du trunk entre les deux cœurs | VLAN 100 ajouté au trunk, tables MAC et ARP vidées |
+
+Toutes les corrections ont été reportées dans les fichiers de configuration (`configs/`), de sorte que la
+documentation décrit ce qui fonctionne réellement. Trois familles se dégagent : les écarts entre câblage réel
+et configuration (A1, A2, A3), les oublis de conception du routage et du filtrage (A4 à A7, A11) et les
+particularités du matériel (A8 à A10). La méthode suivie est la même à chaque fois : test de proche en proche
+jusqu'au segment défaillant, comparaison du réel et de la configuration, correction, nouvel essai.
+
+### Limites constatées
+
+- **Serveur de Paris raccordé au seul cœur 1.** Pendant la panne du cœur 1, le trafic continue, mais le
+  serveur DHCP/DNS devient injoignable. La cible (Lot B) prévoit des serveurs virtualisés en cluster, raccordés
+  aux deux cœurs.
+- **Un seul lien Internet par site** (PT13) : la cible (Lot A) prévoit un second fournisseur d'accès et un
+  second tunnel.
+- **Tunnel GRE non chiffré** : la cible le protège par IPsec.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -3434,7 +3544,7 @@ que le NAT (Network Address Translation) fonctionne depuis les deux sites.
 |---|---|
 | PC-BUR-PARIS-1 | DHCP (automatique, VLAN 10) |
 | PC-BANCAIRE-PARIS-1 | IP statique `10.10.4.10` / `255.255.255.192` / passerelle `10.10.4.1` / DNS `10.10.4.70` |
-| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. 01) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/7 |
+| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. 01) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/6 |
 | IPPHONE-PARIS-1 | DHCP automatique via VLAN voix (aucune configuration manuelle) |
 | PC-BUR-LYON-1 | DHCP (VLAN 10) |
 | PC-BANCAIRE-LYON-1 | IP statique `10.20.1.10` / `255.255.255.224` / passerelle `10.20.1.1` / DNS `10.20.1.40` |

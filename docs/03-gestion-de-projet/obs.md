@@ -13,6 +13,7 @@ de tâches du WBS.
 | Conformité réglementaire (RGPD, ACPR, DSP2) | Direction Conformité & Sécurité / RSSI | Ingénieur Cybersécurité |
 | Réseau et infrastructure | Responsable Infrastructure & Réseau | Ingénieur Réseaux & Sécurité |
 | Systèmes et virtualisation | Responsable Infrastructure & Réseau | Ingénieur Systèmes & Virtualisation |
-| Cybersécurité (SOC, PRA/PCA, GED) | RSSI | Ingénieur Cybersécurité / SOC |
+| Cybersécurité (SOC, PRA/PCA) | RSSI | Ingénieur Cybersécurité / SOC |
+| GED sécurisée (Lot F) | Direction Conformité & Sécurité / RSSI | Chef de projet |
 | Formation et accompagnement des utilisateurs | Direction des Ressources Humaines | Ingénieur Systèmes & Déploiement |
 | Recette et validation | DSI + Direction Conformité & Sécurité | Chef de projet |

@@ -48,3 +48,8 @@ du dossier complet.
 La validation du procès-verbal de recette, signé conjointement par la DSI de KHS Bank et le Chef de
 projet MOM-TECH, marque le passage du projet en phase de fonctionnement normal (*Run*), couverte par
 le [contrat de maintenance](contrat-maintenance.md).
+
+En complément, la conception réseau du Lot A a été vérifiée sur la maquette Cisco Packet Tracer : 13 tests
+exécutés et conformes, dont la bascule de la passerelle HSRP (6 secondes de coupure), et 11 anomalies
+détectées puis corrigées pendant la recette (voir la partie consacrée à la maquette, « Résultats de la
+recette »).

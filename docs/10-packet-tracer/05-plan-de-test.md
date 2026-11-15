@@ -16,7 +16,7 @@ est concrètement observable dans la maquette Packet Tracer.
 | PT07 | Connectivité inter-site | `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1 | Réponse OK, via le tunnel GRE |
 | PT08 | Exemption de NAT inter-site | `show ip nat translations` sur RTR-PARIS après PT07 | **Aucune** entrée pour la destination 10.20.x.x |
 | PT09 | Téléphonie | Sur IPPHONE-PARIS-1, vérifier l'obtention d'une IP dans `10.10.10.0/23` | Voice VLAN fonctionnel |
-| PT10 | Filtrage du pare-feu | Depuis ISP-RTR, tenter `ping 10.10.254.5` (IP inside de FW-PARIS) | **Échoue** (aucune règle n'autorise l'entrant depuis l'extérieur) |
+| PT10 | Filtrage du pare-feu | Depuis RTR-PARIS (zone *outside*), `ping 10.10.254.2` (interface outside de l'ASA) puis `ping 10.10.0.11` (PC-BUR-PARIS-1) | Les deux **échouent** : l'ASA reste muet côté Internet et l'ACL `OUTSIDE-IN` n'admet en entrée que le LAN de Lyon — alors que la route existe (`10.10.0.0/16 via 10.10.254.2`, utilisée avec succès par PT07) |
 
 ## Tests de résilience (les plus importants pour la soutenance)
 
@@ -24,8 +24,9 @@ est concrètement observable dans la maquette Packet Tracer.
 
 1. Lancer un `ping -t 10.10.0.1` en continu depuis PC-BUR-PARIS-1 (onglet Desktop → Command Prompt).
 2. Sur CORE-PARIS-SW1, exécuter `show standby brief` pour confirmer qu'il est **Active**.
-3. Éteindre CORE-PARIS-SW1 (clic droit → Turn Off, ou simplement `shutdown` sur son interface Vlan10
-   depuis sa console avant l'extinction).
+3. Mettre CORE-PARIS-SW1 hors service : le 3560 de Packet Tracer n'a pas d'interrupteur, on coupe donc
+   tous ses ports (`interface range FastEthernet0/1 - 24 , GigabitEthernet0/1 - 2` puis `shutdown`),
+   ce qui équivaut, vu du réseau, à une perte totale de l'équipement.
 4. Observer le ping : quelques paquets perdus puis reprise automatique — CORE-PARIS-SW2 devient actif.
 5. Vérifier avec `show standby brief` sur CORE-PARIS-SW2 qu'il est passé à l'état **Active**.
 
