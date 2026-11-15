@@ -9,6 +9,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | — | Transit cœur ↔ pare-feu (VLAN 100) | SW1 → `10.10.254.9` : 4/5 ; SW2 → `10.10.254.9` : 4/5 ; HSRP Vl100 SW1 Active / SW2 Standby, VIP `10.10.254.12` | Conforme |
 | — | Table de routage FW-PARIS | `S* 0.0.0.0/0 via 10.10.254.1` (outside) ; `S 10.10.0.0/16 via 10.10.254.12` (inside) | Conforme |
 | — | FW-PARIS → VIP HSRP `10.10.254.12` | 4/5 (1er paquet perdu = résolution ARP) | Conforme |
+| — | FW-PARIS → RTR-PARIS `10.10.254.1` (outside) | 4/5 | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
 
