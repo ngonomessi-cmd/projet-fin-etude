@@ -6,13 +6,13 @@ title: "Soutenance KHS Bank — Trame orale, scénario de démonstration et ques
 
 | Partie | Durée | Diapositives |
 |---|---:|---|
-| Introduction et acteurs | 3 min | 1 à 5 |
-| Cahier des charges | 2 min | 6 |
-| Actions réalisées (gestion de projet, audit, solutions, architecture, migration) | 7 min | 7 à 10 |
-| **Maquette Cisco Packet Tracer** (présentation, puis tests en direct ou captures) | **4 à 6 min** | 11 et 12 |
-| Focus GED sécurisée (présentation) | 4 min | 13 à 17 |
-| **Démonstration en direct de la GED** | **8 à 10 min** | 16 (support) |
-| Synthèse (bilan, recette, conclusion) | 4 min | 18 à 21 |
+| Introduction et acteurs | 3 min | 1 à 6 |
+| Cahier des charges | 2 min | 7 et 8 |
+| Actions réalisées (gestion de projet, audit, solutions, architecture, migration) | 7 min | 9 à 13 |
+| **Maquette Cisco Packet Tracer** (présentation, puis tests en direct ou captures) | **4 à 6 min** | 14 et 15 |
+| Focus GED sécurisée (présentation) | 4 min | 16 à 21 |
+| **Démonstration en direct de la GED** | **8 à 10 min** | 20 (support) |
+| Synthèse (bilan, recette, conclusion) | 4 min | 22 à 26 |
 | **Total** | **≈ 34 à 36 min** (dont 18 min de démonstrations) | |
 
 Le plan suit celui attendu à la soutenance : entreprise et acteurs, éléments clés du cahier des charges, actions réalisées (aspects techniques et méthodologiques), synthèse et conclusion. **Adaptez les durées** à celles annoncées par votre jury. Si la présentation doit être plus courte : la démonstration de la GED se réduit à la version courte (§ 4.2) et la maquette Packet Tracer à un seul test (la bascule HSRP, PT11).
@@ -23,11 +23,11 @@ Julien Joël NGONO MESSI conduit la présentation (ouverture, enchaînements, cl
 
 | Diapositives | Partie | Présentateur |
 |---|---|---|
-| 1 à 5 | Introduction, acteurs | Julien Joël |
-| 6 à 10 | Cahier des charges, gestion de projet, audit, solutions, architecture et migration | *à répartir avec les trois autres membres* |
-| 11 et 12 | Maquette Cisco Packet Tracer | **Julien Joël** |
-| 13 à 17 | GED sécurisée (Lot F), preuve de sécurité, démonstration, courrier | **Julien Joël** |
-| 18 à 21 | Bilan financier, recette, conclusion | *à répartir* (clôture par Julien Joël) |
+| 1 à 6 | Introduction, acteurs | Julien Joël |
+| 7 à 13 | Cahier des charges, gestion de projet, audit, solutions, architecture et migration | *à répartir avec les trois autres membres* |
+| 14 et 15 | Maquette Cisco Packet Tracer | **Julien Joël** |
+| 16 à 21 | GED sécurisée (Lot F), preuve de sécurité, démonstration, courrier | **Julien Joël** |
+| 22 à 26 | Bilan financier, recette, conclusion | *à répartir* (clôture par Julien Joël) |
 
 Chaque changement de présentateur se fait par une phrase de passage (« Je passe la parole à … pour … ») ; prévoir deux répétitions complètes.
 
@@ -39,25 +39,30 @@ Les mêmes textes figurent dans les notes du fichier PowerPoint (mode présentat
 |---:|---|---|
 | 1 | Sujet, rôle, plan | « Je vais vous présenter la migration et la sécurisation du système d'information de KHS Bank, réalisées pour MOM-TECH. » |
 | 2 | Annoncer le plan | « Quatre temps, puis deux démonstrations. » |
-| 3 | KHS Bank : banque réglementée, SI vieillissant | « Un établissement agréé ACPR, 920 collaborateurs, deux sites, et un SI hérité de choix non harmonisés. » |
-| 4 | MOM-TECH : trois pôles, équipe de 4 ingénieurs | « Notre conviction : la sécurité se pense dès la conception. » |
-| 5 | L'équipe : 4 ingénieurs ; Julien Joël présente le Lot F et la maquette réseau | « J'ai réalisé la GED sécurisée et la maquette Packet Tracer ; je vous les présente. » |
-| 6 | Cinq objectifs, contraintes fortes, 26 semaines | « Le point dur : aucune interruption des services bancaires. » |
-| 7 | Pilotage : PBS, WBS, OBS, RACI, risques, Gantt, ITIL v4 | « Six phases, du 5 janvier au 26 juin 2026. » |
-| 8 | Audit : 14 constats critiques en 3 axes | « Redondance, détection et continuité, protection des données sensibles. » |
-| 9 | Trois piliers pour limiter la fragmentation des éditeurs | « Moins d'éditeurs, moins de failles d'intégration. » |
-| 10 | Architecture cible et migration en 7 étapes | « Coexistence progressive : zéro interruption. » |
-| 11 | Maquette Packet Tracer : deux sites, HSRP, VLAN, ASA, GRE | « Pour ne pas rester sur le papier, j'ai construit l'architecture réseau dans Packet Tracer, avec le même plan d'adressage que le dossier. » |
-| 12 | La recette réalisée : 13/13 conformes, bascule en 6 s, 11 anomalies corrigées | « Je coupe le cœur actif pendant un ping continu : six secondes de coupure, puis le second cœur reprend seul. C'est la fin du point de défaillance unique R1. Et la recette a trouvé onze anomalies, toutes corrigées. » |
-| 13 | Lot F : une GED réalisée par MOM-TECH, avec ateliers Word/Excel/PowerPoint intégrés | « Les agents créent leurs documents directement dans la GED : ils naissent classés, référencés et tracés. Microsoft 365 reste le socle des postes et de l'identité. » |
-| 14 | La sécurité est dans la base, pas dans le code | « Même si l'application avait un défaut, la base refuserait l'accès. » |
-| 15 | Preuve en situation : un rédacteur refusé | « Voici le site déployé : un rédacteur force l'adresse d'administration. Refus à trois niveaux : menu, page, et surtout la base. » |
-| 16 | Annonce de la démonstration | « Cinq personnages, un document confidentiel, six étapes. » |
-| 17 | Courrier physique et multi-organisation | « Le courrier papier reste critique dans une banque. Une même plateforme sert deux organisations, cloisonnées par la base. » |
-| 18 | ≈ 4,8 M€ d'investissement, ≈ 1,5 M€/an, ≈ 11 % du budget | « Le coût récurrent laisse de la marge sur le budget de 14 M€. » |
-| 19 | Recette : tous les tests de l'extrait sont conformes | « Chaque exigence critique a un test et un résultat attendu. » |
-| 20 | Objectifs atteints, perspectives | « 14 constats traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
-| 21 | Remerciements | « Je suis à votre disposition pour vos questions. » |
+| 3 | Intercalaire : Partie 1, les acteurs | « Commençons par les acteurs du projet. » |
+| 4 | KHS Bank : banque réglementée, SI vieillissant | « Un établissement agréé ACPR, 920 collaborateurs, deux sites, et un SI hérité de choix non harmonisés. » |
+| 5 | MOM-TECH : trois pôles, équipe de 4 ingénieurs | « Notre conviction : la sécurité se pense dès la conception. » |
+| 6 | L'équipe : 4 ingénieurs et leurs rôles ; Julien Joël présente le Lot F et la maquette réseau | « J'ai réalisé la GED sécurisée et la maquette Packet Tracer ; je vous les présente. » |
+| 7 | Intercalaire : Partie 2, le cahier des charges | « Voyons ce que demandait le cahier des charges. » |
+| 8 | Cinq objectifs, contraintes fortes, 26 semaines | « Le point dur : aucune interruption des services bancaires. » |
+| 9 | Intercalaire : Partie 3, les actions réalisées | « Passons aux actions réalisées. » |
+| 10 | Pilotage : PBS, WBS, OBS, RACI, risques, Gantt, ITIL v4 | « Six phases, du 5 janvier au 26 juin 2026. » |
+| 11 | Audit : 14 constats critiques en 3 axes | « Redondance, détection et continuité, protection des données sensibles. » |
+| 12 | Trois piliers pour limiter la fragmentation des éditeurs | « Moins d'éditeurs, moins de failles d'intégration. » |
+| 13 | Architecture cible et migration en 7 étapes | « Coexistence progressive : zéro interruption. » |
+| 14 | Maquette Packet Tracer : deux sites, HSRP, VLAN, ASA, GRE | « Pour ne pas rester sur le papier, j'ai construit l'architecture réseau dans Packet Tracer, avec le même plan d'adressage que le dossier. » |
+| 15 | La recette réalisée : 13/13 conformes, bascule en 6 s, 11 anomalies corrigées | « Je coupe le cœur actif pendant un ping continu : six secondes de coupure, puis le second cœur reprend seul. C'est la fin du point de défaillance unique R1. Et la recette a trouvé onze anomalies, toutes corrigées. » |
+| 16 | Intercalaire : Partie 4, la GED sécurisée | « J'en viens au cœur de mon travail : la GED sécurisée. » |
+| 17 | Lot F : une GED réalisée par MOM-TECH, avec ateliers Word/Excel/PowerPoint intégrés | « Les agents créent leurs documents directement dans la GED : ils naissent classés, référencés et tracés. Microsoft 365 reste le socle des postes et de l'identité. » |
+| 18 | La sécurité est dans la base, pas dans le code | « Même si l'application avait un défaut, la base refuserait l'accès. » |
+| 19 | Preuve en situation : un rédacteur refusé | « Voici le site déployé : un rédacteur force l'adresse d'administration. Refus à trois niveaux : menu, page, et surtout la base. » |
+| 20 | Annonce de la démonstration | « Cinq personnages, un document confidentiel, six étapes. » |
+| 21 | Courrier physique et multi-organisation | « Le courrier papier reste critique dans une banque. Une même plateforme sert deux organisations, cloisonnées par la base. » |
+| 22 | Intercalaire : Partie 5, la synthèse | « Pour finir, la synthèse. » |
+| 23 | ≈ 4,8 M€ d'investissement, ≈ 1,5 M€/an, ≈ 11 % du budget | « Le coût récurrent laisse de la marge sur le budget de 14 M€. » |
+| 24 | Recette : tous les tests de l'extrait sont conformes | « Chaque exigence critique a un test et un résultat attendu. » |
+| 25 | Objectifs atteints, perspectives | « 14 constats traités, aucune interruption. Prochaines étapes : IA anti-fraude, cloud souverain. » |
+| 26 | Remerciements | « Je suis à votre disposition pour vos questions. » |
 
 # 4. Scénario de démonstration (8 à 10 minutes)
 
@@ -92,7 +97,7 @@ Le rôle « chef du courrier » et « agent du courrier » se désigne depuis la
 | 8 | Aude | **Audit** | Chaque étape est inscrite ; aucune action de suppression n'existe | 1 min |
 | 9 | (Optionnel, en commentaire) | Montrer le code du déclencheur d'immutabilité, ou citer le test qui refuse `DELETE` | Le journal est protégé, **y compris pour la clé de service** | 0,5 min |
 
-**Variante de l'étape 2 (30 secondes)** : connecté en rédacteur, saisir l'adresse `/admin/utilisateurs`. L'accès est refusé (même écran que la diapositive 15) : le menu ne propose pas l'administration, la page refuse, et la base vérifie le rôle.
+**Variante de l'étape 2 (30 secondes)** : connecté en rédacteur, saisir l'adresse `/admin/utilisateurs`. L'accès est refusé (même écran que la diapositive 19) : le menu ne propose pas l'administration, la page refuse, et la base vérifie le rôle.
 
 **Version courte (5 min)** : étapes 1, 2, 4, 5 et 8.
 
