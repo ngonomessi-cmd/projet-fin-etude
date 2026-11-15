@@ -40,6 +40,7 @@ exit
 ! --- Liaison vers CORE-PARIS-SW2 (trunk direct, porte HSRP + toutes les VLAN) ---
 interface FastEthernet0/2
  description LIEN-VERS-CORE-PARIS-SW2
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,50,99
  switchport trunk native vlan 999
@@ -59,6 +60,7 @@ exit
 ! --- Liaison vers l'unique switch d'accès (l'autre lien redondant part de SW2) ---
 interface FastEthernet0/4
  description LIEN-VERS-ACC-PARIS-SW
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999

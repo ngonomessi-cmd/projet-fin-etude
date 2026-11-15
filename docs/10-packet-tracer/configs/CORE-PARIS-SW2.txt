@@ -37,6 +37,7 @@ exit
 ! --- Liaison vers CORE-PARIS-SW1 ---
 interface FastEthernet0/2
  description LIEN-VERS-CORE-PARIS-SW1
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,50,99
  switchport trunk native vlan 999
@@ -45,6 +46,7 @@ exit
 ! --- Liaison vers l'unique switch d'accès (2e lien redondant, sur son port Fa0/2) ---
 interface FastEthernet0/3
  description LIEN-VERS-ACC-PARIS-SW
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,40,50,99
  switchport trunk native vlan 999
