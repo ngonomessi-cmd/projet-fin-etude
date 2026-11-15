@@ -117,6 +117,12 @@ def tableaux(d):
                 continue
             moy = sum(col) / len(col)
             poids.append(max(3.5, min(0.55 * moy + 0.45 * max(col), 42)))
+        # aucune colonne plus étroite que son mot le plus long (pas de mot coupé)
+        for r in lignes:
+            for k, tc in enumerate(r.findall(qn("w:tc"))):
+                mots = texte_cellule(tc).split()
+                if mots:
+                    poids[k] = max(poids[k], min(max(len(m) for m in mots), 22) * 1.2 + 1.5)
         if a_entete:
             for k, tc in enumerate(lignes[0].findall(qn("w:tc"))):
                 mots = texte_cellule(tc).replace("/", " ").split()

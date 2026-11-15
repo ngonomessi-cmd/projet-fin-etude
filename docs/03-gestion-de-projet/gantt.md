@@ -14,7 +14,7 @@ six phases séquencées avec chevauchement limité entre la fin de l'audit et le
 | 5. Déploiement | 45 j | 30/03/2026 | 29/05/2026 |
 | 6. Tests, Recette et Finalisation | 20 j | 01/06/2026 | 26/06/2026 |
 
-Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
+Le diagramme de Gantt ci-dessous détaille les 25 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
 
 ![Diagramme de Gantt du projet, du 5 janvier au 26 juin 2026](../figures/gantt.png)
 
@@ -31,14 +31,16 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 | Audit | Rapport d'audit consolidé | 4 j | 03/02/2026 | 06/02/2026 | Chef de projet |
 | Conception | Architecture réseau cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Réseaux & Sécurité |
 | Conception | Architecture systèmes cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Systèmes & Virtualisation |
-| Conception | Conception cybersécurité (SOC/SIEM, IAM, GED) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception cybersécurité (SOC/SIEM, IAM) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception de la GED sécurisée (Lot F) | 10 j | 09/02/2026 | 20/02/2026 | Chef de projet |
 | Conception | Validation architecture (COPIL) | 3 j | 04/03/2026 | 06/03/2026 | Chef de projet, DSI, RSSI |
 | Planification | Consultation fournisseurs / appel d'offres | 8 j | 09/03/2026 | 18/03/2026 | Chef de projet |
 | Planification | Plan de migration | 5 j | 19/03/2026 | 25/03/2026 | Ing. Réseaux, Ing. Systèmes |
 | Planification | Commande et livraison du matériel | 2 j | 26/03/2026 | 27/03/2026 | Chef de projet |
 | Déploiement | Réseau (câblage, équipements, VPN, segmentation) | 15 j | 30/03/2026 | 17/04/2026 | Ing. Réseaux & Sécurité |
 | Déploiement | Systèmes (virtualisation, stockage, AD, messagerie, postes) | 20 j | 30/03/2026 | 24/04/2026 | Ing. Systèmes & Virtualisation |
-| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
+| Déploiement | Réalisation de la GED sécurisée (Lot F) | 30 j | 30/03/2026 | 08/05/2026 | Chef de projet |
+| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
 | Déploiement | Migration de KHS-Core | 10 j | 18/05/2026 | 29/05/2026 | Ing. Systèmes, Chef de projet |
 | Tests/Recette | Tests de déploiement par lot | 8 j | 01/06/2026 | 10/06/2026 | Équipe complète |
 | Tests/Recette | Cahier de tests et recette | 4 j | 11/06/2026 | 16/06/2026 | Chef de projet |
@@ -50,9 +52,9 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 
 | Ressource | Rôle | Charge estimée sur le projet |
 |---|---|:---:|
-| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, recette | 100 % |
+| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, conception et réalisation de la GED sécurisée, recette | 100 % |
 | Ing. Réseaux & Sécurité | Audit et déploiement réseau, PRA/PCA réseau | 90 % |
-| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM, GED | 95 % |
+| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM | 95 % |
 | Ing. Systèmes & Déploiement | Audit et déploiement systèmes, postes clients, formation | 90 % |
 
 Le déploiement (phase 5, 45 jours) concentre la charge la plus forte et le plus grand nombre de tâches en

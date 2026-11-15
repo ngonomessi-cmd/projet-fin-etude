@@ -314,7 +314,7 @@ s = slide("Focus : la GED sécurisée (Lot F)", "4 · Focus GED",
 table(s, 0.7, 1.45, 12.0, [("Exigence du Lot F", 2.6), ("Constat", 0.8), ("Mécanisme de la GED", 3.4)], [
     ["Création de documents sans poste ni partage de fichiers", "C5", "Ateliers Word, Excel, PowerPoint ; export .docx .xlsx .pptx et PDF"],
     ["Classification (public interne / restreint / confidentiel)", "C5", "Appliquée par la base de données (RLS)"],
-    ["Accès par rôle (rédacteur, validateur, admin, auditeur)", "C5, C8", "Règles RLS par rôle et par département"],
+    ["Accès par rôle (rédacteur, validateur, superviseur, admin, auditeur)", "C5, C8", "Règles RLS par rôle et par département"],
     ["Authentification forte", "C2", "Double authentification TOTP obligatoire"],
     ["Workflow dépôt → vérification → validation → publication", "C5", "Fonction transactionnelle côté base"],
     ["Journal d'audit immuable", "C5", "Déclencheur PostgreSQL : aucune modification possible"],

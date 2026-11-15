@@ -362,7 +362,8 @@ de tâches du WBS.
 | Conformité réglementaire (RGPD, ACPR, DSP2) | Direction Conformité & Sécurité / RSSI | Ingénieur Cybersécurité |
 | Réseau et infrastructure | Responsable Infrastructure & Réseau | Ingénieur Réseaux & Sécurité |
 | Systèmes et virtualisation | Responsable Infrastructure & Réseau | Ingénieur Systèmes & Virtualisation |
-| Cybersécurité (SOC, PRA/PCA, GED) | RSSI | Ingénieur Cybersécurité / SOC |
+| Cybersécurité (SOC, PRA/PCA) | RSSI | Ingénieur Cybersécurité / SOC |
+| GED sécurisée (Lot F) | Direction Conformité & Sécurité / RSSI | Chef de projet |
 | Formation et accompagnement des utilisateurs | Direction des Ressources Humaines | Ingénieur Systèmes & Déploiement |
 | Recette et validation | DSI + Direction Conformité & Sécurité | Chef de projet |
 
@@ -389,7 +390,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Conception** | | | | | | | |
 | Architecture réseau cible | C | I | A | R | C | C | |
 | Architecture systèmes cible | C | I | A | C | R | C | |
-| Conception cybersécurité (SOC/SIEM, IAM, GED) | I | C | A | C | C | R | |
+| Conception cybersécurité (SOC/SIEM, IAM) | I | C | A | C | C | R | |
+| Conception de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
 | Validation de l'architecture (COPIL) | A | C | R | I | I | I | |
 | **Planification** | | | | | | | |
 | Consultation fournisseurs / appel d'offres | I | I | R | C | C | I | C |
@@ -399,7 +401,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Déploiement** | | | | | | | |
 | Déploiement réseau (câblage, équipements, VPN) | I | I | A | R | I | I | |
 | Déploiement systèmes (virtualisation, stockage, AD, messagerie, postes) | I | I | A | I | R | I | |
-| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | I | C | A | I | I | R | |
+| Réalisation de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
+| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | I | C | A | I | I | R | |
 | Migration de l'application métier KHS-Core | C | I | A | I | R | C | |
 | **Tests, Recette et Finalisation** | | | | | | | |
 | Tests de déploiement par lot | I | I | A | R | R | R | |
@@ -471,7 +474,7 @@ six phases séquencées avec chevauchement limité entre la fin de l'audit et le
 | 5. Déploiement | 45 j | 30/03/2026 | 29/05/2026 |
 | 6. Tests, Recette et Finalisation | 20 j | 01/06/2026 | 26/06/2026 |
 
-Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
+Le diagramme de Gantt ci-dessous détaille les 25 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
 
 ![Diagramme de Gantt du projet, du 5 janvier au 26 juin 2026](docs/figures/gantt.png)
 
@@ -488,14 +491,16 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 | Audit | Rapport d'audit consolidé | 4 j | 03/02/2026 | 06/02/2026 | Chef de projet |
 | Conception | Architecture réseau cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Réseaux & Sécurité |
 | Conception | Architecture systèmes cible | 8 j | 09/02/2026 | 18/02/2026 | Ing. Systèmes & Virtualisation |
-| Conception | Conception cybersécurité (SOC/SIEM, IAM, GED) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception cybersécurité (SOC/SIEM, IAM) | 10 j | 09/02/2026 | 20/02/2026 | Ing. Cybersécurité / SOC |
+| Conception | Conception de la GED sécurisée (Lot F) | 10 j | 09/02/2026 | 20/02/2026 | Chef de projet |
 | Conception | Validation architecture (COPIL) | 3 j | 04/03/2026 | 06/03/2026 | Chef de projet, DSI, RSSI |
 | Planification | Consultation fournisseurs / appel d'offres | 8 j | 09/03/2026 | 18/03/2026 | Chef de projet |
 | Planification | Plan de migration | 5 j | 19/03/2026 | 25/03/2026 | Ing. Réseaux, Ing. Systèmes |
 | Planification | Commande et livraison du matériel | 2 j | 26/03/2026 | 27/03/2026 | Chef de projet |
 | Déploiement | Réseau (câblage, équipements, VPN, segmentation) | 15 j | 30/03/2026 | 17/04/2026 | Ing. Réseaux & Sécurité |
 | Déploiement | Systèmes (virtualisation, stockage, AD, messagerie, postes) | 20 j | 30/03/2026 | 24/04/2026 | Ing. Systèmes & Virtualisation |
-| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
+| Déploiement | Réalisation de la GED sécurisée (Lot F) | 30 j | 30/03/2026 | 08/05/2026 | Chef de projet |
+| Déploiement | Cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | 20 j | 20/04/2026 | 15/05/2026 | Ing. Cybersécurité / SOC |
 | Déploiement | Migration de KHS-Core | 10 j | 18/05/2026 | 29/05/2026 | Ing. Systèmes, Chef de projet |
 | Tests/Recette | Tests de déploiement par lot | 8 j | 01/06/2026 | 10/06/2026 | Équipe complète |
 | Tests/Recette | Cahier de tests et recette | 4 j | 11/06/2026 | 16/06/2026 | Chef de projet |
@@ -507,9 +512,9 @@ Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépe
 
 | Ressource | Rôle | Charge estimée sur le projet |
 |---|---|:---:|
-| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, recette | 100 % |
+| Chef de projet / Ing. Architecture Système | Pilotage, cadrage, conception systèmes, conception et réalisation de la GED sécurisée, recette | 100 % |
 | Ing. Réseaux & Sécurité | Audit et déploiement réseau, PRA/PCA réseau | 90 % |
-| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM, GED | 95 % |
+| Ing. Cybersécurité / SOC | Audit et déploiement cybersécurité, SOC/SIEM | 95 % |
 | Ing. Systèmes & Déploiement | Audit et déploiement systèmes, postes clients, formation | 90 % |
 
 Le déploiement (phase 5, 45 jours) concentre la charge la plus forte et le plus grand nombre de tâches en
@@ -1172,7 +1177,7 @@ MOM-TECH ».
   référencés et tracés, sans passer par un poste de travail ni par un partage de fichiers.
 - **Classification des documents** par niveau de confidentialité (public interne / restreint /
   confidentiel), appliquée par la base de données ;
-- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, administrateur, auditeur) et
+- **Contrôle d'accès basé sur les rôles (RBAC)** (rédacteur, validateur, superviseur, administrateur, auditeur) et
   cloisonnement par département, appliqués par PostgreSQL (*Row Level Security*) ;
 - **Workflow de validation** pour les documents sensibles (dépôt → vérification → validation →
   publication) ;
@@ -1240,7 +1245,7 @@ DLP, Entra PIM).
 | Exigence du Lot F | Constat d'audit | Mécanisme de la GED |
 |---|---|---|
 | Classification des documents (public interne / restreint / confidentiel) | C5 | Colonne `classification`, appliquée par la base de données (RLS) |
-| Contrôle d'accès par rôle (rédacteur, validateur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
+| Contrôle d'accès par rôle (rédacteur, validateur, superviseur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
 | Authentification forte | C2 | Double authentification TOTP obligatoire (Google Authenticator) |
 | Workflow dépôt → vérification → validation → publication | C5 | Fonction transactionnelle `transition_statut_document` |
 | Journal d'audit immuable | C5 | Table `audit_log` protégée par un déclencheur PostgreSQL |
@@ -1307,12 +1312,32 @@ l'identité, le rôle, le département et l'organisation de l'appelant.
 écriture. La règle de lecture d'un document, simplifiée, est la suivante :
 
 - le **propriétaire** lit toujours son document ;
-- l'**administrateur** et l'**auditeur** lisent tout document sorti du brouillon ;
+- l'**administrateur**, le **superviseur** et l'**auditeur** lisent tout document sorti du brouillon ;
 - un document **publié** est lu selon sa classification : *public interne* par toute l'organisation,
   *restreint* par le département concerné, *confidentiel* par le seul validateur du département
   (en plus du propriétaire, de l'administrateur et de l'auditeur) ;
 - un document **en vérification, validé ou rejeté** est lu par le validateur du département ;
 - un **brouillon** reste privé : seuls son auteur et les personnes avec qui il est partagé le voient.
+
+**Les six rôles.** Chaque agent a un rôle, attribué par un administrateur ; la base de données en
+déduit ce qu'il peut lire et faire.
+
+| Rôle | Ce qu'il peut faire | Ce qu'il ne peut pas faire |
+|---|---|---|
+| Lecteur | Consulter les documents publiés qui lui sont accessibles | Produire ou modifier un document |
+| Rédacteur | Créer, rédiger et partager des documents, les soumettre à validation | Valider ou publier |
+| Validateur | Comme le rédacteur ; vérifier, valider, publier et archiver les documents de **son** département | Agir hors de son département |
+| Superviseur | Rédiger, valider, publier, archiver, classer et partager dans **tous** les départements ; consulter le journal d'audit | Modifier un réglage |
+| Administrateur | Tout ce que fait le superviseur, plus les réglages : comptes et rôles, modèles, archivage, signatures, site public | Lire les brouillons des autres |
+| Auditeur | Consulter tous les documents sortis du brouillon et le journal d'audit | Produire ou modifier quoi que ce soit |
+
+Le rôle **superviseur** a été ajouté pour les personnes qui doivent superviser l'ensemble des
+contenus sans administrer la plateforme : membres de l'équipe projet, jury, direction. Il
+sépare deux responsabilités que l'administrateur cumulait : agir sur les documents de tous les
+départements, et régler la plateforme. Les réglages (rôles et profils, double authentification des
+agents, modèles, actualités, courrier du public, paramètres d'archivage et de messagerie,
+signataires et délégations, canaux) restent refusés au superviseur par la base de données elle-même,
+et non par l'interface.
 
 Autres dispositions qui renforcent le modèle :
 
@@ -1411,6 +1436,8 @@ Les catégories de conservation du courrier sont paramétrées par organisation.
 - rejeu intégral des 33 migrations sur une base vierge, sans erreur ;
 - tests SQL de la sécurité : 169 tests sur le courrier de l'Agence et 15 sur celui de KHS Bank, auxquels
   s'ajoutent les tests du circuit documentaire, de la visibilité, de la signature et de l'archivage ;
+- 20 tests du rôle superviseur : droits sur les contenus de tous les départements, refus de chaque
+  réglage, et non-régression des autres rôles ;
 - parcours de bout en bout dans un navigateur automatisé (42 contrôles sur le courrier) ;
 - compilation de production (`next build`) et typage TypeScript sans erreur ;
 - mise à niveau de sécurité du framework (Next.js 16.4.5) après audit des dépendances.

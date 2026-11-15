@@ -12,7 +12,7 @@ DLP, Entra PIM).
 | Exigence du Lot F | Constat d'audit | Mécanisme de la GED |
 |---|---|---|
 | Classification des documents (public interne / restreint / confidentiel) | C5 | Colonne `classification`, appliquée par la base de données (RLS) |
-| Contrôle d'accès par rôle (rédacteur, validateur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
+| Contrôle d'accès par rôle (rédacteur, validateur, superviseur, administrateur, auditeur) | C5, C8 | Colonne `role` et règles RLS par rôle et par département |
 | Authentification forte | C2 | Double authentification TOTP obligatoire (Google Authenticator) |
 | Workflow dépôt → vérification → validation → publication | C5 | Fonction transactionnelle `transition_statut_document` |
 | Journal d'audit immuable | C5 | Table `audit_log` protégée par un déclencheur PostgreSQL |
@@ -79,12 +79,32 @@ l'identité, le rôle, le département et l'organisation de l'appelant.
 écriture. La règle de lecture d'un document, simplifiée, est la suivante :
 
 - le **propriétaire** lit toujours son document ;
-- l'**administrateur** et l'**auditeur** lisent tout document sorti du brouillon ;
+- l'**administrateur**, le **superviseur** et l'**auditeur** lisent tout document sorti du brouillon ;
 - un document **publié** est lu selon sa classification : *public interne* par toute l'organisation,
   *restreint* par le département concerné, *confidentiel* par le seul validateur du département
   (en plus du propriétaire, de l'administrateur et de l'auditeur) ;
 - un document **en vérification, validé ou rejeté** est lu par le validateur du département ;
 - un **brouillon** reste privé : seuls son auteur et les personnes avec qui il est partagé le voient.
+
+**Les six rôles.** Chaque agent a un rôle, attribué par un administrateur ; la base de données en
+déduit ce qu'il peut lire et faire.
+
+| Rôle | Ce qu'il peut faire | Ce qu'il ne peut pas faire |
+|---|---|---|
+| Lecteur | Consulter les documents publiés qui lui sont accessibles | Produire ou modifier un document |
+| Rédacteur | Créer, rédiger et partager des documents, les soumettre à validation | Valider ou publier |
+| Validateur | Comme le rédacteur ; vérifier, valider, publier et archiver les documents de **son** département | Agir hors de son département |
+| Superviseur | Rédiger, valider, publier, archiver, classer et partager dans **tous** les départements ; consulter le journal d'audit | Modifier un réglage |
+| Administrateur | Tout ce que fait le superviseur, plus les réglages : comptes et rôles, modèles, archivage, signatures, site public | Lire les brouillons des autres |
+| Auditeur | Consulter tous les documents sortis du brouillon et le journal d'audit | Produire ou modifier quoi que ce soit |
+
+Le rôle **superviseur** a été ajouté pour les personnes qui doivent superviser l'ensemble des
+contenus sans administrer la plateforme : membres de l'équipe projet, jury, direction. Il
+sépare deux responsabilités que l'administrateur cumulait : agir sur les documents de tous les
+départements, et régler la plateforme. Les réglages (rôles et profils, double authentification des
+agents, modèles, actualités, courrier du public, paramètres d'archivage et de messagerie,
+signataires et délégations, canaux) restent refusés au superviseur par la base de données elle-même,
+et non par l'interface.
 
 Autres dispositions qui renforcent le modèle :
 
@@ -183,6 +203,8 @@ Les catégories de conservation du courrier sont paramétrées par organisation.
 - rejeu intégral des 33 migrations sur une base vierge, sans erreur ;
 - tests SQL de la sécurité : 169 tests sur le courrier de l'Agence et 15 sur celui de KHS Bank, auxquels
   s'ajoutent les tests du circuit documentaire, de la visibilité, de la signature et de l'archivage ;
+- 20 tests du rôle superviseur : droits sur les contenus de tous les départements, refus de chaque
+  réglage, et non-régression des autres rôles ;
 - parcours de bout en bout dans un navigateur automatisé (42 contrôles sur le courrier) ;
 - compilation de production (`next build`) et typage TypeScript sans erreur ;
 - mise à niveau de sécurité du framework (Next.js 16.4.5) après audit des dépendances.

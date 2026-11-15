@@ -21,7 +21,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Conception** | | | | | | | |
 | Architecture réseau cible | C | I | A | R | C | C | |
 | Architecture systèmes cible | C | I | A | C | R | C | |
-| Conception cybersécurité (SOC/SIEM, IAM, GED) | I | C | A | C | C | R | |
+| Conception cybersécurité (SOC/SIEM, IAM) | I | C | A | C | C | R | |
+| Conception de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
 | Validation de l'architecture (COPIL) | A | C | R | I | I | I | |
 | **Planification** | | | | | | | |
 | Consultation fournisseurs / appel d'offres | I | I | R | C | C | I | C |
@@ -31,7 +32,8 @@ La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs 
 | **Déploiement** | | | | | | | |
 | Déploiement réseau (câblage, équipements, VPN) | I | I | A | R | I | I | |
 | Déploiement systèmes (virtualisation, stockage, AD, messagerie, postes) | I | I | A | I | R | I | |
-| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA, GED) | I | C | A | I | I | R | |
+| Réalisation de la GED sécurisée (Lot F) | A | C | R | I | C | C | |
+| Déploiement cybersécurité (SOC/SIEM, EDR, IAM/MFA, PRA/PCA) | I | C | A | I | I | R | |
 | Migration de l'application métier KHS-Core | C | I | A | I | R | C | |
 | **Tests, Recette et Finalisation** | | | | | | | |
 | Tests de déploiement par lot | I | I | A | R | R | R | |
