@@ -112,7 +112,7 @@ export default async function PageSignatures() {
     qualitesTenues.length > 0 ||
     delegationsAVenir.length > 0;
   const voitToutesDelegations =
-    admin || profil.role === "auditeur" || qualitesTenues.length > 0;
+    admin || profil.role === "auditeur" || profil.role === "superviseur" || qualitesTenues.length > 0;
   const delegationsVisibles = voitToutesDelegations
     ? delegations
     : delegations.filter(

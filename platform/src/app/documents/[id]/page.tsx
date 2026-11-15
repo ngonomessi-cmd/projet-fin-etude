@@ -57,21 +57,22 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   const estProprietaire = document.owner_id === user!.id;
   const meDepartement = profil.departement === document.departement;
   const producteur = ROLES_PRODUCTEURS.includes(profil.role);
-  const peutPartager = producteur && (estProprietaire || profil.role === "administrateur" || Boolean(coEditeur));
+  const toutDepartement = profil.role === "administrateur" || profil.role === "superviseur";
+  const peutPartager = producteur && (estProprietaire || toutDepartement || Boolean(coEditeur));
   const archive = Boolean(document.archive_le);
   const statut = statutAffiche(document, langue);
-  const valideurDuDepartement = profil.role === "administrateur" || (profil.role === "validateur" && meDepartement);
+  const valideurDuDepartement = toutDepartement || (profil.role === "validateur" && meDepartement);
 
   // Mêmes règles que les fonctions classer_document, archiver_document et
   // nouvelle_version_document (migration 0024), qui les revérifient.
   const peutClasser =
     !archive &&
     ((estProprietaire && (document.statut === "brouillon" || document.statut === "rejete")) ||
-      profil.role === "administrateur" ||
+      toutDepartement ||
       (profil.role === "validateur" && meDepartement && document.statut !== "brouillon"));
   const peutArchiver = document.statut === "publie" && !archive && valideurDuDepartement;
   const peutReviser =
-    document.statut === "publie" && producteur && (estProprietaire || profil.role === "administrateur" || meDepartement);
+    document.statut === "publie" && producteur && (estProprietaire || toutDepartement || meDepartement);
 
   // Filiation des versions (seules les versions lisibles par ce compte remontent).
   const [{ data: precedenteData }, { data: suivantesData }, { data: archivisteData }] = await Promise.all([
@@ -140,7 +141,7 @@ export default async function PageDetailDocument({ params }: { params: Promise<{
   const qualitesBat: QualiteBat[] =
     qualitesSignataire.length > 0
       ? qualitesSignataire.map((q) => ({ qualite: q.qualite, intitule: q.intitule, intitule_en: q.intitule_en }))
-      : estProprietaire || profil.role === "administrateur"
+      : estProprietaire || toutDepartement
         ? ((qualitesOrgData ?? []) as { code: string; intitule: string; intitule_en: string }[])
             .filter((q) => qualitesPourvues.has(q.code))
             .map((q) => ({ qualite: q.code, intitule: q.intitule, intitule_en: q.intitule_en }))

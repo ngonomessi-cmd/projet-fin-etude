@@ -73,7 +73,7 @@ export default async function PageDocuments({
   );
 
   const peutValider = (d: Ligne) =>
-    profil.role === "administrateur" || (profil.role === "validateur" && profil.departement === d.departement);
+    profil.role === "administrateur" || profil.role === "superviseur" || (profil.role === "validateur" && profil.departement === d.departement);
 
   const idsPartages = new Set(((partagesData ?? []) as { document_id: string }[]).map((p) => p.document_id));
   const mesBrouillons = documents.filter((d) => d.owner_id === user!.id && d.statut === "brouillon");
@@ -233,7 +233,7 @@ export default async function PageDocuments({
 
               {vue === "circuit" && (
                 <div className="flex flex-col gap-4">
-                  {(profil.role === "administrateur" || profil.role === "validateur") && (
+                  {(profil.role === "administrateur" || profil.role === "validateur" || profil.role === "superviseur") && (
                     <Section titre={t("À traiter par vous", "Awaiting your action")} aide={t("Documents à vérifier, valider ou publier.", "Documents to review, approve or publish.")}>
                       <TableauDocuments documents={aTraiter} afficherDepartement vide={t("Rien à traiter pour le moment.", "Nothing to process for now.")} />
                     </Section>

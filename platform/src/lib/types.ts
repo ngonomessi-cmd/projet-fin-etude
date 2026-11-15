@@ -3,7 +3,7 @@
 // depuis cet environnement de développement — à régénérer avec
 // `supabase gen types typescript` une fois le projet Supabase créé.)
 
-export type RoleUtilisateur = "lecteur" | "redacteur" | "validateur" | "administrateur" | "auditeur";
+export type RoleUtilisateur = "lecteur" | "redacteur" | "validateur" | "superviseur" | "administrateur" | "auditeur";
 
 export type ClassificationDocument = "public_interne" | "restreint" | "confidentiel";
 

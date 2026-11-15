@@ -7,7 +7,7 @@ import type { RoleUtilisateur } from "@/lib/types";
 import { libelles } from "@/lib/labels";
 import { useTraduction } from "@/components/i18n/Langue";
 
-const ROLES: RoleUtilisateur[] = ["lecteur", "redacteur", "validateur", "administrateur", "auditeur"];
+const ROLES: RoleUtilisateur[] = ["lecteur", "redacteur", "validateur", "superviseur", "administrateur", "auditeur"];
 
 export function SelecteurRole({ utilisateurId, roleActuel }: { utilisateurId: string; roleActuel: RoleUtilisateur }) {
   const router = useRouter();

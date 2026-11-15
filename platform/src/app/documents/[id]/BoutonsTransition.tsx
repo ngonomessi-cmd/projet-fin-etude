@@ -25,7 +25,7 @@ export function BoutonsTransition({
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
 
-  const peutValider = role === "administrateur" || (role === "validateur" && meDepartement);
+  const peutValider = role === "administrateur" || role === "superviseur" || (role === "validateur" && meDepartement);
 
   async function transitionner(nouveauStatut: StatutDocument) {
     setEnCours(true);
