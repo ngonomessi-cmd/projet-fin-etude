@@ -362,7 +362,7 @@ Internet de Paris tombe ?
 
 **Déroulé.** Suppression du câble RTR-PARIS ↔ ISP-RTR, puis `ping 10.20.0.10` depuis PC-BUR-PARIS-1.
 
-**Résultat obtenu.** 0/4 : `Reply from 10.10.254.9: Destination host unreachable`.
+**Résultat obtenu.** 0/4 : `Reply from 10.10.254.9: Destination host unreachable`. Après remise en place du câble, les réponses reviennent seules (`TTL=122`) : le tunnel se rétablit sans intervention.
 
 **Interprétation.** Le tunnel GRE s'appuie sur l'unique lien Internet du site : quand ce lien tombe, le tunnel
 tombe et la route vers Lyon disparaît ; le réseau le signale aussitôt (« destination injoignable ») au lieu de
