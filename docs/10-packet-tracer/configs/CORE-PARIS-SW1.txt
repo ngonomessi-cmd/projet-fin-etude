@@ -117,8 +117,8 @@ interface Vlan99
  standby 99 preempt
 exit
 
-! --- VLAN de transit vers le pare-feu (pas d'HSRP ici : chaque cœur utilise
-!     directement sa propre route vers l'ASA, présent sur le même segment L2) ---
+! --- VLAN de transit vers le pare-feu (10.10.254.8/29) : HSRP groupe 100,
+!     VIP 10.10.254.12 = next-hop de la route de retour de l'ASA ---
 interface Vlan100
  ip address 10.10.254.10 255.255.255.248
  standby 100 ip 10.10.254.12
