@@ -1,6 +1,6 @@
-# Résultats des tests de la maquette (recette du 15/11/2026)
+# Journal brut de la recette de la maquette (15/11/2026)
 
-Résultats réellement observés dans Packet Tracer, test par test (complète le [plan de test](05-plan-de-test.md)).
+Relevé chronologique des résultats observés dans Packet Tracer, dans l'ordre de la recette. La synthèse commentée est dans [06 — Résultats de la recette](06-resultats-recette.md).
 
 | # | Test | Résultat observé | Statut |
 |---|---|---|---|

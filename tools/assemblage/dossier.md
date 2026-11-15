@@ -2325,6 +2325,11 @@ La validation du procès-verbal de recette, signé conjointement par la DSI de K
 projet MOM-TECH, marque le passage du projet en phase de fonctionnement normal (*Run*), couverte par
 le contrat de maintenance.
 
+En complément, la conception réseau du Lot A a été vérifiée sur la maquette Cisco Packet Tracer : 13 tests
+exécutés et conformes, dont la bascule de la passerelle HSRP (6 secondes de coupure), et 11 anomalies
+détectées puis corrigées pendant la recette (voir la partie consacrée à la maquette, « Résultats de la
+recette »).
+
 ## Conclusion
 
 ### Synthèse du projet
@@ -2794,6 +2799,8 @@ routage inter-VLAN, filtrage, NAT et liaison inter-site.
 - 03 — Guide de construction pas-à-pas
 - 04 — Configuration des serveurs et postes
 - 05 — Plan de test
+- 06 — Résultats de la recette — procès-verbal, anomalies corrigées, limites
+- 07 — Journal brut de la recette
 - configs/ — un fichier `.txt` par équipement réseau, prêt à copier-coller dans sa console
 
 ### Pourquoi les équipements diffèrent du dossier "réel"
@@ -2919,7 +2926,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | FW-PARIS | Ethernet0/1 (inside) | Automatique | CORE-PARIS-SW1 | FastEthernet0/1 |
 | FW-PARIS | Ethernet0/2 (inside) | Automatique | CORE-PARIS-SW2 | FastEthernet0/1 |
 | RTR-LYON | GigabitEthernet0/1 | Automatique | FW-LYON | Ethernet0/0 (outside) |
-| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | GigabitEthernet0/1 |
+| FW-LYON | Ethernet0/1 (inside) | Automatique | CORE-LYON-SW | FastEthernet0/1 |
 | CORE-PARIS-SW1 | FastEthernet0/2 | Automatique | CORE-PARIS-SW2 | FastEthernet0/2 |
 | CORE-PARIS-SW1 | FastEthernet0/3 | Automatique | SRV-PARIS | FastEthernet0 |
 | CORE-PARIS-SW1 | FastEthernet0/4 | Automatique | ACC-PARIS-SW | FastEthernet0/1 |
@@ -2930,7 +2937,7 @@ qu'à Paris, un site suffit à prouver la compétence ; un seul serveur et un se
 | ACC-PARIS-SW | FastEthernet0/6 | Automatique | LAPTOP-WIFI-PARIS-1 | FastEthernet0 |
 | ACC-PARIS-SW | FastEthernet0/7 | Automatique | IPPHONE-PARIS-1 | Port Switch |
 | CORE-LYON-SW | FastEthernet0/2 | Automatique | SRV-LYON | FastEthernet0 |
-| CORE-LYON-SW | FastEthernet0/1 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
+| CORE-LYON-SW | FastEthernet0/3 | Automatique | ACC-LYON-SW | FastEthernet0/1 |
 | ACC-LYON-SW | FastEthernet0/2 | Automatique | PC-BUR-LYON-1 | FastEthernet0 |
 | ACC-LYON-SW | FastEthernet0/3 | Automatique | PC-BANCAIRE-LYON-1 | FastEthernet0 |
 
@@ -2973,7 +2980,7 @@ ajoutées ici.
 |---|---|---|---|
 | RTR-PARIS ↔ ISP-RTR | 203.0.113.0/30 | RTR-PARIS Gi0/0 = .2 | ISP-RTR Gi0/0 = .1 |
 | RTR-PARIS ↔ FW-PARIS | 10.10.254.0/30 | RTR-PARIS Gi0/1 = .1 | FW-PARIS Eth0/0 (outside) = .2 |
-| FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.4/29 | FW-PARIS Eth0/1+0/2 (inside) = .5 | CORE-PARIS-SW1 = .6 · CORE-PARIS-SW2 = .7 |
+| FW-PARIS ↔ CORE-PARIS-SW1/SW2 (VLAN 100, transit partagé) | 10.10.254.8/29 | FW-PARIS Eth0/1+0/2 (inside) = .9 | CORE-PARIS-SW1 = .10 · CORE-PARIS-SW2 = .11 · adresse virtuelle HSRP = .12 |
 | CORE-PARIS-SW1 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/1 |
 | CORE-PARIS-SW2 ↔ ACC-PARIS-SW | trunk VLAN 10,20,40,50,99 | Fa0/1 | Fa0/2 |
 | Tunnel GRE Paris (Tunnel0) | 172.16.0.0/30 | RTR-PARIS = .1 | (RTR-LYON = .2) |
@@ -3041,7 +3048,7 @@ est concrètement observable dans la maquette Packet Tracer.
 | PT07 | Connectivité inter-site | `ping` de PC-BUR-PARIS-1 vers PC-BUR-LYON-1 | Réponse OK, via le tunnel GRE |
 | PT08 | Exemption de NAT inter-site | `show ip nat translations` sur RTR-PARIS après PT07 | **Aucune** entrée pour la destination 10.20.x.x |
 | PT09 | Téléphonie | Sur IPPHONE-PARIS-1, vérifier l'obtention d'une IP dans `10.10.10.0/23` | Voice VLAN fonctionnel |
-| PT10 | Filtrage du pare-feu | Depuis ISP-RTR, tenter `ping 10.10.254.5` (IP inside de FW-PARIS) | **Échoue** (aucune règle n'autorise l'entrant depuis l'extérieur) |
+| PT10 | Filtrage du pare-feu | Depuis RTR-PARIS (zone *outside*), `ping 10.10.254.2` (interface outside de l'ASA) puis `ping 10.10.0.11` (PC-BUR-PARIS-1) | Les deux **échouent** : l'ASA reste muet côté Internet et l'ACL `OUTSIDE-IN` n'admet en entrée que le LAN de Lyon — alors que la route existe (`10.10.0.0/16 via 10.10.254.2`, utilisée avec succès par PT07) |
 
 ### Tests de résilience (les plus importants pour la soutenance)
 
@@ -3049,8 +3056,9 @@ est concrètement observable dans la maquette Packet Tracer.
 
 1. Lancer un `ping -t 10.10.0.1` en continu depuis PC-BUR-PARIS-1 (onglet Desktop → Command Prompt).
 2. Sur CORE-PARIS-SW1, exécuter `show standby brief` pour confirmer qu'il est **Active**.
-3. Éteindre CORE-PARIS-SW1 (clic droit → Turn Off, ou simplement `shutdown` sur son interface Vlan10
-   depuis sa console avant l'extinction).
+3. Mettre CORE-PARIS-SW1 hors service : le 3560 de Packet Tracer n'a pas d'interrupteur, on coupe donc
+   tous ses ports (`interface range FastEthernet0/1 - 24 , GigabitEthernet0/1 - 2` puis `shutdown`),
+   ce qui équivaut, vu du réseau, à une perte totale de l'équipement.
 4. Observer le ping : quelques paquets perdus puis reprise automatique — CORE-PARIS-SW2 devient actif.
 5. Vérifier avec `show standby brief` sur CORE-PARIS-SW2 qu'il est passé à l'état **Active**.
 
@@ -3088,6 +3096,80 @@ nécessaire — démontre la suppression du point de défaillance unique identif
 | `show interfaces trunk` | Tous les switches | VLAN autorisés cohérents avec le plan |
 | `show port-security` | Switches d'accès | Nombre d'adresses MAC autorisées par port |
 | `show crypto session` *(si IPsec ajouté en option)* | RTR-PARIS, RTR-LYON | Tunnel IPsec établi au-dessus du GRE |
+
+## Résultats de la recette de la maquette
+
+La recette de la maquette a été menée le 15 novembre 2026 en suivant le plan de test.
+Chaque test a été exécuté sur la maquette réelle ; les résultats ci-dessous sont ceux relevés à l'écran (le
+relevé chronologique complet figure dans le journal de recette).
+
+### Procès-verbal
+
+| Test | Intitulé | Résultat obtenu | Statut |
+|---|---|---|---|
+| PT01 | Connectivité locale | La passerelle du VLAN 10 répond (`10.10.0.2`, premier saut du traceroute) | Conforme |
+| PT02 | Attribution DHCP | Paris : `10.10.0.11/22`, passerelle `10.10.0.1`, DNS `10.10.4.70` ; Lyon : `10.20.0.10/24`, passerelle `10.20.0.1`, DNS `10.20.1.40` | Conforme |
+| PT03 | Routage inter-VLAN (bancaire → serveurs) | Réponses de `10.10.4.70`, TTL=127 (un seul routage, par le cœur) | Conforme après correction (A11) |
+| PT04 | Isolement du VLAN invités | 0/4, « Destination host unreachable » renvoyé par le cœur : l'ACL des invités rejette le paquet | Conforme après correction (A3) |
+| PT05 | Accès Internet des invités | 3/4, TTL=124 | Conforme |
+| PT06 | Sortie Internet et NAT | 3/4, TTL=124 ; traductions `10.10.4.10 → 203.0.113.2` (PAT) sur RTR-PARIS | Conforme après correction (A6) |
+| PT07 | Paris ↔ Lyon par le tunnel GRE | 10/10, 0 % de perte, TTL=122 ; chemin vérifié par traceroute | Conforme après corrections (A2, A7, A9) |
+| PT08 | Pas de NAT entre les sites | Aucune traduction pour le trafic vers Lyon | Conforme |
+| PT09 | VLAN voix | Téléphone IP en `10.10.10.10/23` sur le VLAN 50 | Conforme après correction (A3) |
+| PT10 | Filtrage entrant du pare-feu | 0/5 depuis la zone extérieure, alors que la route existe : seule l'ACL bloque | Conforme |
+| PT11 | Bascule HSRP | Coupure de **6 secondes** sur un ping continu, puis reprise automatique ; le cœur 2 devient actif sur les 7 groupes | Conforme |
+| PT12 | Redondance vers le pare-feu et préemption | Internet reste joignable par le cœur 2 ; au retour du cœur 1, il reprend le rôle actif | Conforme |
+| PT13 | Panne du lien Internet | Paris ↔ Lyon injoignable (« destination injoignable »), reprise automatique au rebranchement | Conforme (limite connue) |
+
+**Bilan : 13 tests sur 13 exécutés et conformes ; 11 anomalies détectées et corrigées pendant la recette.**
+
+### Lecture des résultats clés
+
+- **TTL.** Chaque routeur traversé retire 1 au compteur TTL d'un paquet (128 au départ d'un poste) : TTL=127
+  signifie un routage, TTL=124 quatre. Pour PT07, TTL=122 compte six équipements routés ; le routeur du
+  fournisseur d'accès n'est pas compté, car le paquet le traverse encapsulé dans le tunnel GRE : c'est la
+  preuve que le trafic emprunte le tunnel.
+- **Traceroute de PT07.** `10.10.0.2` (cœur 1) → `10.10.254.9` (FW-PARIS) → `*` → `*` → `10.20.254.2`
+  (FW-LYON) → `10.20.254.6` (cœur de Lyon) → `10.20.0.10`. Les deux sauts muets sont les routeurs de bordure :
+  leurs messages « TTL expiré » sont filtrés par la règle d'entrée du pare-feu de Paris, qui n'admet que le
+  réseau de Lyon.
+- **Bascule HSRP.** Le cœur 2 attend de ne plus recevoir les messages du cœur 1 pendant le délai de détention
+  (10 s par défaut) avant de reprendre l'adresse virtuelle ; la coupure mesurée, 6 secondes, est conforme. Les
+  postes conservent leur passerelle : seul l'équipement qui la porte change. Le constat R1 de l'audit (cœur
+  unique, point de défaillance unique) est levé.
+- **Filtrage.** Le pare-feu ne répond pas aux pings venus de l'extérieur, même sur sa propre interface : il
+  reste invisible à un balayage d'adresses.
+
+### Anomalies détectées et corrections
+
+| N° | Symptôme | Cause | Correction |
+|---|---|---|---|
+| A1 | Postes en adresse APIPA (`169.254.x.x`) | Port du serveur resté dans le VLAN 1 | Ports d'accès réaffectés selon le plan de câblage |
+| A2 | Cœur de Lyon sans lien avec son pare-feu | Câblage réel décalé (pare-feu sur Fa0/1, accès sur Fa0/3) | Configuration alignée sur le câblage réel |
+| A3 | Portable invité placé dans le VLAN bureautique | Ports du portable et du téléphone inversés | Fa0/6 en VLAN 40, Fa0/7 en VLAN 10 + voix 50 |
+| A4 | `Bad mask /29` sur le transit | `.7` est l'adresse de diffusion de `10.10.254.0/29` | Transit renuméroté en `10.10.254.8/29` |
+| A5 | Pare-feu sans retour vers le LAN | Route de retour absente | Route vers `10.10.0.0/16` via l'adresse virtuelle HSRP `10.10.254.12` |
+| A6 | Pas d'accès Internet, table NAT vide | Routeurs de bordure sans route de retour vers leur LAN | Routes `10.10.0.0/16` et `10.20.0.0/16` via les pare-feu |
+| A7 | Flux inter-site refusé par les pare-feu | Un ASA refuse par défaut l'entrant | ACL `OUTSIDE-IN` limitée au réseau de l'autre site |
+| A8 | Trunks refusés sur les 3560 | Encapsulation à déclarer explicitement | `switchport trunk encapsulation dot1q` |
+| A9 | Pare-feu de Lyon à l'adresse d'usine | Configuration interne jamais appliquée | Interface interne `10.20.254.5/30` et route de retour |
+| A10 | Incohérence de VLAN natif | VLAN natif 999 absent d'un trunk | `switchport trunk native vlan 999` |
+| A11 | Après bascule, cœurs désappariés sur le VLAN de transit | VLAN 100 absent du trunk entre les deux cœurs | VLAN 100 ajouté au trunk, tables MAC et ARP vidées |
+
+Toutes les corrections ont été reportées dans les fichiers de configuration (`configs/`), de sorte que la
+documentation décrit ce qui fonctionne réellement. Trois familles se dégagent : les écarts entre câblage réel
+et configuration (A1, A2, A3), les oublis de conception du routage et du filtrage (A4 à A7, A11) et les
+particularités du matériel (A8 à A10). La méthode suivie est la même à chaque fois : test de proche en proche
+jusqu'au segment défaillant, comparaison du réel et de la configuration, correction, nouvel essai.
+
+### Limites constatées
+
+- **Serveur de Paris raccordé au seul cœur 1.** Pendant la panne du cœur 1, le trafic continue, mais le
+  serveur DHCP/DNS devient injoignable. La cible (Lot B) prévoit des serveurs virtualisés en cluster, raccordés
+  aux deux cœurs.
+- **Un seul lien Internet par site** (PT13) : la cible (Lot A) prévoit un second fournisseur d'accès et un
+  second tunnel.
+- **Tunnel GRE non chiffré** : la cible le protège par IPsec.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -3461,7 +3543,7 @@ que le NAT (Network Address Translation) fonctionne depuis les deux sites.
 |---|---|
 | PC-BUR-PARIS-1 | DHCP (automatique, VLAN 10) |
 | PC-BANCAIRE-PARIS-1 | IP statique `10.10.4.10` / `255.255.255.192` / passerelle `10.10.4.1` / DNS `10.10.4.70` |
-| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. 01) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/7 |
+| LAPTOP-WIFI-PARIS-1 | **Filaire** (module Wi-Fi incompatible dans PT, cf. 01) — DHCP, VLAN 40 (invités), branché sur ACC-PARIS-SW Fa0/6 |
 | IPPHONE-PARIS-1 | DHCP automatique via VLAN voix (aucune configuration manuelle) |
 | PC-BUR-LYON-1 | DHCP (VLAN 10) |
 | PC-BANCAIRE-LYON-1 | IP statique `10.20.1.10` / `255.255.255.224` / passerelle `10.20.1.1` / DNS `10.20.1.40` |

@@ -286,23 +286,24 @@ rect(s, 0.5, 6.25, 12.3, 0.65, fill=NAVY)
 text(s, 0.7, 6.28, 11.9, 0.6, "Compétences C07 · C08 : routage, VLAN, routage inter-VLAN, redondance du cœur", size=17, bold=True, color=GOLD, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
 
 # ---------------------------------------------------------------- 9c. Tests de la maquette
-s = slide("Maquette : tests de résilience et de sécurité", "3 · Actions réalisées",
-          "Le plan de test de la maquette comporte treize tests. Voici les plus parlants. "
-          "Le test de bascule HSRP : je lance un ping continu, j'éteins le cœur actif, quelques paquets sont perdus puis le second cœur reprend : c'est la suppression du point de défaillance unique R1. "
-          "Le second test : le trafic vers Internet continue grâce au raccordement indépendant du second cœur au pare-feu. "
-          "Côté sécurité : le VLAN invités est isolé du réseau interne mais garde l'accès à Internet, le NAT n'est pas appliqué au trafic inter-site, et le pare-feu bloque les connexions entrantes depuis l'extérieur. "
-          "Je précise les simplifications assumées : un seul pare-feu par site, pas de cluster ; un seul FAI simulé par site ; GRE à la place d'IPsec ; échelle réduite à un poste par VLAN. "
-          "La redondance complète est décrite dans le Lot A. [À dérouler en direct si le temps le permet, ou montrer les captures.]")
-table(s, 0.7, 1.45, 12.0, [("Test", 1.0), ("Action", 3.2), ("Résultat attendu", 3.2)], [
-    ["PT11", "Éteindre le cœur actif pendant un ping continu", "Quelques paquets perdus, le second cœur prend le relais (HSRP)"],
-    ["PT12", "Cœur 1 éteint : ping vers Internet", "Le trafic passe par le cœur 2, relié au pare-feu"],
-    ["PT04", "Ping du VLAN invités vers le LAN interne", "Échec : bloqué par l'ACL des invités"],
-    ["PT05", "Ping du VLAN invités vers Internet", "Réponse : l'ACL ne bloque que le LAN"],
-    ["PT07", "Ping Paris → Lyon", "Réponse via le tunnel GRE, sans NAT"],
-    ["PT10", "Ping depuis Internet vers l'adresse du pare-feu", "Échec : aucune règle n'autorise l'entrant"]], size=14, hsize=14, rowh=0.6)
-rect(s, 0.7, 5.75, 12.0, 1.15, fill=GOLDL)
-text(s, 0.9, 5.8, 11.6, 1.1, ["Simplifications assumées : un pare-feu par site (pas de cluster HA) · un FAI simulé par site · GRE à la place d'IPsec ·",
-                              "un poste par VLAN · équivalents Packet Tracer des Catalyst 9300 et FortiGate (absents du catalogue)"], size=14, color=INK, anchor=MSO_ANCHOR.MIDDLE, spacing=3)
+s = slide("Maquette : la recette réalisée", "3 · Actions réalisées",
+          "J'ai mené la recette complète de la maquette le 15 novembre : treize tests, tous exécutés, tous conformes. Voici les plus parlants, avec les résultats réels. "
+          "La bascule HSRP : pendant un ping continu vers Internet, je mets le cœur actif hors service ; six paquets sont perdus, soit six secondes, puis le second cœur reprend seul, sur les sept VLAN. "
+          "C'est la levée du constat R1 : en audit, une panne du cœur coupait toute l'agence ; aujourd'hui elle coûte six secondes, sans intervention. Au retour du cœur 1, la préemption lui rend le rôle actif. "
+          "Le Wi-Fi invités est isolé : le cœur répond « destination injoignable », alors qu'Internet reste accessible. Paris joint Lyon à 10 sur 10 ; le TTL de 122 et le traceroute prouvent le passage par le tunnel GRE. "
+          "Depuis l'extérieur, le pare-feu bloque tout, et ne répond même pas au ping. "
+          "Surtout, la recette a joué son rôle : elle a détecté onze anomalies, toutes corrigées et reportées dans les configurations. La plus parlante : au premier essai, un portable invité se retrouvait dans le réseau des employés, parce que deux ports étaient inversés. "
+          "Simplifications assumées : un pare-feu par site, un lien Internet par site, GRE sans IPsec, un poste par VLAN. [Dérouler PT11 en direct si le temps le permet, sinon montrer les captures.]")
+table(s, 0.7, 1.4, 12.0, [("Test", 1.0), ("Action", 3.3), ("Résultat obtenu", 4.1)], [
+    ["PT11", "Cœur actif hors service pendant un ping continu", "6 paquets perdus (≈ 6 s), puis reprise automatique : le cœur 2 devient actif sur les 7 VLAN"],
+    ["PT12", "Cœur 1 hors service, puis remis en service", "Internet joignable via le cœur 2 ; au retour, le cœur 1 reprend la main (préemption)"],
+    ["PT04", "Portable invité → réseau interne", "0/4, « destination injoignable » renvoyé par le cœur : l'ACL bloque"],
+    ["PT05", "Portable invité → Internet", "3/4 réponses : seul le LAN est interdit"],
+    ["PT07", "Paris → Lyon", "10/10, TTL 122 : passage par le tunnel GRE prouvé par le traceroute"],
+    ["PT10", "Extérieur → réseau interne et pare-feu", "0/5 : le pare-feu bloque et reste muet"]], size=13, hsize=14, rowh=0.55)
+kpi(s, 0.7, 5.55, 3.85, "13 / 13", "tests exécutés et conformes")
+kpi(s, 4.775, 5.55, 3.85, "6 s", "de coupure à la panne du cœur\n(au lieu d'un arrêt complet)", couleur=GREEN)
+kpi(s, 8.85, 5.55, 3.85, "11", "anomalies détectées par la recette\net corrigées")
 
 # ---------------------------------------------------------------- 10. Focus GED
 s = slide("Focus : la GED sécurisée (Lot F)", "4 · Focus GED",
