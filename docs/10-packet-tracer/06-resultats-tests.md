@@ -21,6 +21,8 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT05 | Accès Internet des invités : `ping 203.0.113.10` | 3/4, TTL=124 (1er paquet perdu = ARP) : l'ACL bloque le LAN interne, pas Internet | Conforme |
 | PT09 | Téléphonie : IPPHONE-PARIS-1 (Cisco 7960) sur ACC-PARIS-SW Fa0/7 | `Vlan50` up, `10.10.10.10/23`, passerelle `10.10.10.1` (VIP HSRP du VLAN voix) : le téléphone a reconnu la voice VLAN 50 annoncée par le commutateur | Conforme |
 | PT11 (état initial) | `show standby brief` sur CORE-PARIS-SW1 | 7 groupes HSRP Active, priorité 110, préemption (P) : Vl10 → VIP `10.10.0.1`, Vl20 → `10.10.4.1`, Vl30 → `10.10.4.65`, Vl40 → `10.10.8.1`, Vl50 → `10.10.10.1`, Vl99 → `10.10.12.1`, Vl100 → `10.10.254.12` ; Standby = SW2 sur chaque VLAN. `ping -t 203.0.113.10` stable (TTL=124) | Conforme |
+| PT11 | Panne de CORE-PARIS-SW1 (tous ses ports en `shutdown` = perte totale de l'équipement ; le 3560 de PT n'a pas d'interrupteur) pendant `ping -t 203.0.113.10` | 6 « Request timed out » consécutifs (≈ 6 s, temps de détection HSRP), puis reprise automatique des réponses sans aucune intervention | Conforme |
+| PT12 | Redondance de l'uplink cœur → pare-feu (même ping, SW1 hors service) | Le trafic Internet reprend via SW2 → FW-PARIS (Et0/2) : la VIP `10.10.254.12` (route de retour de l'ASA) a basculé sur SW2 avec les VIP des VLAN utilisateurs | Conforme |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
