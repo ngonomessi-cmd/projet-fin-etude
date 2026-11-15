@@ -11,6 +11,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | — | FW-PARIS → VIP HSRP `10.10.254.12` | 4/5 (1er paquet perdu = résolution ARP) | Conforme |
 | — | FW-PARIS → RTR-PARIS `10.10.254.1` (outside) | 4/5 | Conforme |
 | PT06 | Sortie Internet (PC-BANCAIRE-PARIS-1 → `203.0.113.10`) | 3/4 réponses, TTL=124 (4 sauts routés : cœur, ASA, RTR-PARIS, ISP), après ajout de la route de retour | Conforme |
+| PT06 (NAT) | `show ip nat translations` sur RTR-PARIS | 4 entrées `icmp 203.0.113.2:9-12 ↔ 10.10.4.10:9-12` vers `203.0.113.10` (PAT sur l'adresse publique de Gi0/0) | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
 
