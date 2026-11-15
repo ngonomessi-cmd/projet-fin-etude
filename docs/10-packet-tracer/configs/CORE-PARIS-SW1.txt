@@ -120,11 +120,14 @@ exit
 ! --- VLAN de transit vers le pare-feu (pas d'HSRP ici : chaque cœur utilise
 !     directement sa propre route vers l'ASA, présent sur le même segment L2) ---
 interface Vlan100
- ip address 10.10.254.6 255.255.255.248
+ ip address 10.10.254.10 255.255.255.248
+ standby 100 ip 10.10.254.12
+ standby 100 priority 110
+ standby 100 preempt
 exit
 
 ! --- Routage : tout ce qui sort du site part par le pare-feu ---
-ip route 0.0.0.0 0.0.0.0 10.10.254.5
+ip route 0.0.0.0 0.0.0.0 10.10.254.9
 
 ! --- ACL d'isolement du VLAN invités (reprise du dossier, constat R5) : aucun accès
 !     aux réseaux internes de KHS Bank, seule la sortie vers Internet est autorisée. ---

@@ -104,11 +104,14 @@ interface Vlan99
 exit
 
 interface Vlan100
- ip address 10.10.254.7 255.255.255.248
+ ip address 10.10.254.11 255.255.255.248
+ standby 100 ip 10.10.254.12
+ standby 100 priority 90
+ standby 100 preempt
 exit
 
 ! --- Routage : route directe et indépendante vers le pare-feu (ne dépend pas de SW1) ---
-ip route 0.0.0.0 0.0.0.0 10.10.254.5
+ip route 0.0.0.0 0.0.0.0 10.10.254.9
 
 ! --- ACL d'isolement du VLAN invités (identique à CORE-PARIS-SW1) ---
 ip access-list extended ACL-INVITES

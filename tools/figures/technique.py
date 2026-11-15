@@ -259,7 +259,7 @@ def maquette_logique():
     # Paris : deux cœurs en HSRP
     d.lien([(345, 380), (345, 410), (215, 410), (215, 455)])
     d.lien([(375, 380), (375, 410), (505, 410), (505, 455)])
-    d.texte(360, 432, "VLAN 100 — transit 10.10.254.4/29", 12, C["gris"], italique=True)
+    d.texte(360, 432, "VLAN 100 — transit 10.10.254.8/29", 12, C["gris"], italique=True)
     d.icone("l3", 215, 480, "CORE-PARIS-SW1", "HSRP actif")
     d.icone("l3", 505, 480, "CORE-PARIS-SW2", "HSRP secours")
     d.lien([(243, 470), (477, 470)], "trunk", couleur=C["bleu"])
