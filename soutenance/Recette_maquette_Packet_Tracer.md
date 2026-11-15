@@ -355,12 +355,25 @@ secondes, sans intervention. »
 **Interprétation.** C'est la **préemption** (`standby … preempt`) : l'équipement de plus forte priorité
 reprend le rôle actif dès qu'il revient. Sans elle, SW2 resterait actif et SW1 resterait en secours.
 
+## PT13 — Panne du lien Internet de Paris
+
+**Objectif.** Montrer honnêtement la limite de la maquette : que devient la liaison Paris ↔ Lyon si le lien
+Internet de Paris tombe ?
+
+**Déroulé.** Suppression du câble RTR-PARIS ↔ ISP-RTR, puis `ping 10.20.0.10` depuis PC-BUR-PARIS-1.
+
+**Résultat obtenu.** 0/4 : `Reply from 10.10.254.9: Destination host unreachable`.
+
+**Interprétation.** Le tunnel GRE s'appuie sur l'unique lien Internet du site : quand ce lien tombe, le tunnel
+tombe et la route vers Lyon disparaît ; le réseau le signale aussitôt (« destination injoignable ») au lieu de
+laisser les paquets se perdre. C'est le comportement attendu, et la raison pour laquelle la cible du dossier
+prévoit un second fournisseur d'accès et un second tunnel (Lot A).
+
 ## Tests non exécutés à ce jour
 
 | Test | Procédure (2 minutes) | Résultat attendu |
 |---|---|---|
 | PT03 — Inter-VLAN autorisé | Sur PC-BANCAIRE-PARIS-1 : `ping 10.10.4.70` (SRV-PARIS) | Réponses, `TTL=127` (un seul routage, par SW1) |
-| PT13 — Panne du lien inter-site | Débrancher le câble RTR-PARIS ↔ ISP-RTR, puis `ping 10.20.0.10` depuis PC-BUR-PARIS-1 | Échec : la maquette n'a qu'un lien Internet par site (voir « Limites connues ») |
 
 # Anomalies détectées pendant la recette et corrections
 
@@ -423,7 +436,7 @@ qui fonctionne réellement.
 | PT10 | Filtrage entrant du pare-feu | 0/5 et 0/5 depuis l'extérieur | Conforme |
 | PT11 | Bascule HSRP | 6 s de coupure, reprise automatique, SW2 Active sur 7 groupes | Conforme |
 | PT12 | Redondance vers le pare-feu et préemption | Internet joignable via SW2 ; SW1 redevient Active à son retour | Conforme |
-| PT13 | Panne du lien inter-site | — | Non exécuté (limite connue) |
+| PT13 | Panne du lien inter-site | 0/4, « Destination host unreachable » : sans lien Internet, plus de tunnel | Conforme (limite connue) |
 
 **Bilan : 11 tests conformes sur 11 exécutés ; 10 anomalies détectées et corrigées ; 2 tests restant à
 exécuter.**
