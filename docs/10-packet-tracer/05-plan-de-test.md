@@ -24,8 +24,9 @@ est concrètement observable dans la maquette Packet Tracer.
 
 1. Lancer un `ping -t 10.10.0.1` en continu depuis PC-BUR-PARIS-1 (onglet Desktop → Command Prompt).
 2. Sur CORE-PARIS-SW1, exécuter `show standby brief` pour confirmer qu'il est **Active**.
-3. Éteindre CORE-PARIS-SW1 (clic droit → Turn Off, ou simplement `shutdown` sur son interface Vlan10
-   depuis sa console avant l'extinction).
+3. Mettre CORE-PARIS-SW1 hors service : le 3560 de Packet Tracer n'a pas d'interrupteur, on coupe donc
+   tous ses ports (`interface range FastEthernet0/1 - 24 , GigabitEthernet0/1 - 2` puis `shutdown`),
+   ce qui équivaut, vu du réseau, à une perte totale de l'équipement.
 4. Observer le ping : quelques paquets perdus puis reprise automatique — CORE-PARIS-SW2 devient actif.
 5. Vérifier avec `show standby brief` sur CORE-PARIS-SW2 qu'il est passé à l'état **Active**.
 
