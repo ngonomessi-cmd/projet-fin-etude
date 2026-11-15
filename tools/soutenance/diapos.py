@@ -462,11 +462,20 @@ anime(s, [f, pic] + t)
 
 # ---------------------------------------------------------------- 8. Audit
 s = slide("L'audit de l'existant : 17 constats critiques", 3, "audit")
-t = [tuile(s, 0.6, 1.6, 3.95, 4.05, "network", "Réseau · 5", "R1 Switch cœur unique\nR2 Pare-feu unique, absent à Lyon\nR3 VPN inter-sites unique\nR4 FAI unique par site\nR5 Aucune segmentation / DMZ", accent=RED, size=15),
-     tuile(s, 4.72, 1.6, 3.95, 4.05, "server-crash", "Systèmes · 6", "S1 Baie de stockage unique\nS2 Sauvegardes sans copie externe\nS3 SQL Server 2012 en fin de support\nS4 Exchange 2013 obsolète\nS5 Windows 8 sur les postes\nS8 Aucun RPO/RTO formalisé", accent=RED, size=15),
-     tuile(s, 8.84, 1.6, 3.95, 4.05, "shield-alert", "Cybersécurité · 6", "C1 Pas de SOC/SIEM\nC2 Pas de MFA (DSP2)\nC3 Pas de PRA/PCA\nC4 Pas d'EDR centralisé\nC5 Documents non classifiés, sans GED\nC8 Comptes à privilèges non gérés", accent=RED, size=15)]
-t.append(text(s, 0.6, 5.7, 12.2, 0.35, "17 constats de criticité élevée sur 23 relevés · les 6 autres, de criticité moyenne (R6, R7, S6, S7, C6, C7), sont traités dans les mêmes lots", size=13, color=GREY, italic=True, align=PP_ALIGN.CENTER))
-b = bandeau(s, 6.15, "3 axes : redondance · détection et continuité · protection des données sensibles", nom_icone="target")
+t = [tuile(s, 0.6, 1.55, 3.95, 3.2, "network", "Réseau · 5", "R1 Switch cœur unique\nR2 Pare-feu unique, absent à Lyon\nR3 VPN inter-sites unique\nR4 FAI unique par site\nR5 Aucune segmentation / DMZ", accent=RED, size=14),
+     tuile(s, 4.72, 1.55, 3.95, 3.2, "server-crash", "Systèmes · 6", "S1 Baie de stockage unique\nS2 Sauvegardes sans copie externe\nS3 SQL Server 2012 en fin de support\nS4 Exchange 2013 obsolète\nS5 Windows 8 sur les postes\nS8 Aucun RPO/RTO formalisé", accent=RED, size=14),
+     tuile(s, 8.84, 1.55, 3.95, 3.2, "shield-alert", "Cybersécurité · 6", "C1 Pas de SOC/SIEM\nC2 Pas de MFA (DSP2)\nC3 Pas de PRA/PCA\nC4 Pas d'EDR centralisé\nC5 Documents non classifiés, sans GED\nC8 Comptes à privilèges non gérés", accent=RED, size=14)]
+g = groupe(s)
+text(g, 0.6, 4.88, 12.2, 0.35, "+ 6 constats de criticité moyenne, traités dans les mêmes lots (23 constats au total)", size=14, bold=True, color=GREY)
+moyens = [("R6", "Équipements hors garantie", "Lots A, I"), ("R7", "Câblage vieillissant", "Lot A"), ("S6", "Pas d'outil de correctifs", "Lot J"),
+          ("S7", "Pas de gestion de parc", "Lot I"), ("C6", "Pas de PSSI formalisée", "Lot F"), ("C7", "Sensibilisation insuffisante", "Formation")]
+for k, (code, lib, lot) in enumerate(moyens):
+    x = 0.6 + k * 2.05
+    rect(g, x, 5.28, 1.95, 0.78, fill=MIST, line=LINE, shape=MSO_SHAPE.ROUNDED_RECTANGLE, rayon=0.15)
+    text(g, x + 0.1, 5.3, 1.8, 0.4, [code + " · " + lot], size=11, bold=True, color=GOLD)
+    text(g, x + 0.1, 5.6, 1.8, 0.45, lib, size=12, color=INK)
+t.append(g)
+b = bandeau(s, 6.25, "3 axes : redondance · détection et continuité · protection des données sensibles", nom_icone="target", size=18, h=0.62)
 anime(s, t + [b])
 
 # ---------------------------------------------------------------- 9. Solutions
