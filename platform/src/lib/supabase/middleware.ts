@@ -68,6 +68,21 @@ export async function mettreAJourSession(requete: NextRequest) {
       return NextResponse.redirect(urlMfa);
     }
   }
+  // Compte créé par un administrateur avec un mot de passe provisoire : le changer
+  // est obligatoire avant tout accès, une fois la double authentification validée.
+  // L'indicateur est dans app_metadata, que seul le serveur (clé de service) peut modifier.
+  const pageMotDePasse = requete.nextUrl.pathname.startsWith("/changer-mot-de-passe");
+  const doitChanger = user?.app_metadata?.doit_changer_mdp === true;
+  if (user && doitChanger && !cheminPublic && !pageMfa && !pageMotDePasse) {
+    const url = requete.nextUrl.clone();
+    url.pathname = "/changer-mot-de-passe";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+  if (user && !doitChanger && pageMotDePasse) {
+    return NextResponse.redirect(new URL("/documents", requete.url));
+  }
+
   // Code déjà validé : la page /mfa renvoie directement vers la destination.
   if (user && pageMfa) {
     const { data: niveau } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();

@@ -16,7 +16,7 @@ Client : KHS Bank — Prestataire : MOM-TECH
 
 **Prestataire :** MOM-TECH
 
-**Candidats :** *[Prénom NOM 1]*, *[Prénom NOM 2]*, *[Prénom NOM 3]*, *[Prénom NOM 4]*
+**Candidats :** NGONO MESSI Julien Joël, ADJE Tchaffa Oladé Moïse, WAFO Franklin Junior, ABAYOMI Obachegoun Olabissi Majesté
 
 **Session :** 2026
 
@@ -62,21 +62,7 @@ que la direction a décidé de confier la refonte de son système d'information 
 
 ## Organisation
 
-```
-                         Direction Générale
-                                 │
-        ┌───────────────┬───────┼───────┬────────────────┐
-        │                │               │                │
-  Direction des    Direction des   Direction     Direction Conformité
-  Systèmes         Risques &       Commerciale    & Sécurité (RSSI)
-  d'Information     Contrôle
-  (DSI)             Interne
-        │
-   ┌────┴─────┬─────────────┬───────────────┐
-Responsable  Responsable   Responsable      Chef de Projet
-Infrastructure Support     Sécurité SI      (référent MOM-TECH)
-& Réseau      Utilisateurs  (interne)
-```
+![Organigramme simplifié de KHS Bank](docs/figures/organigramme-khs.png)
 
 Le pilotage du projet côté client est assuré conjointement par la **DSI** (maîtrise d'ouvrage) et la
 **Direction Conformité & Sécurité**, qui doit valider toute solution impactant la protection des données
@@ -139,26 +125,16 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 ## Organisation de l'équipe projet
 
-```
-                        Direction de projet MOM-TECH
-                                    │
-                 ┌──────────────────┴──────────────────┐
-                 │                                       │
-     Équipe Architecture Système                Équipe Réseau & Sécurité
-                 │                                       │
-   ┌─────────────┴─────────────┐          ┌──────────────┴──────────────┐
-Ingénieur Systèmes         Ingénieur      Ingénieur Réseaux &      Ingénieur
-& Virtualisation            IA / Data      Cybersécurité            Cybersécurité / SOC
-```
+![Organisation de l'équipe projet MOM-TECH](docs/figures/organigramme-momtech.png)
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|
-| Chef de projet / Ingénieur Architecture Système | *[Prénom NOM 1]* | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA |
-| Ingénieur Réseaux & Sécurité | *[Prénom NOM 2]* | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
-| Ingénieur Cybersécurité / SOC | *[Prénom NOM 3]* | Lot D, F (audit sécurité), SOC/SIEM, GED sécurisée, conformité RGPD/ACPR |
-| Ingénieur Systèmes & Déploiement | *[Prénom NOM 4]* | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
+| Chef de projet / Ingénieur Architecture Système | NGONO MESSI Julien Joël | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA, Lot F |
+| Ingénieur Réseaux & Sécurité | ADJE Tchaffa Oladé Moïse | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
+| Ingénieur Cybersécurité / SOC | ABAYOMI Obachegoun Olabissi Majesté | Lot D, F (audit sécurité), SOC/SIEM, conformité RGPD/ACPR |
+| Ingénieur Systèmes & Déploiement | WAFO Franklin Junior | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
 
-*(Noms des 4 candidats à compléter — la répartition ci-dessus respecte l'obligation du cahier des charges
+*(La répartition ci-dessus respecte l'obligation du cahier des charges
 de structurer l'équipe en deux sous-équipes Architecture Système / Réseau & Sécurité, tout en couvrant
 l'ensemble des lots principaux et complémentaires.)*
 

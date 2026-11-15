@@ -35,7 +35,8 @@ MX une fois l'ensemble des boîtes migrées et validées.
 
 Déploiement de Microsoft Defender for Endpoint sur l'ensemble du parc. Connexion de l'ensemble des
 sources (pare-feu, EDR, identité, messagerie, GED) à **Microsoft Sentinel**. Activation des politiques
-Purview (classification, DLP) sur la GED. Déploiement du bastion PAM (Entra PIM) pour les comptes à
+Purview DLP sur la messagerie, Teams et OneDrive ; ouverture de la GED sécurisée aux utilisateurs
+(import des documents classés, enrôlement de la double authentification). Déploiement du bastion PAM (Entra PIM) pour les comptes à
 privilèges.
 
 ## Étape 6 — Application métier KHS-Core

@@ -27,21 +27,7 @@ que la direction a décidé de confier la refonte de son système d'information 
 
 ## Organisation
 
-```
-                         Direction Générale
-                                 │
-        ┌───────────────┬───────┼───────┬────────────────┐
-        │                │               │                │
-  Direction des    Direction des   Direction     Direction Conformité
-  Systèmes         Risques &       Commerciale    & Sécurité (RSSI)
-  d'Information     Contrôle
-  (DSI)             Interne
-        │
-   ┌────┴─────┬─────────────┬───────────────┐
-Responsable  Responsable   Responsable      Chef de Projet
-Infrastructure Support     Sécurité SI      (référent MOM-TECH)
-& Réseau      Utilisateurs  (interne)
-```
+![Organigramme simplifié de KHS Bank](../figures/organigramme-khs.png)
 
 Le pilotage du projet côté client est assuré conjointement par la **DSI** (maîtrise d'ouvrage) et la
 **Direction Conformité & Sécurité**, qui doit valider toute solution impactant la protection des données

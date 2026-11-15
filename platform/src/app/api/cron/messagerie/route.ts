@@ -16,7 +16,8 @@ import { creerClientAdmin } from "@/lib/supabase/admin";
 // même nom est définie sur le projet).
 export async function GET(requete: NextRequest) {
   const secret = process.env.CRON_SECRET;
-  if (secret && requete.headers.get("authorization") !== `Bearer ${secret}`) {
+  // Sans secret configuré, la route refuse tout appel (elle ne doit jamais être ouverte au public).
+  if (!secret || requete.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ erreur: "Non autorisé" }, { status: 401 });
   }
 

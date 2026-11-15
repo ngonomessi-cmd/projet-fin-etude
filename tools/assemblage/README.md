@@ -1,38 +1,34 @@
 # Assemblage du dossier final (Word)
 
-Ce dossier contient les outils pour regénérer le document Word final
-(`export/Dossier_de_mise_en_situation_KHS_Bank_MOM-TECH.docx`) à partir des sources Markdown du dossier
-`docs/`.
+Ce dossier contient les outils qui produisent les documents Word du dossier (`export/`) à partir des sources
+Markdown de `docs/` et des figures de `docs/figures/`.
 
-## Prérequis
-
-- `pandoc` (≥ 2.x)
-- `libreoffice-writer` (uniquement pour prévisualiser le rendu en PDF, optionnel)
-
-## Régénérer le document
-
-Depuis la racine du dépôt :
+## Régénérer tout (figures + documents)
 
 ```bash
-python3 tools/assemblage/build.py
-pandoc tools/assemblage/dossier.md \
-  -o export/Dossier_de_mise_en_situation_KHS_Bank_MOM-TECH.docx \
-  --reference-doc=tools/assemblage/khs-template.docx \
-  --toc-depth=3
+bash tools/assemblage/generer.sh
 ```
 
-`build.py` concatène tous les fichiers de `docs/` dans l'ordre du sommaire, retire les liens Markdown
-internes (inutiles une fois le document fusionné), décale les niveaux de titre pour qu'ils s'imbriquent
-sous chaque grande partie, insère les sauts de page et le sommaire (champ TOC natif Word), et ajoute une
-page de garde et l'abstract en anglais.
+Prérequis : `python3` avec `python-docx`, `pandoc` (≥ 3), `node` avec `playwright` (navigateur Chromium) et la
+police Carlito (équivalente métrique de Calibri).
 
-`khs-template.docx` est un modèle de référence pandoc personnalisé : police Calibri 11 pt pour le corps de
-texte (conforme à l'exigence Arial/Calibri 10-11), pied de page avec numérotation « Page X sur Y », marges
-2 cm, format A4, et une police réduite (Consolas 7 pt) pour les blocs de schémas ASCII afin qu'ils tiennent
-dans la largeur de page sans retour à la ligne intempestif.
+## Ce que fait la chaîne
+
+1. **Figures** (`tools/figures/`) : chaque schéma est décrit en HTML/SVG avec une charte graphique commune,
+   puis rendu en PNG haute résolution par Chromium (`rendu.mjs`). Le diagramme de Gantt (`gantt.py`) est
+   construit directement à partir du tableau des tâches de `docs/03-gestion-de-projet/gantt.md` ; la matrice
+   des risques (`gestion.py`) à partir du registre des risques. Modifier ces tableaux puis relancer la
+   génération met les figures à jour.
+2. **Assemblage** (`build.py`) : concatène les fichiers de `docs/` dans l'ordre du sommaire, retire les liens
+   internes, décale les niveaux de titre, insère les sauts de page, le sommaire et les annexes.
+3. **Conversion** : `pandoc` avec le modèle `khs-template.docx` (Calibri 11 pt, marges 2 cm, A4).
+4. **Finition** (`finition.py`) : page de garde composée, table des figures, légendes numérotées
+   « Figure n » (champ SEQ), tableaux mis en forme (en-tête répété, filets, lignes alternées, largeurs de
+   colonnes proportionnées), pages en paysage pour le PBS, le WBS et le Gantt, en-tête courant, corps de
+   texte justifié.
 
 ## Après génération
 
-Ouvrir le document dans Microsoft Word et **mettre à jour le sommaire** (clic droit sur le sommaire →
-« Mettre à jour les champs », ou Ctrl+A puis F9) : le champ est généré à l'ouverture par Word et apparaît
-vide si le document est prévisualisé uniquement via LibreOffice en ligne de commande.
+Ouvrir le document dans Microsoft Word et **accepter la mise à jour des champs** proposée à l'ouverture : le
+sommaire et la table des figures se remplissent alors (ils apparaissent vides dans un aperçu LibreOffice en
+ligne de commande).

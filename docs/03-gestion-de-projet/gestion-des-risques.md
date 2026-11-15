@@ -33,6 +33,8 @@ Criticité = Impact × Probabilité (sur 25).
 | P11 | Perte de données lors de la migration de la base SQL Server 2012 | Technique | 5 | 2 | 10 | Sauvegarde complète avant migration, migration à blanc en environnement de test, contrôle de cohérence post-migration | Ing. Systèmes | 5 |
 | P12 | Manque de compétences internes KHS Bank pour la reprise en MCO après le projet | Organisationnel | 3 | 3 | 9 | Plan de formation des équipes techniques internes, documentation d'exploitation détaillée, période de transfert de compétences | Chef de projet | 6 |
 
+![Matrice de criticité des risques projet avant mitigation (impact × probabilité)](../figures/matrice-risques.png)
+
 ## Priorisation
 
 Trois risques dépassent le seuil de criticité 12 avant mitigation (**P4**, **P5**, **P1**) et concentrent

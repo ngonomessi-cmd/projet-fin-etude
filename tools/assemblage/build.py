@@ -6,7 +6,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 DOCS = REPO + "/docs"
 
-LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]*\.md[^)]*\)")
+LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\((?!https?:)[^)]*\)")
 HEADING_RE = re.compile(r"^(#{1,6})(\s.*)?$")
 FENCE_RE = re.compile(r"^\s*```")
 
@@ -49,6 +49,10 @@ def load(relpath: str, shift: int = 1) -> str:
     with open(f"{DOCS}/{relpath}", encoding="utf-8") as f:
         text = f.read()
     text = strip_md_links(text)
+    # Images référencées par un simple nom de fichier : chemin relatif au dépôt une fois fusionné.
+    text = re.sub(r"\]\((?:\.\./)+figures/", "](docs/figures/", text)
+    dossier = os.path.dirname(relpath)
+    text = re.sub(r"(!\[[^\]]*\]\()([^)/:]+\.(?:png|jpg|jpeg))\)", lambda m: f"{m.group(1)}docs/{dossier}/{m.group(2)})", text)
     text = shift_headings(text, shift)
     return text.strip("\n")
 
@@ -94,6 +98,7 @@ PARTS = [
         "05-solutions/lot-d-antivirus-edr.md",
         "05-solutions/lot-e-ids-ips.md",
         "05-solutions/lot-f-audit-securite-ged.md",
+        "05-solutions/lot-f-demonstrateur-ged.md",
         "05-solutions/lot-g-pra-pca.md",
         "05-solutions/lot-h-monitoring-ticketing.md",
         "05-solutions/lot-i-gestion-parc-maintenance.md",
@@ -127,11 +132,21 @@ PARTS = [
         "09-procedures/configuration-commutateur-coeur-n3.md",
         "09-procedures/procedure-lot1-stockage-sauvegarde.md",
     ]),
+    ("10. Maquette Cisco Packet Tracer", [
+        "10-packet-tracer/README.md",
+        "10-packet-tracer/01-topologie-et-cablage.md",
+        "10-packet-tracer/02-plan-adressage.md",
+        "10-packet-tracer/05-plan-de-test.md",
+    ]),
 ]
 
 ANNEXES = [
     ("Annexe A — Cahier des charges KHS Bank (texte intégral)", [
         "02-cahier-des-charges/cahier-des-charges-khs-bank.md",
+    ]),
+    ("Annexe B — Maquette Packet Tracer : construction et configuration des postes", [
+        "10-packet-tracer/03-guide-construction.md",
+        "10-packet-tracer/04-configuration-serveurs-et-postes.md",
     ]),
 ]
 
@@ -157,7 +172,7 @@ Migration et sécurisation du système d'information de KHS Bank
 
 **Prestataire :** MOM-TECH
 
-**Candidats :** *[Prénom NOM 1]*, *[Prénom NOM 2]*, *[Prénom NOM 3]*, *[Prénom NOM 4]*
+**Candidats :** NGONO MESSI Julien Joël, ADJE Tchaffa Oladé Moïse, WAFO Franklin Junior, ABAYOMI Obachegoun Olabissi Majesté
 
 **Session :** 2026
 """

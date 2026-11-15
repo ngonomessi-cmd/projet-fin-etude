@@ -260,6 +260,8 @@ const LABEL_ACTION: Record<string, [string, string]> = {
   classement: ["Changement de nature", "Document type changed"],
   parametres_archivage: ["Réglage de l'archivage", "Archiving settings"],
   changement_role: ["Changement de rôle", "Role change"],
+  creation_compte: ["Création d'un compte par l'administrateur", "Account created by an administrator"],
+  changement_mot_de_passe: ["Mot de passe provisoire remplacé", "Temporary password replaced"],
   reinitialisation_mfa: ["Réinitialisation de la double authentification", "Two-factor authentication reset"],
   titulaire_signature: ["Désignation du titulaire d'une qualité de signature", "Signing capacity holder appointed"],
   delegation_signature: ["Délégation de signature", "Signature delegated"],

@@ -14,15 +14,9 @@ six phases séquencées avec chevauchement limité entre la fin de l'audit et le
 | 5. Déploiement | 45 j | 30/03/2026 | 29/05/2026 |
 | 6. Tests, Recette et Finalisation | 20 j | 01/06/2026 | 26/06/2026 |
 
-```
-                 Jan   Fév   Mar   Avr   Mai   Juin
-Pilotage         ████
-Audit                  ████
-Conception              ████████
-Planification                    ████
-Déploiement                           ████████████████
-Tests/Recette                                          ████████
-```
+Le diagramme de Gantt ci-dessous détaille les 23 tâches du projet, leurs dépendances (liens fin-début), les ressources affectées et les quatre jalons de pilotage : lancement, validation de l'architecture en COPIL, signature du PV de recette et clôture.
+
+![Diagramme de Gantt du projet, du 5 janvier au 26 juin 2026](../figures/gantt.png)
 
 ## Détail des tâches et ressources assignées
 

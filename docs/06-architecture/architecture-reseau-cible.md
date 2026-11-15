@@ -2,40 +2,7 @@
 
 ## 1. Schéma d'ensemble
 
-```
-                         FAI Principal          FAI Secours
-                        (Orange Business)        (SFR Pro)
-                              │                       │
-                    ┌─────────┴───────────┬───────────┴─────────┐
-                    │                                             │
-            ┌───────┴────────┐                            ┌───────┴────────┐
-            │  Cluster HA     │                            │  Cluster HA     │
-            │  FortiGate 200F │◀──── 2 tunnels IPsec ─────▶│  FortiGate 200F │
-            │  (siège Paris)  │      redondants (VPN)       │  (site Lyon)    │
-            └───────┬────────┘                            └───────┬────────┘
-                    │                                             │
-              ┌─────┴─────┐                                 ┌─────┴─────┐
-              │    DMZ     │                                 │  (pas de   │
-              │ (portail   │                                 │   DMZ,     │
-              │ intranet/  │                                 │  back-     │
-              │ extranet)  │                                 │  office)   │
-              └─────┬─────┘                                 └─────┬─────┘
-                    │                                             │
-        ┌───────────┴───────────┐                       ┌─────────┴─────────┐
-        │  Stack Cisco Catalyst  │                       │  Stack Cisco       │
-        │  9300 (cœur N3, HA)    │                       │  Catalyst 9300     │
-        └───────────┬───────────┘                       │  (cœur N3, HA)     │
-                    │                                    └─────────┬─────────┘
-        ┌───────────┴───────────┐                                 │
-        │ Catalyst 9200 (distri) │                       Catalyst 9200 (distri)
-        └───────────┬───────────┘                                 │
-       ┌─────────────┼─────────────┐                    ┌──────────┴──────────┐
-   Accès (postes) Accès (Wi-Fi) Accès (VOIP)         Accès (postes)      Accès (Wi-Fi/VOIP)
-   VLAN 10/20      VLAN 40       VLAN 50              VLAN 10/20 Lyon     VLAN 40/50 Lyon
-        │
-   VLAN 30 (serveurs) ── Cluster VMware / stockage (cf. architecture systèmes)
-   VLAN 99 (management) ── accès administrateurs via bastion PAM
-```
+![Architecture réseau cible des sites de Paris et de Lyon](../figures/reseau-cible.png)
 
 Chaque site dispose désormais de son propre cluster de pare-feu en haute disponibilité, de son propre
 double lien Internet et de son propre cœur de réseau redondant — supprimant la dépendance totale du

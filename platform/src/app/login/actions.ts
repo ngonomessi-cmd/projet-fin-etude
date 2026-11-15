@@ -9,7 +9,7 @@ import type { Traduire } from "@/lib/i18n/plateforme";
 export type ResultatConnexion = { erreur: string | null };
 
 export async function connecterAction(formData: FormData): Promise<ResultatConnexion> {
-  const email = String(formData.get("email") ?? "");
+  const email = String(formData.get("email") ?? "").trim();
   const motDePasse = String(formData.get("mot_de_passe") ?? "");
 
   const supabase = await creerClientServeur();
@@ -20,7 +20,7 @@ export async function connecterAction(formData: FormData): Promise<ResultatConne
 }
 
 export async function inscrireAction(formData: FormData): Promise<ResultatConnexion> {
-  const email = String(formData.get("email") ?? "");
+  const email = String(formData.get("email") ?? "").trim();
   const motDePasse = String(formData.get("mot_de_passe") ?? "");
   const nomComplet = String(formData.get("nom_complet") ?? "");
   const departement = String(formData.get("departement") ?? "Direction");

@@ -36,26 +36,16 @@ Sécurité**), tout en apportant une valeur ajoutée différenciante sur l'IA ap
 
 ## Organisation de l'équipe projet
 
-```
-                        Direction de projet MOM-TECH
-                                    │
-                 ┌──────────────────┴──────────────────┐
-                 │                                       │
-     Équipe Architecture Système                Équipe Réseau & Sécurité
-                 │                                       │
-   ┌─────────────┴─────────────┐          ┌──────────────┴──────────────┐
-Ingénieur Systèmes         Ingénieur      Ingénieur Réseaux &      Ingénieur
-& Virtualisation            IA / Data      Cybersécurité            Cybersécurité / SOC
-```
+![Organisation de l'équipe projet MOM-TECH](../figures/organigramme-momtech.png)
 
 | Rôle | Candidat | Périmètre principal |
 |---|---|---|
-| Chef de projet / Ingénieur Architecture Système | *[Prénom NOM 1]* | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA |
-| Ingénieur Réseaux & Sécurité | *[Prénom NOM 2]* | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
-| Ingénieur Cybersécurité / SOC | *[Prénom NOM 3]* | Lot D, F (audit sécurité), SOC/SIEM, GED sécurisée, conformité RGPD/ACPR |
-| Ingénieur Systèmes & Déploiement | *[Prénom NOM 4]* | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
+| Chef de projet / Ingénieur Architecture Système | NGONO MESSI Julien Joël | Pilotage global, PBS/WBS/OBS/RACI, serveurs, virtualisation, PRA/PCA, Lot F |
+| Ingénieur Réseaux & Sécurité | ADJE Tchaffa Oladé Moïse | Lot A (architecture réseau), Lot E (IDS/IPS), Lot G (PRA/PCA réseau) |
+| Ingénieur Cybersécurité / SOC | ABAYOMI Obachegoun Olabissi Majesté | Lot D, F (audit sécurité), SOC/SIEM, conformité RGPD/ACPR |
+| Ingénieur Systèmes & Déploiement | WAFO Franklin Junior | Lot B, C, J (postes clients, Office 365, déploiements), Lot H (monitoring) |
 
-*(Noms des 4 candidats à compléter — la répartition ci-dessus respecte l'obligation du cahier des charges
+*(La répartition ci-dessus respecte l'obligation du cahier des charges
 de structurer l'équipe en deux sous-équipes Architecture Système / Réseau & Sécurité, tout en couvrant
 l'ensemble des lots principaux et complémentaires.)*
 

@@ -3,19 +3,7 @@
 Le PBS décompose le projet en livrables (produits attendus), indépendamment de l'ordre dans lequel ils
 sont réalisés.
 
-```
-                              Projet Migration & Sécurisation SI KHS Bank
-                                                │
-        ┌───────────┬────────────┬─────────────┼─────────────┬────────────┬────────────┐
-        │           │            │              │             │            │            │
-   Cadrage &    Rapports      Architecture   Infrastructure  Dispositif   Dossiers de  Bilan
-   Documents    d'audit       cible &        déployée        de sécurité  recette &    financier &
-   de gestion   (réseau,      schémas        (réseau,        (SOC/SIEM,   PV de        contrat de
-   de projet    systèmes,     techniques     systèmes,       PRA/PCA,     livraison    maintenance
-   (PBS/WBS/    cybersécu)                   postes)         GED,
-   OBS/RACI/                                                 IAM/MFA)
-   Gantt)
-```
+![PBS : décomposition du projet en livrables](../figures/pbs.png)
 
 ## Détail des livrables par branche
 

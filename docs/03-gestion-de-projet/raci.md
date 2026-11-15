@@ -1,9 +1,11 @@
 # Matrice RACI
 
-**R** = Réalisateur (un seul par tâche) · **A** = Approbateur (un seul par tâche) · **C** = Consulté ·
-**I** = Informé
+**R** = Réalisateur · **A** = Approbateur, seul responsable de la validation (un seul par tâche) · **C** = Consulté ·
+**I** = Informé.
 
-| Livrable / Tâche | DSI (KHS) | RSSI (KHS) | Chef de projet (MOM-TECH) | Ing. Réseaux & Sécurité | Ing. Systèmes & Virtualisation | Ing. Cybersécurité / SOC | Fournisseurs |
+La DSI et le RSSI représentent KHS Bank ; le chef de projet et les ingénieurs représentent MOM-TECH.
+
+| Livrable / Tâche | DSI | RSSI | Chef de projet | Ing. Réseaux & Sécurité | Ing. Systèmes & Virtualisation | Ing. Cybersécurité / SOC | Fournisseurs |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Pilotage** | | | | | | | |
 | Cadrage du projet | A | C | R | I | I | I | |
