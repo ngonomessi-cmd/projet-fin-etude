@@ -10,6 +10,7 @@ import { EtatMfa } from "./EtatMfa";
 import { PLATEFORME_BILINGUE } from "@/lib/i18n/plateforme";
 import { COURRIER_ACTIF } from "@/lib/organisation";
 import { SelecteurRoleCourrier } from "./SelecteurRoleCourrier";
+import { FormulaireCreationCompte } from "./FormulaireCreationCompte";
 import { chargerNomsDepartementsEn } from "@/lib/i18n/serveur";
 import { traductionServeur } from "@/lib/i18n/serveur";
 
@@ -104,6 +105,8 @@ export default async function PageUtilisateurs() {
               </tbody>
             </table>
           </div>
+
+          <FormulaireCreationCompte />
 
           {PLATEFORME_BILINGUE && <NomsDepartementsEn lignes={lignesDepartements} />}
 
