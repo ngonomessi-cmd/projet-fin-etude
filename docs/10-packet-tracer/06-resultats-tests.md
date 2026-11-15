@@ -20,6 +20,7 @@ Résultats réellement observés dans Packet Tracer, test par test (complète le
 | PT04 | Isolation des invités : LAPTOP-WIFI-PARIS-1 (`10.10.8.10/24`, passerelle `10.10.8.1`) → `ping 10.10.0.11` | 0/4 — « Destination host unreachable » renvoyé par `10.10.8.2` (SVI VLAN 40 de SW1) : l'ACL `ACL-INVITES` rejette le paquet dès l'entrée du routage | Conforme (après correction) |
 | PT05 | Accès Internet des invités : `ping 203.0.113.10` | 3/4, TTL=124 (1er paquet perdu = ARP) : l'ACL bloque le LAN interne, pas Internet | Conforme |
 | PT09 | Téléphonie : IPPHONE-PARIS-1 (Cisco 7960) sur ACC-PARIS-SW Fa0/7 | `Vlan50` up, `10.10.10.10/23`, passerelle `10.10.10.1` (VIP HSRP du VLAN voix) : le téléphone a reconnu la voice VLAN 50 annoncée par le commutateur | Conforme |
+| PT11 (état initial) | `show standby brief` sur CORE-PARIS-SW1 | 7 groupes HSRP Active, priorité 110, préemption (P) : Vl10 → VIP `10.10.0.1`, Vl20 → `10.10.4.1`, Vl30 → `10.10.4.65`, Vl40 → `10.10.8.1`, Vl50 → `10.10.10.1`, Vl99 → `10.10.12.1`, Vl100 → `10.10.254.12` ; Standby = SW2 sur chaque VLAN. `ping -t 203.0.113.10` stable (TTL=124) | Conforme |
 | — | FW-LYON ↔ CORE-LYON-SW (`10.20.254.4/30`) | CORE-LYON-SW → `10.20.254.5` : 4/5 après correction | Conforme |
 
 ## Anomalies détectées pendant la recette et corrections
