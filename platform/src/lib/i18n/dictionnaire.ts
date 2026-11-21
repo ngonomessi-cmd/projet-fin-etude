@@ -126,6 +126,52 @@ const SERVICES_EN = [
   },
 ] as const;
 
+// Secteurs prioritaires et régions (page d'accueil et page « Investir au Cameroun »).
+// « cle » relie chaque secteur à son pictogramme et, le cas échéant, à sa photo.
+const SECTEURS_FR = [
+  { cle: "agriculture", titre: "Agriculture & Agro-industrie", description: "Cacao, café, coton, banane, huile de palme : des filières d'exportation établies et un fort potentiel de transformation locale." },
+  { cle: "energie", titre: "Énergie", description: "Un important potentiel hydroélectrique, des ouvrages de production récents et des besoins croissants en énergies renouvelables, notamment solaires." },
+  { cle: "industrie", titre: "Industrie & Transformation", description: "Agro-transformation, matériaux de construction, zones industrielles et logistiques autour des ports de Douala et de Kribi." },
+  { cle: "mines", titre: "Mines & Ressources", description: "Bauxite, fer, or et autres ressources minérales à valoriser dans le cadre du code minier." },
+  { cle: "numerique", titre: "Économie numérique", description: "Télécommunications, services numériques et paiement mobile, portés par une population jeune et des câbles sous-marins qui atterrissent sur le littoral." },
+  { cle: "tourisme", titre: "Tourisme & Hôtellerie", description: "Du mont Cameroun aux plages de Kribi et aux parcs nationaux du Nord : une diversité de paysages qui vaut au pays le surnom d'« Afrique en miniature »." },
+] as const;
+
+const SECTEURS_EN = [
+  { cle: "agriculture", titre: "Agriculture & Agribusiness", description: "Cocoa, coffee, cotton, bananas, palm oil: established export value chains and strong potential for local processing." },
+  { cle: "energie", titre: "Energy", description: "Significant hydropower potential, recently commissioned generation projects and growing demand for renewables, especially solar." },
+  { cle: "industrie", titre: "Industry & Processing", description: "Agro-processing, building materials, industrial and logistics zones around the ports of Douala and Kribi." },
+  { cle: "mines", titre: "Mining & Resources", description: "Bauxite, iron ore, gold and other mineral resources to develop under the mining code." },
+  { cle: "numerique", titre: "Digital Economy", description: "Telecommunications, digital services and mobile payments, driven by a young population and submarine cables landing on the coast." },
+  { cle: "tourisme", titre: "Tourism & Hospitality", description: "From Mount Cameroon to the beaches of Kribi and the national parks of the North: a diversity of landscapes that earns the country the nickname “Africa in miniature”." },
+] as const;
+
+const REGIONS_FR = [
+  { ville: "maroua", nom: "Extrême-Nord", chefLieu: "Maroua", atouts: "Agriculture, élevage, échanges avec les pays voisins" },
+  { ville: "garoua", nom: "Nord", chefLieu: "Garoua", atouts: "Coton, élevage, port fluvial sur la Bénoué, barrage de Lagdo" },
+  { ville: "ngaoundere", nom: "Adamaoua", chefLieu: "Ngaoundéré", atouts: "Élevage, bauxite, terminus du chemin de fer vers le Nord" },
+  { ville: "bamenda", nom: "Nord-Ouest", chefLieu: "Bamenda", atouts: "Agriculture, élevage, artisanat" },
+  { ville: "bafoussam", nom: "Ouest", chefLieu: "Bafoussam", atouts: "Café, cultures vivrières, commerce et PME" },
+  { ville: "buea", nom: "Sud-Ouest", chefLieu: "Buéa", atouts: "Mont Cameroun, plantations agro-industrielles, port de Limbé, tourisme" },
+  { ville: "douala", nom: "Littoral", chefLieu: "Douala", atouts: "Capitale économique, port de Douala, industrie et logistique" },
+  { ville: "yaounde", nom: "Centre", chefLieu: "Yaoundé", atouts: "Capitale politique, administrations et services" },
+  { ville: "bertoua", nom: "Est", chefLieu: "Bertoua", atouts: "Forêt et filière bois, mines, barrage de Lom Pangar" },
+  { ville: "ebolowa", nom: "Sud", chefLieu: "Ebolowa", atouts: "Port en eau profonde de Kribi, forêt, tourisme balnéaire" },
+] as const;
+
+const REGIONS_EN = [
+  { ville: "maroua", nom: "Far North", chefLieu: "Maroua", atouts: "Agriculture, livestock, trade with neighbouring countries" },
+  { ville: "garoua", nom: "North", chefLieu: "Garoua", atouts: "Cotton, livestock, river port on the Benue, Lagdo dam" },
+  { ville: "ngaoundere", nom: "Adamawa", chefLieu: "Ngaoundéré", atouts: "Livestock, bauxite, northern terminus of the railway" },
+  { ville: "bamenda", nom: "North-West", chefLieu: "Bamenda", atouts: "Agriculture, livestock, crafts" },
+  { ville: "bafoussam", nom: "West", chefLieu: "Bafoussam", atouts: "Coffee, food crops, trade and SMEs" },
+  { ville: "buea", nom: "South-West", chefLieu: "Buea", atouts: "Mount Cameroon, agro-industrial plantations, port of Limbe, tourism" },
+  { ville: "douala", nom: "Littoral", chefLieu: "Douala", atouts: "Economic capital, port of Douala, industry and logistics" },
+  { ville: "yaounde", nom: "Centre", chefLieu: "Yaoundé", atouts: "Political capital, government and services" },
+  { ville: "bertoua", nom: "East", chefLieu: "Bertoua", atouts: "Forestry and timber, mining, Lom Pangar dam" },
+  { ville: "ebolowa", nom: "South", chefLieu: "Ebolowa", atouts: "Kribi deep-sea port, forestry, seaside tourism" },
+] as const;
+
 export const DICTIONNAIRE = {
   fr: {
     nav: {
@@ -135,21 +181,27 @@ export const DICTIONNAIRE = {
       actualites: "Actualités",
       contact: "Contact",
       nousContacter: "Nous contacter",
+      agence: "L'Agence",
+      investir: "Investir au Cameroun",
+      secteurs: "Secteurs porteurs",
+      accompagnement: "Accompagnement",
+      regions: "Régions",
     },
     hero: {
-      surtitre: "Investir au Cameroun, c'est bâtir l'avenir",
-      titre: "L'Agence de Promotion des Investissements du Cameroun",
+      surtitre: "Cameroun",
+      titre: "Investir au Cameroun,",
+      titreAccent: "un hub stratégique en Afrique",
       description:
-        "Nous accompagnons les investisseurs, nationaux et étrangers, dans la réalisation de leurs projets au Cameroun, en leur offrant un guichet unique, des services adaptés et un cadre sécurisé.",
-      cta1: "Découvrir nos services",
-      cta2: "Pourquoi investir au Cameroun ?",
+        "Un marché en croissance, des ressources diversifiées et une position privilégiée au cœur de la CEMAC et de la CEEAC.",
+      cta1: "Explorer les opportunités",
+      cta2: "Découvrir le Cameroun",
       legende: "Un environnement attractif pour des investissements durables",
     },
     chiffres: [
-      { valeur: "+ 1 000", libelle: "projets accompagnés", detail: "depuis la création de l'agence" },
-      { valeur: "+ 3 500", libelle: "investisseurs", detail: "nationaux et étrangers" },
-      { valeur: "10 secteurs clés", libelle: "", detail: "pour un développement économique durable" },
-      { valeur: "Un guichet unique", libelle: "", detail: "pour toutes vos démarches d'investissement" },
+      { valeur: "29 M+", libelle: "Habitants", detail: "Un marché national dynamique" },
+      { valeur: "CEMAC", libelle: "Un marché régional intégré", detail: "Six pays, plus de 60 millions de consommateurs" },
+      { valeur: "6", libelle: "Secteurs prioritaires", detail: "Des opportunités à fort potentiel" },
+      { valeur: "1", libelle: "Interlocuteur unique", detail: "Un accompagnement sur mesure par l'agence" },
     ],
     missionsTeaser: {
       surtitre: "Nos missions",
@@ -236,6 +288,35 @@ export const DICTIONNAIRE = {
       champs: "Merci de renseigner votre nom, une adresse e-mail valide, l'objet et un message d'au moins 10 caractères.",
       envoi: "L'envoi a échoué. Merci de réessayer dans quelques instants.",
     },
+    secteurs: {
+      titre: "Secteurs d'investissement prioritaires",
+      lienTout: "Voir tous les secteurs",
+      items: SECTEURS_FR,
+    },
+    opportunites: {
+      titre: "Opportunités d'investissement",
+      description:
+        "Présentez-nous votre projet : l'agence identifie avec vous les opportunités par secteur et par région, et vous oriente vers les bons interlocuteurs.",
+      cta: "Présenter mon projet",
+    },
+    regionsAccueil: {
+      titre: "Explorer le Cameroun par région",
+      description: "Dix régions aux atouts complémentaires : situez les grands pôles économiques du pays sur la carte.",
+      cta: "Accéder à la carte",
+    },
+    investir: {
+      surtitre: "Investir au Cameroun",
+      titre: "Six secteurs porteurs, dix régions complémentaires",
+      description:
+        "Un aperçu des secteurs prioritaires et des atouts de chaque région, pour orienter votre projet. L'agence vous accompagne ensuite dans le détail.",
+      secteursTitre: "Les secteurs prioritaires",
+      regionsTitre: "Les dix régions du Cameroun",
+      regionsIntro: "Chef-lieu et principaux atouts économiques de chaque région.",
+      chefLieu: "Chef-lieu",
+      projetTitre: "Un projet dans l'un de ces secteurs ?",
+      projetCta: "Contacter l'agence",
+      regions: REGIONS_FR,
+    },
     pourquoiInvestir: {
       surtitre: "Pourquoi investir au Cameroun ?",
       titre: "Une destination de choix en Afrique",
@@ -304,21 +385,27 @@ export const DICTIONNAIRE = {
       actualites: "News",
       contact: "Contact",
       nousContacter: "Contact us",
+      agence: "The Agency",
+      investir: "Invest in Cameroon",
+      secteurs: "Key sectors",
+      accompagnement: "Support",
+      regions: "Regions",
     },
     hero: {
-      surtitre: "Investing in Cameroon means building the future",
-      titre: "The Investment Promotion Agency of Cameroon",
+      surtitre: "Cameroon",
+      titre: "Invest in Cameroon,",
+      titreAccent: "a strategic hub in Africa",
       description:
-        "We support national and foreign investors in carrying out their projects in Cameroon, offering a one-stop shop, tailored services and a secure framework.",
-      cta1: "Discover our services",
-      cta2: "Why invest in Cameroon?",
+        "A growing market, diversified resources and a prime location at the heart of CEMAC and ECCAS.",
+      cta1: "Explore opportunities",
+      cta2: "Discover Cameroon",
       legende: "An attractive environment for sustainable investment",
     },
     chiffres: [
-      { valeur: "1,000+", libelle: "projects supported", detail: "since the agency was founded" },
-      { valeur: "3,500+", libelle: "investors", detail: "national and foreign" },
-      { valeur: "10 key sectors", libelle: "", detail: "for sustainable economic development" },
-      { valeur: "A one-stop shop", libelle: "", detail: "for all your investment procedures" },
+      { valeur: "29 M+", libelle: "Inhabitants", detail: "A dynamic domestic market" },
+      { valeur: "CEMAC", libelle: "An integrated regional market", detail: "Six countries, over 60 million consumers" },
+      { valeur: "6", libelle: "Priority sectors", detail: "High-potential opportunities" },
+      { valeur: "1", libelle: "Single point of contact", detail: "Tailored support from the agency" },
     ],
     missionsTeaser: {
       surtitre: "Our missions",
@@ -402,6 +489,35 @@ export const DICTIONNAIRE = {
     erreursContact: {
       champs: "Please enter your name, a valid email address, a subject and a message of at least 10 characters.",
       envoi: "Sending failed. Please try again in a few moments.",
+    },
+    secteurs: {
+      titre: "Priority investment sectors",
+      lienTout: "View all sectors",
+      items: SECTEURS_EN,
+    },
+    opportunites: {
+      titre: "Investment opportunities",
+      description:
+        "Tell us about your project: the agency works with you to identify opportunities by sector and region, and directs you to the right contacts.",
+      cta: "Submit my project",
+    },
+    regionsAccueil: {
+      titre: "Explore Cameroon by region",
+      description: "Ten regions with complementary strengths: locate the country's main economic hubs on the map.",
+      cta: "Open the map",
+    },
+    investir: {
+      surtitre: "Invest in Cameroon",
+      titre: "Six key sectors, ten complementary regions",
+      description:
+        "An overview of the priority sectors and of each region's strengths, to help shape your project. The agency then supports you in detail.",
+      secteursTitre: "Priority sectors",
+      regionsTitre: "The ten regions of Cameroon",
+      regionsIntro: "Regional capital and main economic strengths of each region.",
+      chefLieu: "Capital",
+      projetTitre: "A project in one of these sectors?",
+      projetCta: "Contact the agency",
+      regions: REGIONS_EN,
     },
     pourquoiInvestir: {
       surtitre: "Why invest in Cameroon?",
