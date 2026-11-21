@@ -4,18 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { URL_LOGO_ORGANISATION, nomOrganisation } from "@/lib/organisation";
+import { CONTACT_ORGANISATION, NOM_ORGANISATION, NOM_ORGANISATION_EN, URL_LOGO_ORGANISATION } from "@/lib/organisation";
 import { LogoOrganisation } from "@/components/LogoOrganisation";
 import { DICTIONNAIRE, cheminAutreLocale, prefixeLocale, type Locale } from "@/lib/i18n/dictionnaire";
-import {
-  IconeBatiment,
-  IconeEnveloppe,
-  IconeFleche,
-  IconeJournal,
-  IconeMaison,
-  IconeMallette,
-} from "@/components/site-public/IconesSite";
+import { IconeEnveloppe, IconeFleche, IconeTelephone } from "@/components/site-public/IconesSite";
 
+// En-tête du site public, sur deux étages : identité et coordonnées sur fond
+// blanc, puis barre de navigation bleu nuit avec le bouton de contact.
 export function EnTetePublic() {
   const pathname = usePathname();
   const locale: Locale = pathname.startsWith("/en") ? "en" : "fr";
@@ -28,69 +23,78 @@ export function EnTetePublic() {
     setMenuOuvert(false);
   }, [pathname]);
 
+  const nomPrincipal = locale === "en" ? NOM_ORGANISATION_EN : NOM_ORGANISATION;
+  const nomSecondaire = locale === "en" ? NOM_ORGANISATION : NOM_ORGANISATION_EN;
+  const { telephone, email } = CONTACT_ORGANISATION;
+
   const liens = [
-    { href: accueil, label: t.nav.accueil, Icone: IconeMaison, actif: pathname === accueil },
-    { href: `${p}/missions`, label: t.nav.missions, Icone: IconeBatiment, actif: pathname.startsWith(`${p}/missions`) },
-    { href: `${p}/services`, label: t.nav.services, Icone: IconeMallette, actif: pathname.startsWith(`${p}/services`) },
-    { href: `${p}/actualites`, label: t.nav.actualites, Icone: IconeJournal, actif: pathname.startsWith(`${p}/actualites`) },
+    { href: accueil, label: t.nav.accueil, actif: pathname === accueil },
+    { href: `${p}/missions`, label: t.nav.agence, actif: pathname.startsWith(`${p}/missions`) },
+    { href: `${p}/investir`, label: t.nav.investir, actif: pathname.startsWith(`${p}/investir`) },
+    { href: `${p}/investir#secteurs`, label: t.nav.secteurs, actif: false },
+    { href: `${p}/services`, label: t.nav.accompagnement, actif: pathname.startsWith(`${p}/services`) },
+    { href: `${p}/investir#regions`, label: t.nav.regions, actif: false },
+    { href: `${p}/actualites`, label: t.nav.actualites, actif: pathname.startsWith(`${p}/actualites`) },
   ];
+  const contactActif = pathname.startsWith(`${p}/contact`);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-stretch justify-between gap-6 px-4 sm:px-8">
-        <Link href={accueil} className="flex min-w-0 items-center gap-3">
-          {URL_LOGO_ORGANISATION ? (
-            <Image
-              src={URL_LOGO_ORGANISATION}
-              alt=""
-              width={130}
-              height={100}
-              priority
-              className="h-11 w-auto shrink-0 object-contain"
-            />
-          ) : (
-            <LogoOrganisation taille="lg" />
-          )}
-          <span className="hidden font-serif text-[15px] font-semibold leading-tight text-encre-900 sm:block">
-            {nomOrganisation(locale)}
-          </span>
-        </Link>
+    <header className="sticky top-0 z-40 shadow-[0_1px_0_rgba(0,24,61,0.08)]">
+      {/* Étage 1 : identité, coordonnées, langue */}
+      <div className="bg-white">
+        <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-8">
+          <Link href={accueil} className="flex min-w-0 items-center gap-3.5">
+            {URL_LOGO_ORGANISATION ? (
+              <Image
+                src={URL_LOGO_ORGANISATION}
+                alt=""
+                width={140}
+                height={100}
+                priority
+                className="h-12 w-auto shrink-0 object-contain"
+              />
+            ) : (
+              <LogoOrganisation taille="lg" />
+            )}
+            <span className="hidden min-w-0 border-l border-slate-200 pl-3.5 sm:block">
+              <span className="block truncate font-serif text-[15px] font-semibold leading-tight text-encre-900">
+                {nomPrincipal}
+              </span>
+              {nomSecondaire !== nomPrincipal && (
+                <span className="mt-0.5 block truncate text-[12.5px] italic leading-tight text-slate-500">{nomSecondaire}</span>
+              )}
+            </span>
+          </Link>
 
-        <div className="flex items-stretch gap-6">
-          <nav className="hidden items-stretch gap-7 lg:flex">
-            {liens.map(({ href, label, Icone, actif }) => (
-              <Link
-                key={href}
-                href={href}
-                aria-current={actif ? "page" : undefined}
-                className={`flex items-center gap-2 border-b-2 pt-0.5 text-sm font-medium transition-colors ${
-                  actif ? "border-gold-500 text-gold-600" : "border-transparent text-encre-900 hover:text-gold-600"
-                }`}
+          <div className="flex items-center gap-5">
+            {telephone && (
+              <a
+                href={`tel:${telephone.replace(/\s+/g, "")}`}
+                className="hidden items-center gap-2 text-[13px] font-medium text-encre-900 hover:text-gold-600 xl:flex"
               >
-                <Icone className="h-4 w-4" />
-                {label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href={`${p}/contact`}
-              className={`hidden items-center gap-2 rounded-md border px-4 py-2 text-[13px] font-semibold transition-colors md:inline-flex ${
-                pathname.startsWith(`${p}/contact`)
-                  ? "border-gold-500 bg-gold-500 text-encre-950"
-                  : "border-gold-500 text-gold-600 hover:bg-gold-500 hover:text-encre-950"
-              }`}
-            >
-              {t.nav.nousContacter}
-              <IconeFleche className="h-3.5 w-3.5" />
-            </Link>
-            <div className="flex items-center gap-0.5 rounded-md border border-slate-200 p-0.5 text-xs font-semibold">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-50 text-gold-600">
+                  <IconeTelephone className="h-4 w-4" />
+                </span>
+                {telephone}
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="hidden items-center gap-2 text-[13px] font-medium text-encre-900 hover:text-gold-600 xl:flex"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-50 text-gold-600">
+                  <IconeEnveloppe className="h-4 w-4" />
+                </span>
+                {email}
+              </a>
+            )}
+            <div className="flex items-center gap-0.5 rounded-full border border-slate-200 p-0.5 text-xs font-semibold">
               {(["fr", "en"] as const).map((l) => (
                 <Link
                   key={l}
                   href={cheminAutreLocale(pathname, l)}
-                  className={`rounded px-2 py-1 uppercase transition-colors ${
+                  className={`rounded-full px-2.5 py-1 uppercase transition-colors ${
                     locale === l ? "bg-encre-950 text-white" : "text-slate-500 hover:text-encre-900"
                   }`}
                 >
@@ -113,22 +117,48 @@ export function EnTetePublic() {
         </div>
       </div>
 
-      <nav
-        className={`flex-col border-t border-slate-100 bg-white px-4 py-2 shadow-lg sm:px-8 lg:hidden ${menuOuvert ? "flex" : "hidden"}`}
-      >
-        {[
-          ...liens,
-          { href: `${p}/contact`, label: t.nav.contact, Icone: IconeEnveloppe, actif: pathname.startsWith(`${p}/contact`) },
-        ].map(({ href, label, Icone, actif }) => (
+      {/* Étage 2 : navigation (grand écran) */}
+      <div className="hidden bg-encre-950 lg:block">
+        <div className="mx-auto flex h-[52px] max-w-7xl items-stretch justify-between gap-6 px-4 sm:px-8">
+          <nav className="flex items-stretch gap-1 xl:gap-2">
+            {liens.map(({ href, label, actif }) => (
+              <Link
+                key={href}
+                href={href}
+                aria-current={actif ? "page" : undefined}
+                className={`relative flex items-center px-2.5 text-[13.5px] font-medium transition-colors xl:px-3 ${
+                  actif ? "text-gold-500" : "text-white/90 hover:text-gold-500"
+                }`}
+              >
+                {label}
+                {actif && <span className="absolute inset-x-2.5 bottom-0 h-[3px] rounded-t bg-gold-500" />}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex items-center">
+            <Link
+              href={`${p}/contact`}
+              aria-current={contactActif ? "page" : undefined}
+              className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-2 text-[13px] font-semibold text-encre-950 shadow-sm transition-colors hover:bg-gold-600 hover:text-white"
+            >
+              {t.nav.nousContacter}
+              <IconeFleche className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Menu déroulant (téléphone et tablette) */}
+      <nav className={`flex-col bg-encre-950 px-4 py-2 shadow-lg sm:px-8 lg:hidden ${menuOuvert ? "flex" : "hidden"}`}>
+        {[...liens, { href: `${p}/contact`, label: t.nav.contact, actif: contactActif }].map(({ href, label, actif }) => (
           <Link
             key={href}
             href={href}
             aria-current={actif ? "page" : undefined}
-            className={`flex items-center gap-3 border-b border-slate-100 py-3.5 text-[15px] font-medium last:border-b-0 ${
-              actif ? "text-gold-600" : "text-encre-900"
+            className={`border-b border-white/10 py-3.5 text-[15px] font-medium last:border-b-0 ${
+              actif ? "text-gold-500" : "text-white"
             }`}
           >
-            <Icone className="h-4 w-4" />
             {label}
           </Link>
         ))}

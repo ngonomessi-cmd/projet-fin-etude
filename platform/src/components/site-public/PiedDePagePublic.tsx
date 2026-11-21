@@ -74,6 +74,7 @@ export function PiedDePagePublic() {
     {
       titre: t.footer.investirTitre,
       liens: [
+        { href: `${p}/investir`, label: t.nav.investir },
         { href: `${p}/services`, label: t.nav.services },
         { href: `${p}/actualites`, label: t.nav.actualites },
       ],

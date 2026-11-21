@@ -41,6 +41,7 @@ export async function mettreAJourSession(requete: NextRequest) {
     requete.nextUrl.pathname.startsWith("/actualites") ||
     requete.nextUrl.pathname.startsWith("/missions") ||
     requete.nextUrl.pathname.startsWith("/services") ||
+    requete.nextUrl.pathname.startsWith("/investir") ||
     requete.nextUrl.pathname.startsWith("/contact") ||
     // Vérification publique d'un document signé (QR code imprimé).
     requete.nextUrl.pathname.startsWith("/verifier") ||
